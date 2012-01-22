@@ -36,8 +36,8 @@
 
 using namespace logbook;
 
-Logbook::Logbook(dbapi::connection::ptr conn)
-	: m_conn(conn), m_session(new Session(conn))
+Logbook::Logbook(const std::string & filename, dbapi::connection::ptr conn)
+	: m_filename(filename), m_conn(conn), m_session(new Session(conn))
 {
 	// Register Mappers
 	m_session->registerMapper<DiveComputer>(new mappers::DiveComputerMapper(m_session));
@@ -67,7 +67,7 @@ Logbook::Ptr Logbook::Create(const std::string & filename, const std::string & c
 	}
 
 	// Create the Logbook
-	Logbook::Ptr lb(new Logbook(db));
+	Logbook::Ptr lb(new Logbook(filename, db));
 
 	// Add Standard Mixes: Air, EANx32 and EANx36
 	Mix::Ptr mAir(new Mix);
@@ -96,7 +96,7 @@ Logbook::Ptr Logbook::Open(const std::string & filename)
 	dbapi::connection::ptr db(new dbapi::connection(filename.c_str()));
 
 	//TODO: Add Schema Version Check
-	return Logbook::Ptr(new Logbook(db));
+	return Logbook::Ptr(new Logbook(filename, db));
 }
 
 void Logbook::Upgrade(const std::string & filename)

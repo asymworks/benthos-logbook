@@ -68,9 +68,10 @@ protected:
 
 	/**
 	 * @brief Class Constructor
+	 * @param[in] Logbook File Name
 	 * @param[in] Database Connection
 	 */
-	Logbook(dbapi::connection::ptr conn);
+	Logbook(const std::string & filename, dbapi::connection::ptr conn);
 
 public:
 
@@ -128,10 +129,14 @@ public:
 	//! @return Database Connection
 	inline dbapi::connection::ptr connection() const { return m_conn; }
 
+	//! @return Logbook File Name
+	inline const std::string & filename() const { return m_filename; }
+
 	//! @return Database Session
 	inline Session::Ptr session() const { return m_session; }
 
 private:
+	std::string					m_filename;	///< Logbook File Name
 	dbapi::connection::ptr		m_conn;		///< Database Connection
 	Session::Ptr				m_session;	///< Database Session
 

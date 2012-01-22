@@ -191,6 +191,7 @@ protected:
 			return downcast(m_loaded[id]);
 
 		typename D::Ptr result = doLoad(id, r);
+		set_persistent_session(result, m_session.lock());
 		m_loaded[id] = upcast(result);
 		return result;
 	}
