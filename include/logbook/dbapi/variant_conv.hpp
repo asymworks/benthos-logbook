@@ -234,15 +234,4 @@ struct convert<std::string, std::vector<unsigned char> >
 	}
 };
 
-// BLOB -> * converter
-template <typename T>
-struct convert<T, std::vector<unsigned char> >
-{
-	T operator() (const std::vector<unsigned char> & v) const
-	{
-		std::string s = convert<std::string, std::vector<unsigned char> >()(v);
-		return convert<T, std::string>()(s);
-	}
-};
-
 #endif /* DBAPI_VARIANT_CONV_HPP_ */

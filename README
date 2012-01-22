@@ -8,3 +8,8 @@ This library provides a general-purpose scuba diving logbook file meant to be
 used in a graphical dive-logging application.
 
 This code is released under a BSD license.
+
+BUILD DEPENDENCIES
+------------------
+sqlite3
+yajl

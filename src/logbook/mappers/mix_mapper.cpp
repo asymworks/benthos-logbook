@@ -41,6 +41,8 @@ std::string MixMapper::sql_delete = "delete from mixes where id=?1";
 
 std::string MixMapper::sql_find_all = "select " + columns + " from mixes";
 std::string MixMapper::sql_find_id = "select " + columns + " from mixes where id=?1";
+std::string MixMapper::sql_find_name = "select " + columns + " from mixes where upper(name) = upper(?1)";
+std::string MixMapper::sql_find_mix = "select " + columns + " from mixes where abs(o2 - ?1) < 5 and abs(he - ?2) < 5 order by o2 desc limit 1";
 
 MixMapper::MixMapper(boost::shared_ptr<Session> session)
 	: Mapper<Mix>(session)
@@ -51,6 +53,8 @@ MixMapper::MixMapper(boost::shared_ptr<Session> session)
 
 	m_find_all_stmt = statement::ptr(new statement(m_conn, sql_find_all));
 	m_find_id_stmt = statement::ptr(new statement(m_conn, sql_find_id));
+	m_find_name_stmt = statement::ptr(new statement(m_conn, sql_find_name));
+	m_find_mix_stmt = statement::ptr(new statement(m_conn, sql_find_mix));
 }
 
 MixMapper::~MixMapper()
@@ -110,6 +114,33 @@ Mix::Ptr MixMapper::find(int64_t id)
 	m_find_id_stmt->bind(1, id);
 
 	dbapi::cursor::ptr c = m_find_id_stmt->exec();
+	dbapi::cursor::row_t r = c->fetchone();
+	if (r.size() == 0)
+		return logbook::Mix::Ptr();
+
+	return load(r);
+}
+
+Mix::Ptr MixMapper::findByName(const std::string & name)
+{
+	m_find_name_stmt->reset();
+	m_find_name_stmt->bind(1, name);
+
+	dbapi::cursor::ptr c = m_find_name_stmt->exec();
+	dbapi::cursor::row_t r = c->fetchone();
+	if (r.size() == 0)
+		return logbook::Mix::Ptr();
+
+	return load(r);
+}
+
+Mix::Ptr MixMapper::findByMix(unsigned int pmO2, unsigned int pmHe)
+{
+	m_find_mix_stmt->reset();
+	m_find_mix_stmt->bind(1, (int)pmO2);
+	m_find_mix_stmt->bind(2, (int)pmHe);
+
+	dbapi::cursor::ptr c = m_find_mix_stmt->exec();
 	dbapi::cursor::row_t r = c->fetchone();
 	if (r.size() == 0)
 		return logbook::Mix::Ptr();

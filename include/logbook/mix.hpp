@@ -148,6 +148,39 @@ private:
 
 };
 
+/**
+ * @brief Breathing Mix Finder Interface
+ *
+ * Extends IFinder<Mix> to add a find-by-name method and a find-by-gas method.
+ * The Find-by-gas method is used by the profile loader to find the "best mix"
+ * given a O2 and He fraction.
+ */
+struct IMixFinder: public IFinder<Mix>
+{
+	typedef boost::shared_ptr<IMixFinder>	Ptr;
+	virtual ~IMixFinder() { }
+
+	/**
+	 * @brief Find a Breathing Mix by Name (case insensitive)
+	 * @param[in] Mix Name
+	 * @return Breathing Mix
+	 */
+	virtual Mix::Ptr findByName(const std::string & name) = 0;
+
+	/**
+	 * @brief Find a Breathing Mix by O2/He fraction
+	 * @param[in] O2 Per Mil
+	 * @param[in] He Per Mil
+	 * @return Breathing Mix
+	 *
+	 * Finds a breathing mix that is within 0.5% of the given mix.  If multiple
+	 * mixes are within 0.5%, this will choose the one with the highest oxygen
+	 * fraction.
+	 */
+	virtual Mix::Ptr findByMix(unsigned int pmO2, unsigned int pmHe) = 0;
+
+};
+
 } /* logbook */
 
 #endif /* LOGBOOK_MIX_HPP_ */
