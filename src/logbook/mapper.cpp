@@ -64,9 +64,10 @@ void AbstractMapper::remove(Persistent::Ptr o)
 	s->bind(1, o->id());
 	s->exec();
 
-	set_persistent_id(o, -1);
 	if (m_loaded[o->id()])
 		m_loaded.erase(o->id());
+
+	set_persistent_id(o, -1);
 }
 
 void AbstractMapper::update(Persistent::Ptr o) const
