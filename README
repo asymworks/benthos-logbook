@@ -1,0 +1,10 @@
+liblogbook : Scuba Diving Logbook Library
+-----------------------------------------
+
+Author: Jonathan Krauss
+E-Mail: jkrauss@asymworks.com
+
+This library provides a general-purpose scuba diving logbook file meant to be
+used in a graphical dive-logging application.
+
+This code is released under a BSD license.
