@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef STATEMENT_IMPL_HPP_
-#define STATEMENT_IMPL_HPP_
+#ifndef DBAPI_STATEMENT_IMPL_HPP_
+#define DBAPI_STATEMENT_IMPL_HPP_
 
 #include "dbapi_error.hpp"
 
@@ -117,4 +117,4 @@ void statement::bind(const std::string & name, const boost::optional<T> & value)
 	bind<boost::optional<T> >(find_index(name), value);
 }
 
-#endif /* STATEMENT_IMPL_HPP_ */
+#endif /* DBAPI_STATEMENT_IMPL_HPP_ */

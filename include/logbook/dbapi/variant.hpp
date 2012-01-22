@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef VARIANT_HPP_
-#define VARIANT_HPP_
+#ifndef DBAPI_VARIANT_HPP_
+#define DBAPI_VARIANT_HPP_
 
 /**
  * @file include/logbook/dbapi/variant.hpp
@@ -169,4 +169,4 @@ std::ostream & operator<< (std::ostream & out, const variant & v);
 #include "variant_conv.hpp"
 #include "variant_impl.hpp"
 
-#endif /* VARIANT_HPP_ */
+#endif /* DBAPI_VARIANT_HPP_ */

@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef LOG_FILTER_HPP_
-#define LOG_FILTER_HPP_
+#ifndef LOGGING_LOG_FILTER_HPP_
+#define LOGGING_LOG_FILTER_HPP_
 
 /**
  * @file include/logbook/logging/filter.hpp
@@ -71,4 +71,4 @@ struct log_filter
 
 } } /* logbook::logging */
 
-#endif /* LOG_FILTER_HPP_ */
+#endif /* LOGGING_LOG_FILTER_HPP_ */

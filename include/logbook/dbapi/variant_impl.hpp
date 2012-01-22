@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef VARIANT_IMPL_HPP_
-#define VARIANT_IMPL_HPP_
+#ifndef DBAPI_VARIANT_IMPL_HPP_
+#define DBAPI_VARIANT_IMPL_HPP_
 
 using namespace logbook::dbapi;
 
@@ -118,4 +118,4 @@ bool variant::is() const
 	return m_value.is_initialized() && boost::apply_visitor(check_is_visitor<T>(), m_value.get());
 }
 
-#endif /* VARIANT_IMPL_HPP_ */
+#endif /* DBAPI_VARIANT_IMPL_HPP_ */

@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef CONNECTION_HPP_
-#define CONNECTION_HPP_
+#ifndef DBAPI_CONNECTION_HPP_
+#define DBAPI_CONNECTION_HPP_
 
 /**
  * @file include/logbook/dbapi/connection.hpp
@@ -276,4 +276,4 @@ private:
 
 } } /* logbook::dbapi */
 
-#endif /* CONNECTION_HPP_ */
+#endif /* DBAPI_CONNECTION_HPP_ */

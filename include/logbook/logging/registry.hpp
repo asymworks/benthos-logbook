@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef REGISTRY_HPP_
-#define REGISTRY_HPP_
+#ifndef LOGGING_REGISTRY_HPP_
+#define LOGGING_REGISTRY_HPP_
 
 /**
  * @file include/logbook/logging/registry.hpp
@@ -59,4 +59,4 @@ logger * getLogger(const std::string & name = std::string());
 
 } } /* sqlitekit::logging */
 
-#endif /* REGISTRY_HPP_ */
+#endif /* LOGGING_REGISTRY_HPP_ */

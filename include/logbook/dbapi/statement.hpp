@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef STATEMENT_HPP_
-#define STATEMENT_HPP_
+#ifndef DBAPI_STATEMENT_HPP_
+#define DBAPI_STATEMENT_HPP_
 
 /**
  * @file include/logbook/dbapi/connection.hpp
@@ -286,4 +286,4 @@ private:
 
 #include "statement_impl.hpp"
 
-#endif /* STATEMENT_HPP_ */
+#endif /* DBAPI_STATEMENT_HPP_ */

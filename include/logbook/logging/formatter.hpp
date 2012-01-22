@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef FORMATTER_HPP_
-#define FORMATTER_HPP_
+#ifndef LOGGING_FORMATTER_HPP_
+#define LOGGING_FORMATTER_HPP_
 
 /**
  * @file include/logbook/logging/formatter.hpp
@@ -90,4 +90,4 @@ struct default_formatter: public formatter
 
 } } /* logbook::logging */
 
-#endif /* FORMATTER_HPP_ */
+#endif /* LOGGING_FORMATTER_HPP_ */

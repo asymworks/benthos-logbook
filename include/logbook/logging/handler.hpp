@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef LOG_HANDLER_HPP_
-#define LOG_HANDLER_HPP_
+#ifndef LOGGING_LOG_HANDLER_HPP_
+#define LOGGING_LOG_HANDLER_HPP_
 
 /**
  * @file include/logbook/logging/log_handler.hpp
@@ -218,4 +218,4 @@ private:
 
 } } /* logbook::logging */
 
-#endif /* LOG_HANDLER_HPP_ */
+#endif /* LOGGING_LOG_HANDLER_HPP_ */

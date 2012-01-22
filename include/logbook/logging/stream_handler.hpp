@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef STREAM_HANDLER_HPP_
-#define STREAM_HANDLER_HPP_
+#ifndef LOGGING_STREAM_HANDLER_HPP_
+#define LOGGING_STREAM_HANDLER_HPP_
 
 /**
  * @file include/logbook/logging/stream_handler.hpp
@@ -85,4 +85,4 @@ private:
 
 } } /* logbook::logging */
 
-#endif /* STREAM_HANDLER_HPP_ */
+#endif /* LOGGING_STREAM_HANDLER_HPP_ */

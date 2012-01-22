@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef VARIANT_CONV_HPP_
-#define VARIANT_CONV_HPP_
+#ifndef DBAPI_VARIANT_CONV_HPP_
+#define DBAPI_VARIANT_CONV_HPP_
 
 #include <boost/lexical_cast.hpp>
 #include <climits>
@@ -245,4 +245,4 @@ struct convert<T, std::vector<unsigned char> >
 	}
 };
 
-#endif /* VARIANT_CONV_HPP_ */
+#endif /* DBAPI_VARIANT_CONV_HPP_ */

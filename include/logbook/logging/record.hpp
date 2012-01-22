@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef LOG_RECORD_HPP_
-#define LOG_RECORD_HPP_
+#ifndef LOGGING_LOG_RECORD_HPP_
+#define LOGGING_LOG_RECORD_HPP_
 
 /**
  * @file include/logbook/logging/record.hpp
@@ -128,4 +128,4 @@ private:
 
 } } /* logbook::logging */
 
-#endif /* LOG_RECORD_HPP_ */
+#endif /* LOGGING_LOG_RECORD_HPP_ */

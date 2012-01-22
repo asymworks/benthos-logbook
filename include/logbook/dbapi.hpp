@@ -28,43 +28,19 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef LOGGING_MUTEX_HPP_
-#define LOGGING_MUTEX_HPP_
+#ifndef LIBLOGBOOK_DBAPI_HPP_
+#define LIBLOGBOOK_DBAPI_HPP_
 
 /**
- * @file include/logbook/logging/mutex.hpp
- * @brief Simple Mutex Class
+ * @file include/include/dbapi.hpp
+ * @brief Logbook DBAPI Library Include File
  * @author Jonathan Krauss <jkrauss@asymworks.com>
  */
 
-namespace logbook { namespace logging {
+#include <logbook/dbapi/connection.hpp>
+#include <logbook/dbapi/cursor.hpp>
+#include <logbook/dbapi/dbapi_error.hpp>
+#include <logbook/dbapi/statement.hpp>
+#include <logbook/dbapi/variant.hpp>
 
-/**
- * @brief Mutex Class
- *
- * Simple C++0x-compliant Mutex class which is used in various places within
- * SQLiteKit.  The backend implementation is platform-specific but tries to
- * use pthreads wherever available.
- */
-class mutex
-{
-public:
-	mutex(const mutex &)=delete;
-	mutex & operator=(const mutex &)=delete;
-
-	mutex();
-	~mutex();
-
-	void lock(); // blocking
-	void unlock();
-	bool try_lock();
-
-private:
-	struct _data;
-	_data * 	m_data;
-
-};
-
-} } /* logbook::logging */
-
-#endif /* LOGGING_MUTEX_HPP_ */
+#endif /* LIBLOGBOOK_DBAPI_HPP_ */

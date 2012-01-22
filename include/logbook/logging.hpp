@@ -28,43 +28,21 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef LOGGING_MUTEX_HPP_
-#define LOGGING_MUTEX_HPP_
+#ifndef LIBLOGBOOK_LOGGING_HPP_
+#define LIBLOGBOOK_LOGGING_HPP_
 
 /**
- * @file include/logbook/logging/mutex.hpp
- * @brief Simple Mutex Class
+ * @file include/logbook/logging.hpp
+ * @brief Logbook Logging Library Include File
  * @author Jonathan Krauss <jkrauss@asymworks.com>
  */
 
-namespace logbook { namespace logging {
+#include <logbook/logging/filter.hpp>
+#include <logbook/logging/formatter.hpp>
+#include <logbook/logging/handler.hpp>
+#include <logbook/logging/logger.hpp>
+#include <logbook/logging/record.hpp>
+#include <logbook/logging/registry.hpp>
+#include <logbook/logging/stream_handler.hpp>
 
-/**
- * @brief Mutex Class
- *
- * Simple C++0x-compliant Mutex class which is used in various places within
- * SQLiteKit.  The backend implementation is platform-specific but tries to
- * use pthreads wherever available.
- */
-class mutex
-{
-public:
-	mutex(const mutex &)=delete;
-	mutex & operator=(const mutex &)=delete;
-
-	mutex();
-	~mutex();
-
-	void lock(); // blocking
-	void unlock();
-	bool try_lock();
-
-private:
-	struct _data;
-	_data * 	m_data;
-
-};
-
-} } /* logbook::logging */
-
-#endif /* LOGGING_MUTEX_HPP_ */
+#endif /* LIBLOGBOOK_LOGGING_HPP_ */

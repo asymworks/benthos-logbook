@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef CURSOR_HPP_
-#define CURSOR_HPP_
+#ifndef DBAPI_CURSOR_HPP_
+#define DBAPI_CURSOR_HPP_
 
 /**
  * @file include/logbook/dbapi/cursor.hpp
@@ -179,4 +179,4 @@ private:
 
 } } /* logbook::dbapi */
 
-#endif /* CURSOR_HPP_ */
+#endif /* DBAPI_CURSOR_HPP_ */

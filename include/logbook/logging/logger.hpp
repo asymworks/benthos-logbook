@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef LOGGER_HPP_
-#define LOGGER_HPP_
+#ifndef LOGGING_LOGGER_HPP_
+#define LOGGING_LOGGER_HPP_
 
 /**
  * @file include/logbook/logging/logger.hpp
@@ -324,4 +324,4 @@ protected:
 
 } } /* logbook::logging */
 
-#endif /* LOGGER_HPP_ */
+#endif /* LOGGING_LOGGER_HPP_ */
