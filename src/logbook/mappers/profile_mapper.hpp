@@ -50,21 +50,23 @@ namespace logbook { namespace mappers {
  * Data Mapper which implements CRUD operations for Dive Profile domain objects
  * within the Logbook database.
  */
-class ProfileMapper: public Mapper<Profile>, public IFinder<Profile>
+class ProfileMapper: public Mapper<Profile>, public IProfileFinder
 {
 public:
 	typedef Mapper<Mix>::Ptr	Ptr;
 	typedef Mapper<Mix>::WPtr	WPtr;
 
 protected:
-	static std::string columns;			///< List of Columns Returned by SELECT
+	static std::string columns;				///< List of Columns Returned by SELECT
 
-	static std::string sql_insert;		///< INSERT Statement SQL String
-	static std::string sql_update;		///< UPDATE Statement SQL String
-	static std::string sql_delete;		///< DELETE Statement SQL String
+	static std::string sql_insert;			///< INSERT Statement SQL String
+	static std::string sql_update;			///< UPDATE Statement SQL String
+	static std::string sql_delete;			///< DELETE Statement SQL String
 
-	static std::string sql_find_all;	///< Find All Statement SQL String
-	static std::string sql_find_id;		///< Find By Id Statement SQL String
+	static std::string sql_find_all;		///< Find All Statement SQL String
+	static std::string sql_find_id;			///< Find By Id Statement SQL String
+	static std::string sql_find_dive;		///< Find For Dive Statement SQL String
+	static std::string sql_find_computer;	///< Find For Computer Statement SQL String
 
 public:
 
@@ -89,6 +91,20 @@ public:
 	 */
 	virtual Profile::Ptr find(int64_t id);
 
+	/**
+	 * @brief Find Profiles that belong to a given Dive
+	 * @param[in] Dive Identifier
+	 * @return List of Profiles
+	 */
+	virtual std::vector<Profile::Ptr> findForDive(int64_t dive_id);
+
+	/**
+	 * @brief Find Profiles that belong to a given Dive Computer
+	 * @param[in] Dive Computer Identifier
+	 * @return List of Profiles
+	 */
+	virtual std::vector<Profile::Ptr> findForComputer(int64_t computer_id);
+
 protected:
 
 	//! Bind an Object to the Insert Statement
@@ -109,6 +125,8 @@ protected:
 protected:
 	dbapi::statement::ptr		m_find_all_stmt;		///< Find All Prepared Statement
 	dbapi::statement::ptr		m_find_id_stmt;			///< Find By Id Prepared Statement
+	dbapi::statement::ptr		m_find_dive_stmt;		///< Find For Dive Prepared Statement
+	dbapi::statement::ptr		m_find_computer_stmt;	///< Find For Computer Prepared Statement
 
 };
 

@@ -49,6 +49,8 @@ std::string ProfileMapper::sql_delete = "delete from profiles where id=?1";
 
 std::string ProfileMapper::sql_find_all = "select " + columns + " from profiles";
 std::string ProfileMapper::sql_find_id = "select " + columns + " from profiles where id=?1";
+std::string ProfileMapper::sql_find_dive = "select " + columns + " from profiles where dive_id=?1";
+std::string ProfileMapper::sql_find_computer = "select " + columns + " from profiles where computer_id=?1";
 
 ProfileMapper::ProfileMapper(boost::shared_ptr<Session> session)
 	: Mapper<Profile>(session)
@@ -59,6 +61,8 @@ ProfileMapper::ProfileMapper(boost::shared_ptr<Session> session)
 
 	m_find_all_stmt = statement::ptr(new statement(m_conn, sql_find_all));
 	m_find_id_stmt = statement::ptr(new statement(m_conn, sql_find_id));
+	m_find_dive_stmt = statement::ptr(new statement(m_conn, sql_find_dive));
+	m_find_computer_stmt = statement::ptr(new statement(m_conn, sql_find_computer));
 }
 
 ProfileMapper::~ProfileMapper()
@@ -168,6 +172,24 @@ Profile::Ptr ProfileMapper::find(int64_t id)
 		return logbook::Profile::Ptr();
 
 	return load(r);
+}
+
+std::vector<Profile::Ptr> ProfileMapper::findForDive(int64_t dive_id)
+{
+	m_find_dive_stmt->reset();
+	m_find_dive_stmt->bind(1, dive_id);
+	dbapi::cursor::ptr c = m_find_dive_stmt->exec();
+
+	return loadAll(c);
+}
+
+std::vector<Profile::Ptr> ProfileMapper::findForComputer(int64_t computer_id)
+{
+	m_find_computer_stmt->reset();
+	m_find_computer_stmt->bind(1, computer_id);
+	dbapi::cursor::ptr c = m_find_computer_stmt->exec();
+
+	return loadAll(c);
 }
 
 struct pfj_parse_context

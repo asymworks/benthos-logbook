@@ -181,6 +181,32 @@ private:
 
 };
 
+/**
+ * @brief Dive Profile Finder Interface
+ *
+ * Extends IFinder<Profile> to add find-by-dive and find-by-computer methods.
+ */
+struct IProfileFinder: public IFinder<Profile>
+{
+	typedef boost::shared_ptr<IProfileFinder>	Ptr;
+	virtual ~IProfileFinder() { }
+
+	/**
+	 * @brief Find Profiles that belong to a given Dive
+	 * @param[in] Dive Identifier
+	 * @return List of Profiles
+	 */
+	virtual std::vector<Profile::Ptr> findForDive(int64_t dive_id) = 0;
+
+	/**
+	 * @brief Find Profiles that belong to a given Dive Computer
+	 * @param[in] Dive Computer Identifier
+	 * @return List of Profiles
+	 */
+	virtual std::vector<Profile::Ptr> findForComputer(int64_t computer_id) = 0;
+
+};
+
 } /* logbook */
 
 #endif /* LOGBOOK_PROFILE_HPP_ */
