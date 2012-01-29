@@ -75,6 +75,140 @@ private:
 	 * - Equipment
 	 */
 
+public:
+
+	//! @return Air Temperature in degrees Celsius
+	const boost::optional<double> & air_temp() const;
+
+	//! @return Average Depth in msw
+	const boost::optional<double> & avg_depth() const;
+
+	//! @return Dive Computer
+	DiveComputer::Ptr computer() const;
+
+	//! @return Dive Local Date/Time
+	const boost::optional<time_t> & datetime() const;
+
+	//! @return Dive Duration in Minutes
+	int duration() const;
+
+	//! @return Ending Tank Pressure in bar
+	const boost::optional<double> end_pressure() const;
+
+	//! @return Surface Interval in Minutes
+	int interval() const;
+
+	//! @return Maximum Depth in msw
+	double max_depth() const;
+
+	//! @return Maximum Water Temperature in degrees Celsius
+	const boost::optional<double> & max_temp() const;
+
+	//! @return Minimum Water Temperature in degrees Celsius
+	const boost::optional<double> & min_temp() const;
+
+	//! @return Breathing Mix
+	Mix::Ptr mix() const;
+
+	//! @return Dive Number
+	const boost::optional<int> & number() const;
+
+	//! @return Repetition Number
+	int repetition() const;
+
+	//! @return Dive Site
+	DiveSite::Ptr site() const;
+
+	//! @return Starting Tank Pressure in bar
+	const boost::optional<double> & start_pressure() const;
+
+	//! @return UTC Offset of the Dive Locale in Minutes
+	const boost::optional<int> & utc_offset() const;
+
+	//! @brief Set the Air Temperature to NULL
+	void setAirTemp(const boost::none_t &);
+
+	//! @param[in] Air Temperature in degrees Celsius
+	void setAirTemp(double value);
+
+	//! @brief Set the Average Depth to NULL
+	void setAvgDepth(const boost::none_t &);
+
+	//! @param[in] Average Depth
+	void setAvgDepth(double value);
+
+	//! @brief Set the Dive Computer to NULL
+	void setComputer(const boost::none_t &);
+
+	//! @param[in] Dive Computer
+	void setComputer(DiveComputer::Ptr value);
+
+	//! @brief Set the Dive Local Date/Time to NULL
+	void setDateTime(const boost::none_t &);
+
+	//! @param[in] Dive Local Date/Time
+	void setDateTime(time_t value);
+
+	//! @param[in] Dive Duration in minutes
+	void setDuration(int value);
+
+	//! @brief Set the Ending Pressure to NULL
+	void setEndPressure(const boost::none_t &);
+
+	//! @param[in] Ending Pressure in bar
+	void setEndPressure(double value);
+
+	//! @param[in] Surface Interval in minutes
+	void setInterval(int value);
+
+	//! @param[in] Maximum Depth in msw
+	void setMaxDepth(double value);
+
+	//! @brief Set the Maximum Water Temperature to NULL
+	void setMaxTemp(const boost::none_t &);
+
+	//! @param[in] Maximum Water Temperature in degrees Celsius
+	void setMaxTemp(double value);
+
+	//! @brief Set the Minimum Water Temperature to NULL
+	void setMinTemp(const boost::none_t &);
+
+	//! @param[in] Minimum Water Temperature in degrees Celsius
+	void setMinTemp(double value);
+
+	//! @brief Set the Breathing Mix to NULL
+	void setMix(const boost::none_t &);
+
+	//! @param[in] Breathing Mix
+	void setMix(Mix::Ptr value);
+
+	//! @brief Set the Dive Number to NULL
+	void setNumber(const boost::none_t &);
+
+	//! @param[in] Dive Number
+	void setNumber(int value);
+
+	//! @param[in] Repetition Number
+	void setRepetition(int value);
+
+	//! @brief Set the Dive Site to NULL
+	void setSite(const boost::none_t &);
+
+	//! @param[in] Dive Site
+	void setSite(DiveSite::Ptr value);
+
+	//! @brief Set the Starting Pressure to NULL
+	void setStartPressure(const boost::none_t &);
+
+	//! @brief Set the Starting Pressure in bar
+	void setStartPressure(double value);
+
+	//! @brief Set the UTC Offset of the Dive Locale to NULL
+	void setUTCOffset(const boost::none_t &);
+
+	//! @param[in] UTC Offset of the Dive Locale in Minutes
+	void setUTCOffset(int value);
+
 private:
 	boost::optional<time_t>			m_datetime;		///< Dive Date/Time
 	boost::optional<int>			m_utc_offset;	///< Dive UTC Offset
