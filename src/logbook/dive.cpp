@@ -301,7 +301,7 @@ void Dive::setEndPressure(const boost::none_t &)
 
 void Dive::setEndPressure(double value)
 {
-	m_endpx.reset();
+	m_endpx = value;
 	mark_dirty();
 }
 
