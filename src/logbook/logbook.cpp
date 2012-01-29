@@ -41,6 +41,7 @@ Logbook::Logbook(const std::string & filename, dbapi::connection::ptr conn)
 	: m_filename(filename), m_conn(conn), m_session(new Session(conn))
 {
 	// Register Mappers
+	m_session->registerMapper<Dive>(new mappers::DiveMapper(m_session));
 	m_session->registerMapper<DiveComputer>(new mappers::DiveComputerMapper(m_session));
 	m_session->registerMapper<DiveSite>(new mappers::DiveSiteMapper(m_session));
 	m_session->registerMapper<Mix>(new mappers::MixMapper(m_session));
