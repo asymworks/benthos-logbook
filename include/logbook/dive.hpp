@@ -80,8 +80,14 @@ public:
 	//! @return Air Temperature in degrees Celsius
 	const boost::optional<double> & air_temp() const;
 
+	//! @return Decompression Algorithm
+	const boost::optional<std::string> & algorithm() const;
+
 	//! @return Average Depth in msw
 	const boost::optional<double> & avg_depth() const;
+
+	//! @return Comments
+	const boost::optional<std::string> & comments() const;
 
 	//! @return Dive Computer
 	DiveComputer::Ptr computer() const;
@@ -89,11 +95,17 @@ public:
 	//! @return Dive Local Date/Time
 	const boost::optional<time_t> & datetime() const;
 
-	//! @return Dive Duration in Minutes
+	//! @return Desaturation Time in Minutes
+	const boost::optional<int> & desat_time() const;
+
+	//! @return Dive Duration in Seconds
 	int duration() const;
 
 	//! @return Ending Tank Pressure in bar
 	const boost::optional<double> end_pressure() const;
+
+	//! @return Ending Pressure Group
+	const boost::optional<std::string> & end_pressure_group() const;
 
 	//! @return Surface Interval in Minutes
 	int interval() const;
@@ -110,11 +122,26 @@ public:
 	//! @return Breathing Mix
 	Mix::Ptr mix() const;
 
+	//! @return No-Fly Time in Minutes
+	const boost::optional<int> & nofly_time() const;
+
 	//! @return Dive Number
 	const boost::optional<int> & number() const;
 
+	//! @return Dive Rating
+	const boost::optional<int> & rating() const;
+
 	//! @return Repetition Number
 	int repetition() const;
+
+	//! @return Residual Nitrogen Time in minutes
+	const boost::optional<int> & rnt() const;
+
+	//! @return Safety Stop Performed
+	bool safety_stop() const;
+
+	//! @return Salinity
+	const boost::optional<std::string> & salinity() const;
 
 	//! @return Dive Site
 	DiveSite::Ptr site() const;
@@ -122,8 +149,26 @@ public:
 	//! @return Starting Tank Pressure in bar
 	const boost::optional<double> & start_pressure() const;
 
+	//! @return Starting Pressure Group
+	const boost::optional<std::string> & start_pressure_group() const;
+
+	//! @return Safety Stop Depth in msw
+	const boost::optional<double> & stop_depth() const;
+
+	//! @return Safety Stop Time in Seconds
+	const boost::optional<int> & stop_time() const;
+
 	//! @return UTC Offset of the Dive Locale in Minutes
 	const boost::optional<int> & utc_offset() const;
+
+	//! @return Visibility Category
+	const boost::optional<std::string> & visibility_category() const;
+
+	//! @return Visibility Distance in meters
+	const boost::optional<double> & visibility_distance() const;
+
+	//! @return Weight Used in kg
+	const boost::optional<double> & weight() const;
 
 	//! @brief Set the Air Temperature to NULL
 	void setAirTemp(const boost::none_t &);
@@ -131,11 +176,23 @@ public:
 	//! @param[in] Air Temperature in degrees Celsius
 	void setAirTemp(double value);
 
+	//! @brief Set the Decompression Algorithm to NULL
+	void setAlgorithm(const boost::none_t &);
+
+	//! @param[in] Decompression Algorithm
+	void setAlgorithm(const std::string & value);
+
 	//! @brief Set the Average Depth to NULL
 	void setAvgDepth(const boost::none_t &);
 
 	//! @param[in] Average Depth
 	void setAvgDepth(double value);
+
+	//! @brief Set Comments to NULL
+	void setComments(const boost::none_t &);
+
+	//! @param[in] Comments
+	void setComments(const std::string & value);
 
 	//! @brief Set the Dive Computer to NULL
 	void setComputer(const boost::none_t &);
@@ -149,7 +206,13 @@ public:
 	//! @param[in] Dive Local Date/Time
 	void setDateTime(time_t value);
 
-	//! @param[in] Dive Duration in minutes
+	//! @brief Set the Desaturation Time to NULL
+	void setDesatTime(const boost::none_t &);
+
+	//! @param[in] Desaturation Time in Minutes
+	void setDesatTime(int value);
+
+	//! @param[in] Dive Duration in Seconds
 	void setDuration(int value);
 
 	//! @brief Set the Ending Pressure to NULL
@@ -158,7 +221,13 @@ public:
 	//! @param[in] Ending Pressure in bar
 	void setEndPressure(double value);
 
-	//! @param[in] Surface Interval in minutes
+	//! @brief Set the Ending Pressure Group to NULL
+	void setEndPressureGroup(const boost::none_t &);
+
+	//! @param[in] Ending Pressure Group
+	void setEndPressureGroup(const std::string & value);
+
+	//! @param[in] Surface Interval in Minutes
 	void setInterval(int value);
 
 	//! @param[in] Maximum Depth in msw
@@ -182,14 +251,41 @@ public:
 	//! @param[in] Breathing Mix
 	void setMix(Mix::Ptr value);
 
+	//! @brief Set the No-Fly Time to NULL
+	void setNoFlyTime(const boost::none_t &);
+
+	//! @param[in] No-Fly Time in Minutes
+	void setNoFlyTime(int value);
+
 	//! @brief Set the Dive Number to NULL
 	void setNumber(const boost::none_t &);
 
 	//! @param[in] Dive Number
 	void setNumber(int value);
 
+	//! @brief Set Dive Rating to NULL
+	void setRating(const boost::none_t &);
+
+	//! @param[in] Dive Rating (0-5)
+	void setRating(int value);
+
 	//! @param[in] Repetition Number
 	void setRepetition(int value);
+
+	//! @brief Set the Residual Nitrogen Time to NULL
+	void setRNT(const boost::none_t &);
+
+	//! @brief Set the Residual Nitrogen Time in minutes
+	void setRNT(int value);
+
+	//! @param[in] Safety Stop Performed
+	void setSafetyStop(bool value);
+
+	//! @brief Set the Salinity to NULL
+	void setSalinity(const boost::none_t &);
+
+	//! @param[in] Salinity ('fresh' or 'salt')
+	void setSalinity(const std::string & value);
 
 	//! @brief Set the Dive Site to NULL
 	void setSite(const boost::none_t &);
@@ -203,11 +299,47 @@ public:
 	//! @brief Set the Starting Pressure in bar
 	void setStartPressure(double value);
 
+	//! @brief Set the Starting Pressure Group to NULL
+	void setStartPressureGroup(const boost::none_t &);
+
+	//! @param[in] Starting Pressure Group
+	void setStartPressureGroup(const std::string & value);
+
+	//! @brief Set the Safety Stop Depth to NULL
+	void setStopDepth(const boost::none_t &);
+
+	//! @param[in] Safety Stop Depth in msw
+	void setStopDepth(double value);
+
+	//! @brief Set the Safety Stop Time to NULL
+	void setStopTime(const boost::none_t &);
+
+	//! @param[in] Safety Stop Time in Seconds
+	void setStopTime(int value);
+
 	//! @brief Set the UTC Offset of the Dive Locale to NULL
 	void setUTCOffset(const boost::none_t &);
 
 	//! @param[in] UTC Offset of the Dive Locale in Minutes
 	void setUTCOffset(int value);
+
+	//! @brief Set the Visibility Category to NULL
+	void setVisibilityCategory(const boost::none_t &);
+
+	//! @param[in] Visibility Category ('excellent', 'good', 'fair' or 'poor')
+	void setVisibilityCategory(const std::string & value);
+
+	//! @brief Set the Visibility Distance to NULL
+	void setVisibilityDistance(const boost::none_t &);
+
+	//! @param[in] Visibility Distance in meters
+	void setVisibilityDistance(double value);
+
+	//! @brief Set the Weight Used to NULL
+	void setWeight(const boost::none_t &);
+
+	//! @param[in] Weight Used in kg
+	void setWeight(double value);
 
 private:
 	boost::optional<time_t>			m_datetime;		///< Dive Date/Time
@@ -233,13 +365,13 @@ private:
 	boost::optional<std::string>	m_comments;		///< Comments
 	boost::optional<int>			m_rating;		///< Rating [0-5]
 
-	boost::optional<bool>			m_stop;			///< Safety Stop Performed
+	bool							m_stop;			///< Safety Stop Performed
 	boost::optional<double>			m_stopdepth;	///< Safety Stop Depth [msw]
 	boost::optional<int>			m_stoptime;		///< Safety Stop Time [sec]
 
 	boost::optional<double>			m_weight;		///< Weight Used [kg]
 	boost::optional<std::string>	m_viz_cat;		///< Visibility Category ('excellent', 'good', 'fair' or 'poor')
-	boost::optional<int>			m_viz_dist;		///< Visibility Distance [m]
+	boost::optional<double>			m_viz_dist;		///< Visibility Distance [m]
 
 	boost::optional<std::string>	m_pg_start;		///< Starting Pressure Group
 	boost::optional<std::string>	m_pg_end;		///< Ending Pressure Group

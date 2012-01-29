@@ -47,6 +47,11 @@ const boost::optional<double> & Dive::air_temp() const
 	return m_airtemp;
 }
 
+const boost::optional<std::string> & Dive::algorithm() const
+{
+	return m_algorithm;
+}
+
 const boost::optional<double> & Dive::avg_depth() const
 {
 	return m_avgdepth;
@@ -62,6 +67,11 @@ const boost::optional<time_t> & Dive::datetime() const
 	return m_datetime;
 }
 
+const boost::optional<int> & Dive::desat_time() const
+{
+	return m_desat;
+}
+
 int Dive::duration() const
 {
 	return m_duration;
@@ -70,6 +80,11 @@ int Dive::duration() const
 const boost::optional<double> Dive::end_pressure() const
 {
 	return m_endpx;
+}
+
+const boost::optional<std::string> & Dive::end_pressure_group() const
+{
+	return m_pg_end;
 }
 
 int Dive::interval() const
@@ -97,6 +112,11 @@ Mix::Ptr Dive::mix() const
 	return m_mix;
 }
 
+const boost::optional<int> & Dive::nofly_time() const
+{
+	return m_nofly;
+}
+
 const boost::optional<int> & Dive::number() const
 {
 	return m_number;
@@ -105,6 +125,16 @@ const boost::optional<int> & Dive::number() const
 int Dive::repetition() const
 {
 	return m_repetition;
+}
+
+const boost::optional<int> & Dive::rnt() const
+{
+	return m_rnt;
+}
+
+bool Dive::safety_stop() const
+{
+	return m_stop;
 }
 
 DiveSite::Ptr Dive::site() const
@@ -117,9 +147,39 @@ const boost::optional<double> & Dive::start_pressure() const
 	return m_startpx;
 }
 
+const boost::optional<std::string> & Dive::start_pressure_group() const
+{
+	return m_pg_start;
+}
+
+const boost::optional<double> & Dive::stop_depth() const
+{
+	return m_stopdepth;
+}
+
+const boost::optional<int> & Dive::stop_time() const
+{
+	return m_stoptime;
+}
+
 const boost::optional<int> & Dive::utc_offset() const
 {
 	return m_utc_offset;
+}
+
+const boost::optional<std::string> & Dive::visibility_category() const
+{
+	return m_viz_cat;
+}
+
+const boost::optional<double> & Dive::visibility_distance() const
+{
+	return m_viz_dist;
+}
+
+const boost::optional<double> & Dive::weight() const
+{
+	return m_weight;
 }
 
 void Dive::setAirTemp(const boost::none_t &)
@@ -134,6 +194,18 @@ void Dive::setAirTemp(double value)
 	mark_dirty();
 }
 
+void Dive::setAlgorithm(const boost::none_t &)
+{
+	m_algorithm.reset();
+	mark_dirty();
+}
+
+void Dive::setAlgorithm(const std::string & value)
+{
+	m_algorithm = value;
+	mark_dirty();
+}
+
 void Dive::setAvgDepth(const boost::none_t &)
 {
 	m_avgdepth.reset();
@@ -143,6 +215,18 @@ void Dive::setAvgDepth(const boost::none_t &)
 void Dive::setAvgDepth(double value)
 {
 	m_avgdepth = value;
+	mark_dirty();
+}
+
+void Dive::setComments(const boost::none_t &)
+{
+	m_comments.reset();
+	mark_dirty();
+}
+
+void Dive::setComments(const std::string & value)
+{
+	m_comments = value;
 	mark_dirty();
 }
 
@@ -170,8 +254,26 @@ void Dive::setDateTime(time_t value)
 	mark_dirty();
 }
 
+void Dive::setDesatTime(const boost::none_t &)
+{
+	m_desat.reset();
+	mark_dirty();
+}
+
+void Dive::setDesatTime(int value)
+{
+	if (value < 0)
+		throw std::invalid_argument("Desaturation Time must be positive");
+
+	m_desat = value;
+	mark_dirty();
+}
+
 void Dive::setDuration(int value)
 {
+	if (value < 0)
+		throw std::invalid_argument("Dive Duration must be positive");
+
 	m_duration = value;
 	mark_dirty();
 }
@@ -188,8 +290,23 @@ void Dive::setEndPressure(double value)
 	mark_dirty();
 }
 
+void Dive::setEndPressureGroup(const boost::none_t &)
+{
+	m_pg_end.reset();
+	mark_dirty();
+}
+
+void Dive::setEndPressureGroup(const std::string & value)
+{
+	m_pg_end = value;
+	mark_dirty();
+}
+
 void Dive::setInterval(int value)
 {
+	if (value < 0)
+		throw std::invalid_argument("Surface Interval must be positive");
+
 	m_interval = value;
 	mark_dirty();
 }
@@ -236,6 +353,21 @@ void Dive::setMix(Mix::Ptr value)
 	mark_dirty();
 }
 
+void Dive::setNoFlyTime(const boost::none_t &)
+{
+	m_nofly.reset();
+	mark_dirty();
+}
+
+void Dive::setNoFlyTime(int value)
+{
+	if (value < 0)
+		throw std::invalid_argument("No-Fly Time must be positive");
+
+	m_nofly = value;
+	mark_dirty();
+}
+
 void Dive::setNumber(const boost::none_t &)
 {
 	m_number.reset();
@@ -244,13 +376,84 @@ void Dive::setNumber(const boost::none_t &)
 
 void Dive::setNumber(int value)
 {
+	if (value < 1)
+		throw std::invalid_argument("Dive number must be greater than 0");
+
 	m_number = value;
+	mark_dirty();
+}
+
+void Dive::setRating(const boost::none_t &)
+{
+	m_rating.reset();
+	mark_dirty();
+}
+
+void Dive::setRating(int value)
+{
+	if ((value < 0) || (value > 5))
+		throw std::invalid_argument("Rating must be between 0 and 5");
+
+	m_rating = value;
 	mark_dirty();
 }
 
 void Dive::setRepetition(int value)
 {
+	if (value < 1)
+		throw std::invalid_argument("Repetition number must be greater than 0");
+
+	if (value == 1)
+		// Surface Interval must be 0 ("infinite") for first dive in
+		// repetition group
+		m_interval = 0;
+
 	m_repetition = value;
+	mark_dirty();
+}
+
+void Dive::setRNT(const boost::none_t &)
+{
+	m_rnt.reset();
+	mark_dirty();
+}
+
+void Dive::setRNT(int value)
+{
+	if (value < 0)
+		throw std::invalid_argument("Residual Nitrogen Time must be positive");
+
+	m_rnt = value;
+	mark_dirty();
+}
+
+void Dive::setSafetyStop(bool value)
+{
+	if (! value)
+	{
+		m_stopdepth.reset();
+		m_stoptime.reset();
+	}
+
+	m_stop = value;
+	mark_dirty();
+}
+
+void Dive::setSalinity(const boost::none_t &)
+{
+	m_salinity.reset();
+	mark_dirty();
+}
+
+void Dive::setSalinity(const std::string & value)
+{
+	std::string lvalue(value);
+	std::transform(value.begin(), value.end(), lvalue.begin(), tolower);
+
+	if ((lvalue != 'fresh') && (lvalue != 'salt'))
+		throw std::invalid_argument("Salinity must be 'fresh' or 'salt'");
+
+	m_salinity = lvalue;
 	mark_dirty();
 }
 
@@ -278,6 +481,42 @@ void Dive::setStartPressure(double value)
 	mark_dirty();
 }
 
+void Dive::setStartPressureGroup(const boost::none_t &)
+{
+	m_pg_start.reset();
+	mark_dirty();
+}
+
+void Dive::setStartPressureGroup(const std::string & value)
+{
+	m_pg_start = value;
+	mark_dirty();
+}
+
+void Dive::setStopDepth(const boost::none_t &)
+{
+	m_stopdepth.reset();
+	mark_dirty();
+}
+
+void Dive::setStopDepth(double value)
+{
+	m_stopdepth = value;
+	mark_dirty();
+}
+
+void Dive::setStopTime(const boost::none_t &)
+{
+	m_stoptime.reset();
+	mark_dirty();
+}
+
+void Dive::setStopTime(int value)
+{
+	m_stoptime = value;
+	mark_dirty();
+}
+
 void Dive::setUTCOffset(const boost::none_t &)
 {
 	m_utc_offset.reset();
@@ -287,5 +526,54 @@ void Dive::setUTCOffset(const boost::none_t &)
 void Dive::setUTCOffset(int value)
 {
 	m_utc_offset = value;
+	mark_dirty();
+}
+
+void Dive::setVisibilityCategory(const boost::none_t &)
+{
+	m_viz_cat.reset();
+	mark_dirty();
+}
+
+void Dive::setVisibilityCategory(const std::string & value)
+{
+	std::string lvalue(value);
+	std::transform(value.begin(), value.end(), lvalue.begin(), tolower);
+
+	if ((lvalue != 'excellent') && (lvalue != 'good') &&
+		(lvalue != 'fair') && (lvalue != 'poor'))
+		throw std::invalid_argument("Visibility Category must be one of 'excellent', 'good', 'fair' or 'poor'");
+
+	m_viz_cat = lvalue;
+	mark_dirty();
+}
+
+void Dive::setVisibilityDistance(const boost::none_t &)
+{
+	m_viz_dist.reset();
+	mark_dirty();
+}
+
+void Dive::setVisibilityDistance(double value)
+{
+	if (value < 0)
+		throw std::invalid_argument("Visibility Distance must be positive");
+
+	m_viz_dist = value;
+	mark_dirty();
+}
+
+void Dive::setWeight(const boost::none_t &)
+{
+	m_weight.reset();
+	mark_dirty();
+}
+
+void Dive::setWeight(double value)
+{
+	if (value < 0)
+		throw std::invalid_argument("Weight used must be positive");
+
+	m_weight = value;
 	mark_dirty();
 }
