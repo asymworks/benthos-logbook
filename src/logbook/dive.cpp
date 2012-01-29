@@ -57,6 +57,11 @@ const boost::optional<double> & Dive::avg_depth() const
 	return m_avgdepth;
 }
 
+const boost::optional<std::string> & Dive::comments() const
+{
+	return m_comments;
+}
+
 DiveComputer::Ptr Dive::computer() const
 {
 	return m_computer;
@@ -122,6 +127,11 @@ const boost::optional<int> & Dive::number() const
 	return m_number;
 }
 
+const boost::optional<int> & Dive::rating() const
+{
+	return m_rating;
+}
+
 int Dive::repetition() const
 {
 	return m_repetition;
@@ -130,6 +140,11 @@ int Dive::repetition() const
 const boost::optional<int> & Dive::rnt() const
 {
 	return m_rnt;
+}
+
+const boost::optional<std::string> & Dive::salinity() const
+{
+	return m_salinity;
 }
 
 bool Dive::safety_stop() const

@@ -129,7 +129,7 @@ void Schema::create_dives_tbl(dbapi::connection::ptr conn) const
 		"visibility_dist float check (visibility_dist > 0), "
 		"pg_start varchar, "
 		"pg_end varchar, "
-		"rnt_start integer check (rnt_start > 0), "
+		"rnt integer check (rnt > 0), "
 		"desat integer, "
 		"nofly integer, "
 		"algorithm varchar, "

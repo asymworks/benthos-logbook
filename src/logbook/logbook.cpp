@@ -32,6 +32,7 @@
 
 #include "mappers/dive_computer_mapper.hpp"
 #include "mappers/dive_site_mapper.hpp"
+#include "mappers/dive_mapper.hpp"
 #include "mappers/mix_mapper.hpp"
 #include "mappers/profile_mapper.hpp"
 

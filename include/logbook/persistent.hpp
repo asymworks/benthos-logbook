@@ -121,6 +121,15 @@ protected:
 	 */
 	void set_session(SessionPtr p);
 
+	/**
+	 * @brief Update Collection Mappings
+	 *
+	 * Called by set_persistent_id when the identifier of this object is
+	 * changed.  The default implementation is a no-op; domain classes should
+	 * override this method to notify collections that the ID has changed.
+	 */
+	virtual void update_mappings();
+
 public:
 
 	/**
