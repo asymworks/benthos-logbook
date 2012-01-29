@@ -450,7 +450,7 @@ void Dive::setSalinity(const std::string & value)
 	std::string lvalue(value);
 	std::transform(value.begin(), value.end(), lvalue.begin(), tolower);
 
-	if ((lvalue != 'fresh') && (lvalue != 'salt'))
+	if ((lvalue != "fresh") && (lvalue != "salt"))
 		throw std::invalid_argument("Salinity must be 'fresh' or 'salt'");
 
 	m_salinity = lvalue;
@@ -540,8 +540,8 @@ void Dive::setVisibilityCategory(const std::string & value)
 	std::string lvalue(value);
 	std::transform(value.begin(), value.end(), lvalue.begin(), tolower);
 
-	if ((lvalue != 'excellent') && (lvalue != 'good') &&
-		(lvalue != 'fair') && (lvalue != 'poor'))
+	if ((lvalue != "excellent") && (lvalue != "good") &&
+		(lvalue != "fair") && (lvalue != "poor"))
 		throw std::invalid_argument("Visibility Category must be one of 'excellent', 'good', 'fair' or 'poor'");
 
 	m_viz_cat = lvalue;
