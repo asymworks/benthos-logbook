@@ -33,8 +33,40 @@
 
 using namespace logbook;
 
+Dive::Tags::Tags()
+	: m_items()
+{
+}
+
+Dive::Tags::~Tags()
+{
+}
+
+std::list<std::string> Dive::Tags::all() const
+{
+	return std::list<std::string>(m_items.begin(), m_items.end());
+}
+
+void Dive::Tags::add(const std::string & tag)
+{
+	std::string ltag(tag);
+	std::transform(ltag.begin(), ltag.end(), ltag.begin(), tolower);
+
+	m_items.insert(tag);
+}
+
+void Dive::Tags::clear()
+{
+	m_items.clear();
+}
+
+void Dive::Tags::remove(const std::string & tag)
+{
+	m_items.erase(tag);
+}
+
 Dive::Dive()
-	: TypedPersistent<Dive>(), m_repetition(1)
+	: TypedPersistent<Dive>(), m_repetition(1), m_tags(new Tags)
 {
 }
 
@@ -175,6 +207,16 @@ const boost::optional<double> & Dive::stop_depth() const
 const boost::optional<int> & Dive::stop_time() const
 {
 	return m_stoptime;
+}
+
+Dive::Tags::Ptr Dive::tags()
+{
+	return m_tags;
+}
+
+Dive::Tags::ConstPtr Dive::tags() const
+{
+	return m_tags;
 }
 
 const boost::optional<int> & Dive::utc_offset() const

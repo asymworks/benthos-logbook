@@ -93,7 +93,30 @@ public:
 	 * @param[in] Domain Object
 	 * @throws dbapi_error on Database Error
 	 */
-	void update(Persistent::Ptr o) const;
+	void update(Persistent::Ptr o);
+
+protected:
+
+	//! Perform Operations after Deleting a Persistent
+	virtual void afterDelete(Persistent::Ptr o, int64_t oldId);
+
+	//! Perform Operations before Deleting a Persistent
+	virtual void beforeDelete(Persistent::Ptr o);
+
+	//! Perform Operations after Inserting a Persistent
+	virtual void afterInsert(Persistent::Ptr o);
+
+	//! Perform Operations before Inserting a Persistent
+	virtual void beforeInsert(Persistent::Ptr o);
+
+	//! Perform Operations after Updating a Persistent
+	virtual void afterUpdate(Persistent::Ptr o);
+
+	//! Perform Operations before Updating a Persistent
+	virtual void beforeUpdate(Persistent::Ptr o);
+
+	//! Perform Operations after Loading a Persistent
+	virtual void afterLoaded(Persistent::Ptr o);
 
 protected:
 
@@ -172,7 +195,7 @@ public:
 	 * @param[in] Domain Object
 	 * @throws dbapi_error on Database Error
 	 */
-	void update(typename D::Ptr o) const
+	void update(typename D::Ptr o)
 	{
 		return AbstractMapper::update(upcast(o));
 	}
@@ -193,6 +216,7 @@ protected:
 		typename D::Ptr result = doLoad(id, r);
 		set_persistent_session(result, m_session.lock());
 		m_loaded[id] = upcast(result);
+		afterLoaded(m_loaded[id]);
 		return result;
 	}
 

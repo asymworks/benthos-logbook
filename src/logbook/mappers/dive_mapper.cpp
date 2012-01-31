@@ -56,6 +56,11 @@ std::string DiveMapper::sql_delete = "delete from dives where id=?1";
 std::string DiveMapper::sql_find_all = "select " + columns + " from dives";
 std::string DiveMapper::sql_find_id = "select " + columns + " from dives where id=?1";
 
+std::string DiveMapper::sql_find_tags = "select tag from divetags where dive_id=?1 order by tag asc";
+std::string DiveMapper::sql_drop_tags = "delete from divetags where dive_id=?1";
+std::string DiveMapper::sql_add_tags = "insert into divetags values (?1, ?2)";
+std::string DiveMapper::sql_all_tags = "select distinct(tag) from divetags order by tag asc";
+
 DiveMapper::DiveMapper(boost::shared_ptr<Session> session)
 	: Mapper<Dive>(session)
 {
@@ -65,10 +70,73 @@ DiveMapper::DiveMapper(boost::shared_ptr<Session> session)
 
 	m_find_all_stmt = statement::ptr(new statement(m_conn, sql_find_all));
 	m_find_id_stmt = statement::ptr(new statement(m_conn, sql_find_id));
+
+	m_find_tags_stmt = statement::ptr(new statement(m_conn, sql_find_tags));
+	m_drop_tags_stmt = statement::ptr(new statement(m_conn, sql_drop_tags));
+	m_add_tags_stmt = statement::ptr(new statement(m_conn, sql_add_tags));
+	m_all_tags_stmt = statement::ptr(new statement(m_conn, sql_all_tags));
 }
 
 DiveMapper::~DiveMapper()
 {
+}
+
+void DiveMapper::afterDelete(Persistent::Ptr o, int64_t oldId)
+{
+	m_drop_tags_stmt->reset();
+	m_drop_tags_stmt->bind(1, oldId);
+	m_drop_tags_stmt->exec();
+}
+
+void DiveMapper::afterInsert(Persistent::Ptr o)
+{
+	Dive::Ptr d = downcast(o);
+
+	std::list<std::string> tags = d->tags()->all();
+	std::list<std::string>::const_iterator it;
+	for (it = tags.begin(); it != tags.end(); it++)
+	{
+		m_add_tags_stmt->reset();
+		m_add_tags_stmt->bind(1, d->id());
+		m_add_tags_stmt->bind(2, * it);
+		m_add_tags_stmt->exec();
+	}
+}
+
+void DiveMapper::afterLoaded(Persistent::Ptr o)
+{
+	Dive::Ptr d = downcast(o);
+
+	m_find_tags_stmt->reset();
+	m_find_tags_stmt->bind(1, d->id());
+
+	dbapi::cursor::ptr c = m_all_tags_stmt->exec();
+	std::vector<cursor::row_t> rs = c->fetchall();
+	std::vector<cursor::row_t>::const_iterator it;
+	for (it = rs.begin(); it != rs.end(); it++)
+		d->tags()->add((* it)[0].as<std::string>());
+}
+
+void DiveMapper::afterUpdate(Persistent::Ptr o)
+{
+	m_drop_tags_stmt->reset();
+	m_drop_tags_stmt->bind(1, o->id());
+	m_drop_tags_stmt->exec();
+
+	afterInsert(o);
+}
+
+std::vector<std::string> DiveMapper::allTags() const
+{
+	std::vector<std::string> result;
+
+	dbapi::cursor::ptr c = m_all_tags_stmt->exec();
+	std::vector<cursor::row_t> rs = c->fetchall();
+	std::vector<cursor::row_t>::const_iterator it;
+	for (it = rs.begin(); it != rs.end(); it++)
+		result.push_back((*it)[0].as<std::string>());
+
+	return result;
 }
 
 void DiveMapper::bindInsert(statement::ptr s, Persistent::Ptr p) const

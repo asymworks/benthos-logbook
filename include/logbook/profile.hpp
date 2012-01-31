@@ -38,7 +38,6 @@
  */
 
 #include <cstdint>
-#include <cstring>
 #include <list>
 #include <map>
 #include <set>
@@ -47,21 +46,13 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <logbook/collection.hpp>
 #include <logbook/dive_computer.hpp>
 #include <logbook/dive.hpp>
 #include <logbook/mix.hpp>
 #include <logbook/persistent.hpp>
 
 namespace logbook {
-
-//! @brief Case-Insensitive String Compare
-struct cicmp
-{
-	bool operator() (const std::string & lhs, const std::string & rhs) const
-	{
-		return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
-	}
-};
 
 /**
  * @brief Waypoint Structure

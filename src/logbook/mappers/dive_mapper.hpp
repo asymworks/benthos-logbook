@@ -50,7 +50,7 @@ namespace logbook { namespace mappers {
  * Data Mapper which implements CRUD operations for Dive domain objects
  * within the Logbook database.
  */
-class DiveMapper: public Mapper<Dive>, public IFinder<Dive>
+class DiveMapper: public Mapper<Dive>, public IDiveFinder
 {
 public:
 	typedef Mapper<Dive>::Ptr	Ptr;
@@ -66,6 +66,11 @@ protected:
 	static std::string sql_find_all;	///< Find All Statement SQL String
 	static std::string sql_find_id;		///< Find By Id Statement SQL String
 
+	static std::string sql_find_tags;	///< Find Tags by Dive SQL String
+	static std::string sql_drop_tags;	///< Drop Tags by Dive SQL String
+	static std::string sql_add_tags;	///< Insert Tags SQL String
+	static std::string sql_all_tags;	///< Find All Tags SQL String
+
 public:
 
 	//! Class Constructor
@@ -75,6 +80,12 @@ public:
 	virtual ~DiveMapper();
 
 public:
+
+	/**
+	 * @brief Find all Tags
+	 * @return List of Tags sorted alphabetically
+	 */
+	virtual std::vector<std::string> allTags() const;
 
 	/**
 	 * @brief Return a list of all Dives
@@ -91,6 +102,20 @@ public:
 
 protected:
 
+	//! Perform Operations after Deleting a Persistent
+	virtual void afterDelete(Persistent::Ptr o, int64_t oldId);
+
+	//! Perform Operations after Inserting a Persistent
+	virtual void afterInsert(Persistent::Ptr o);
+
+	//! Perform Operations after Updating a Persistent
+	virtual void afterUpdate(Persistent::Ptr o);
+
+	//! Perform Operations after Loading a Persistent
+	virtual void afterLoaded(Persistent::Ptr o);
+
+protected:
+
 	//! Bind an Object to the Insert Statement
 	virtual void bindInsert(statement::ptr s, Persistent::Ptr o) const;
 
@@ -103,6 +128,11 @@ protected:
 protected:
 	dbapi::statement::ptr		m_find_all_stmt;		///< Find All Prepared Statement
 	dbapi::statement::ptr		m_find_id_stmt;			///< Find By Id Prepared Statement
+
+	dbapi::statement::ptr 		m_find_tags_stmt;		///< Find Tags by Dive Prepared Statement
+	dbapi::statement::ptr 		m_drop_tags_stmt;		///< Drop Tags by Dive Prepared Statement
+	dbapi::statement::ptr 		m_add_tags_stmt;		///< Insert Tags Prepared Statement
+	dbapi::statement::ptr 		m_all_tags_stmt;		///< Find All Tags Prepared Statement
 
 };
 

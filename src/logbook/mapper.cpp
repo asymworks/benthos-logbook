@@ -42,8 +42,38 @@ AbstractMapper::~AbstractMapper()
 {
 }
 
+void AbstractMapper::afterDelete(Persistent::Ptr o, int64_t oldId)
+{
+}
+
+void AbstractMapper::afterInsert(Persistent::Ptr o)
+{
+}
+
+void AbstractMapper::afterLoaded(Persistent::Ptr o)
+{
+}
+
+void AbstractMapper::afterUpdate(Persistent::Ptr o)
+{
+}
+
+void AbstractMapper::beforeDelete(Persistent::Ptr o)
+{
+}
+
+void AbstractMapper::beforeInsert(Persistent::Ptr o)
+{
+}
+
+void AbstractMapper::beforeUpdate(Persistent::Ptr o)
+{
+}
+
 int64_t AbstractMapper::insert(Persistent::Ptr o)
 {
+	beforeInsert(o);
+
 	dbapi::statement::ptr s(insertStatement());
 	s->reset();
 	s->bind(1, boost::none);
@@ -54,27 +84,39 @@ int64_t AbstractMapper::insert(Persistent::Ptr o)
 	set_persistent_id(o, c->last_rowid());
 	m_loaded[o->id()] = o;
 
+	afterInsert(o);
+
 	return o->id();
 }
 
 void AbstractMapper::remove(Persistent::Ptr o)
 {
+	beforeDelete(o);
+
 	dbapi::statement::ptr s(removeStatement());
 	s->reset();
 	s->bind(1, o->id());
 	s->exec();
 
-	if (m_loaded[o->id()])
-		m_loaded.erase(o->id());
+	int64_t oId = o->id();
+
+	if (m_loaded[oId])
+		m_loaded.erase(oId);
 
 	set_persistent_id(o, -1);
+
+	afterDelete(o, oId);
 }
 
-void AbstractMapper::update(Persistent::Ptr o) const
+void AbstractMapper::update(Persistent::Ptr o)
 {
+	beforeUpdate(o);
+
 	dbapi::statement::ptr s(updateStatement());
 	s->reset();
 	s->bind(1, o->id());
 	bindUpdate(s, o);
 	s->exec();
+
+	afterUpdate(o);
 }

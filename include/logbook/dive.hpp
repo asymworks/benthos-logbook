@@ -39,10 +39,14 @@
 
 #include <cstdint>
 #include <ctime>
+#include <list>
+#include <set>
+#include <vector>
 
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <logbook/collection.hpp>
 #include <logbook/dive_computer.hpp>
 #include <logbook/dive_site.hpp>
 #include <logbook/mix.hpp>
@@ -67,13 +71,60 @@ public:
 	//! Class Destructor
 	virtual ~Dive();
 
-private:
+public:
+
+	/**
+	 * @brief Dive Tags Collection
+	 *
+	 * Holds a collection of 'tags', user-defined strings associated with a
+	 * dive to perform arbitrary grouping and categorization.
+	 */
+	class Tags
+	{
+	public:
+		typedef boost::shared_ptr<Tags>			Ptr;
+		typedef boost::shared_ptr<const Tags>	ConstPtr;
+
+	public:
+
+		//! Class Constructor
+		Tags();
+
+		//! Class Destructor
+		~Tags();
+
+	public:
+
+		//! @return List of Tags for the Dive
+		std::list<std::string> all() const;
+
+		//! @param[in] Tag to Add
+		void add(const std::string & tag);
+
+		//! @brief Clear list of Tags
+		void clear();
+
+		//! @param[in] Tag to Remove
+		void remove(const std::string & tag);
+
+	private:
+		std::set<std::string, cicmp> 	m_items;
+
+	};
+
+public:
+
 	/**
 	 * Managed Collection Mappings:
-	 * - Flags
 	 * - Profiles
 	 * - Equipment
 	 */
+
+	//! @return List of Tags
+	Tags::Ptr tags();
+
+	//! @return List of Tags
+	Tags::ConstPtr tags() const;
 
 public:
 
@@ -379,6 +430,26 @@ private:
 	boost::optional<int>			m_desat;		///< Desaturation Time [minutes]
 	boost::optional<int>			m_nofly;		///< No-Fly Time [minutes]
 	boost::optional<std::string>	m_algorithm;	///< Decompression Algorithm/Table Name
+
+	Tags::Ptr						m_tags;			///< List of Tags
+
+};
+
+/**
+ * @brief Dive Finder Interface
+ *
+ * Extends IFinder<Dive> to add various lookup methods for Dives and Dive Tags.
+ */
+struct IDiveFinder: public IFinder<Dive>
+{
+	typedef boost::shared_ptr<IDiveFinder>	Ptr;
+	virtual ~IDiveFinder() { }
+
+	/**
+	 * @brief Find all Tags
+	 * @return List of Tags sorted alphabetically
+	 */
+	virtual std::vector<std::string> allTags() const = 0;
 
 };
 
