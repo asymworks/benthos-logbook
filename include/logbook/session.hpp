@@ -37,6 +37,7 @@
  * @author Jonathan Krauss <jkrauss@asymworks.com>
  */
 
+#include <list>
 #include <map>
 #include <set>
 #include <typeinfo>
@@ -46,6 +47,7 @@
 #include <boost/utility.hpp>
 
 #include <logbook/dbapi.hpp>
+#include <logbook/logging.hpp>
 #include <logbook/mapper.hpp>
 #include <logbook/persistent.hpp>
 
@@ -68,27 +70,8 @@ struct typecmp
 //! @brief Mapper Registry Type
 typedef std::map<const_typeinfo_ptr, AbstractMapper::Ptr, typecmp> mapper_registry;
 
-//! @brief Pair of <typeinfo, Persistent::Ptr>
-typedef std::pair<const_typeinfo_ptr, Persistent::Ptr> uow_entry;
-
-//! @brief Comparator for Unit of Work Entries
-struct uow_entry_cmp
-{
-	bool operator()(const uow_entry & lhs, const uow_entry & rhs) const
-	{
-		if (lhs.first == rhs.first)
-		{
-			// Sort on Persistent::Ptr
-			return lhs.second < rhs.second;
-		}
-
-		// Sort on Type Info
-		return lhs.first->before(* rhs.first) != 0;
-	}
-};
-
 //! @brief Unit of Work Entry List
-typedef std::set<uow_entry, uow_entry_cmp> uow_registry;
+typedef std::set<Persistent::Ptr> uow_registry;
 
 /**
  * @brief Database Session Class
@@ -104,10 +87,15 @@ public:
 	typedef boost::shared_ptr<Session>	Ptr;
 	typedef boost::weak_ptr<Session>	WPtr;
 
-public:
+protected:
 
 	//! Class Constructor
 	Session(connection::ptr conn);
+
+public:
+
+	//! Class Factory Method
+	static Session::Ptr Create(connection::ptr conn);
 
 	//! Class Destructor
 	virtual ~Session();
@@ -151,6 +139,15 @@ public:
 		const_typeinfo_ptr ti = & typeid(D);
 		m_mappers[ti] = mptr;
 	}
+
+	//! @return Check if the Object is Marked as Deleted
+	bool isDeleted(Persistent::Ptr p) const;
+
+	//! @return Check if the Object is Marked as Dirty
+	bool isDirty(Persistent::Ptr p) const;
+
+	//! @return Check if the Object is Marked as New
+	bool isNew(Persistent::Ptr p) const;
 
 	/**
 	 * @brief Register a Deleted Object
@@ -216,9 +213,26 @@ protected:
 	//! Update Dirty Objects in the Database
 	void updateDirty();
 
+	/**
+	 * @brief Sort a Unit of Work Registry
+	 * @param[in] Unit of Work Registry
+	 * @return Ordered list of Persistents
+	 *
+	 * Performs a topological sort of the unit of work registry to ensure that
+	 * database operations are carried out in the proper order such that object
+	 * relations are consistent.
+	 *
+	 * In particular, this method moves objects of type Mix, DiveSite and
+	 * DiveComputer to the beginning so that their id's are assigned first in
+	 * an insert operation and are correctly picked up when owning objects
+	 * such as Dive and Profile are inserted.
+	 */
+	std::list<Persistent::Ptr> sort(const uow_registry & registry) const;
+
 private:
 	connection::ptr		m_conn;		///< Database Connection
 	mapper_registry		m_mappers;	///< Registry of Data Mappers
+	logging::logger *	m_logger;	///< Logger Instance
 
 	uow_registry		m_new;		///< Registry of New Objects
 	uow_registry		m_dirty;	///< Registry of Dirty Objects

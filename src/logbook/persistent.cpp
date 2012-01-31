@@ -66,14 +66,9 @@ Session::Ptr Persistent::session() const
 void Persistent::set_id(int64_t id)
 {
 	m_id = id;
-	update_mappings();
 }
 
 void Persistent::set_session(Session::Ptr p)
 {
 	m_session = p;
-}
-
-void Persistent::update_mappings()
-{
 }

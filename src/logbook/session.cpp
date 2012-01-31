@@ -30,13 +30,34 @@
 
 #include "logbook/session.hpp"
 
+#include "mappers/dive_computer_mapper.hpp"
+#include "mappers/dive_site_mapper.hpp"
+#include "mappers/dive_mapper.hpp"
+#include "mappers/mix_mapper.hpp"
+#include "mappers/profile_mapper.hpp"
+
 using namespace logbook;
 
 Session::Session(connection::ptr conn)
-	: m_conn(conn), m_mappers()
+	: m_conn(conn), m_mappers(), m_logger(logging::getLogger("orm.session"))
 {
 	// Ensure Foreign Key Checks are enabled
 	m_conn->exec_sql("pragma foreign_keys=1");
+}
+
+Session::Ptr Session::Create(connection::ptr conn)
+{
+	Session::Ptr ptr(new Session(conn));
+
+	// Register Mappers
+	ptr->registerMapper<Dive>(new mappers::DiveMapper(ptr));
+	ptr->registerMapper<DiveComputer>(new mappers::DiveComputerMapper(ptr));
+	ptr->registerMapper<DiveSite>(new mappers::DiveSiteMapper(ptr));
+	ptr->registerMapper<Mix>(new mappers::MixMapper(ptr));
+	ptr->registerMapper<Profile>(new mappers::ProfileMapper(ptr));
+
+	// Return new Session
+	return ptr;
 }
 
 Session::~Session()
@@ -47,18 +68,14 @@ void Session::commit()
 {
 	m_conn->begin();
 	insertNew();
-	updateDirty();
 	deleteRemoved();
+	updateDirty();
 	m_conn->commit();
 
-	// Register New objects with this Session
-	uow_registry::iterator it;
-	for (it = m_new.begin(); it != m_new.end(); it++)
-		set_persistent_session(it->second, shared_from_this());
-
 	// Unregister Deleted objects from this Session
+	uow_registry::iterator it;
 	for (it = m_deleted.begin(); it != m_deleted.end(); it++)
-		set_persistent_session(it->second, Session::Ptr());
+		set_persistent_session(* it, Session::Ptr());
 
 	// Clear the UOW Lists
 	m_new.clear();
@@ -68,28 +85,45 @@ void Session::commit()
 
 void Session::deleteRemoved()
 {
-	uow_registry::iterator it;
-	for (it = m_deleted.begin(); it != m_deleted.end(); it++)
+	std::list<Persistent::Ptr>::iterator it;
+	std::list<Persistent::Ptr> items = sort(m_deleted);
+	for (it = items.begin(); it != items.end(); it++)
 	{
-		AbstractMapper::Ptr p(m_mappers[it->first]);
+		AbstractMapper::Ptr p(m_mappers[(* it)->type_info()]);
 		if (! p)
-			throw std::runtime_error(std::string("No mapper found for class ") + it->first->name());
+			throw std::runtime_error(std::string("No mapper found for class ") + (* it)->type_info()->name());
 
-		p->remove(it->second);
+		p->remove(* it);
 	}
 }
 
 void Session::insertNew()
 {
-	uow_registry::iterator it;
-	for (it = m_new.begin(); it != m_new.end(); it++)
+	std::list<Persistent::Ptr>::iterator it;
+	std::list<Persistent::Ptr> items = sort(m_new);
+	for (it = items.begin(); it != items.end(); it++)
 	{
-		AbstractMapper::Ptr p(m_mappers[it->first]);
+		AbstractMapper::Ptr p(m_mappers[(* it)->type_info()]);
 		if (! p)
-			throw std::runtime_error(std::string("No mapper found for class ") + it->first->name());
+			throw std::runtime_error(std::string("No mapper found for class ") + (* it)->type_info()->name());
 
-		p->insert(it->second);
+		p->insert(* it);
 	}
+}
+
+bool Session::isDeleted(Persistent::Ptr p) const
+{
+	return (m_deleted.find(p) != m_deleted.end());
+}
+
+bool Session::isDirty(Persistent::Ptr p) const
+{
+	return (m_dirty.find(p) != m_dirty.end());
+}
+
+bool Session::isNew(Persistent::Ptr p) const
+{
+	return (m_new.find(p) != m_new.end());
 }
 
 void Session::registerDeleted(Persistent::Ptr p)
@@ -100,17 +134,18 @@ void Session::registerDeleted(Persistent::Ptr p)
 	if (! p->session() || (p->session().get() != this))
 		throw std::runtime_error("Object does not belong to this Session");
 
-	uow_entry e(p->type_info(), p);
-
-	if (m_new.find(e) != m_new.end())
+	if (m_new.find(p) != m_new.end())
 	{
-		m_new.erase(e);
+		m_new.erase(p);
 		return;
 	}
 
-	m_dirty.erase(e);
-	if (m_deleted.find(e) == m_deleted.end())
-		m_deleted.insert(e);
+	m_dirty.erase(p);
+	if (m_deleted.find(p) == m_deleted.end())
+	{
+		m_logger->debug("Registering deleted object %s[%d]", p->type_info()->name(), p->id());
+		m_deleted.insert(p);
+	}
 }
 
 void Session::registerDirty(Persistent::Ptr p)
@@ -121,13 +156,14 @@ void Session::registerDirty(Persistent::Ptr p)
 	if (! p->session() || (p->session().get() != this))
 		throw std::runtime_error("Object does not belong to this Session");
 
-	uow_entry e(p->type_info(), p);
-
-	if (m_deleted.find(e) != m_deleted.end())
+	if (m_deleted.find(p) != m_deleted.end())
 		throw std::runtime_error("Object is already registered as deleted");
 
-	if ((m_dirty.find(e) == m_dirty.end()) && (m_new.find(e) == m_new.end()))
-		m_dirty.insert(e);
+	if ((m_dirty.find(p) == m_dirty.end()) && (m_new.find(p) == m_new.end()))
+	{
+		m_logger->debug("Registering dirty object %s[%d]", p->type_info()->name(), p->id());
+		m_dirty.insert(p);
+	}
 }
 
 void Session::registerNew(Persistent::Ptr p)
@@ -138,27 +174,79 @@ void Session::registerNew(Persistent::Ptr p)
 	if (p->session() && (p->session().get() != this))
 		throw std::runtime_error("Object is already owned by a Session");
 
-	uow_entry e(p->type_info(), p);
-
-	if (m_new.find(e) != m_new.end())
+	if (m_new.find(p) != m_new.end())
 		throw std::runtime_error("Object is already registered as new");
-	if (m_dirty.find(e) != m_dirty.end())
+	if (m_dirty.find(p) != m_dirty.end())
 		throw std::runtime_error("Object is already registered as dirty");
-	if (m_deleted.find(e) != m_deleted.end())
+	if (m_deleted.find(p) != m_deleted.end())
 		throw std::runtime_error("Object is already registered as deleted");
 
-	m_new.insert(e);
+	set_persistent_session(p, shared_from_this());
+	m_logger->debug("Registering new object of type %s", p->type_info()->name());
+
+	m_new.insert(p);
+}
+
+std::list<Persistent::Ptr> Session::sort(const uow_registry & registry) const
+{
+	/*
+	 * Hard-coded, inefficient topological sort.  This should be adequate for
+	 * most use cases but can certainly be improved.
+	 */
+
+	std::list<Persistent::Ptr>::iterator it;
+	std::list<Persistent::Ptr> items(registry.begin(), registry.end());
+	std::list<Persistent::Ptr> result;
+
+	// Scan for Mix/DiveSite/DiveComputer
+	for (it = items.begin(); it != items.end(); )
+	{
+		if (((* it)->type_info() == (& typeid(Mix))) ||
+			((* it)->type_info() == (& typeid(DiveSite))) ||
+			((* it)->type_info() == (& typeid(DiveComputer))))
+		{
+			result.push_back(* it);
+			it = items.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+
+	// Scan for Dive
+	for (it = items.begin(); it != items.end(); )
+	{
+		if ((* it)->type_info() == (& typeid(Dive)))
+		{
+			result.push_back(* it);
+			it = items.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+
+	// Append remainder of the Items (Profiles, others)
+	for (it = items.begin(); it != items.end(); it++)
+		result.push_back(* it);
+
+	// Return sorted list
+	items.clear();
+	return result;
 }
 
 void Session::updateDirty()
 {
-	uow_registry::iterator it;
-	for (it = m_dirty.begin(); it != m_dirty.end(); it++)
+	std::list<Persistent::Ptr>::iterator it;
+	std::list<Persistent::Ptr> items = sort(m_dirty);
+	for (it = items.begin(); it != items.end(); it++)
 	{
-		AbstractMapper::Ptr p(m_mappers[it->first]);
+		AbstractMapper::Ptr p(m_mappers[(* it)->type_info()]);
 		if (! p)
-			throw std::runtime_error(std::string("No mapper found for class ") + it->first->name());
+			throw std::runtime_error(std::string("No mapper found for class ") + (* it)->type_info()->name());
 
-		p->update(it->second);
+		p->update(* it);
 	}
 }
