@@ -96,14 +96,14 @@ public:
 	 * @param[in] Dive Identifier
 	 * @return List of Profiles
 	 */
-	virtual std::vector<Profile::Ptr> findForDive(int64_t dive_id);
+	virtual std::vector<Profile::Ptr> findByDive(int64_t dive_id);
 
 	/**
 	 * @brief Find Profiles that belong to a given Dive Computer
 	 * @param[in] Dive Computer Identifier
 	 * @return List of Profiles
 	 */
-	virtual std::vector<Profile::Ptr> findForComputer(int64_t computer_id);
+	virtual std::vector<Profile::Ptr> findByComputer(int64_t computer_id);
 
 protected:
 

@@ -174,7 +174,7 @@ Profile::Ptr ProfileMapper::find(int64_t id)
 	return load(r);
 }
 
-std::vector<Profile::Ptr> ProfileMapper::findForDive(int64_t dive_id)
+std::vector<Profile::Ptr> ProfileMapper::findByDive(int64_t dive_id)
 {
 	m_find_dive_stmt->reset();
 	m_find_dive_stmt->bind(1, dive_id);
@@ -183,7 +183,7 @@ std::vector<Profile::Ptr> ProfileMapper::findForDive(int64_t dive_id)
 	return loadAll(c);
 }
 
-std::vector<Profile::Ptr> ProfileMapper::findForComputer(int64_t computer_id)
+std::vector<Profile::Ptr> ProfileMapper::findByComputer(int64_t computer_id)
 {
 	m_find_computer_stmt->reset();
 	m_find_computer_stmt->bind(1, computer_id);

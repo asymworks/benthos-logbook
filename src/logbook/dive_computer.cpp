@@ -29,8 +29,99 @@
  */
 
 #include "logbook/dive_computer.hpp"
+#include "logbook/dive.hpp"
+#include "logbook/profile.hpp"
+#include "logbook/session.hpp"
 
 using namespace logbook;
+
+class DiveComputerDives: public ObjectCollection<Dive, DiveComputer>
+{
+public:
+
+	//! Class Constructor
+	DiveComputerDives(DiveComputer::Ptr obj)
+		: ObjectCollection(obj)
+	{
+	}
+
+	//! Class Destructor
+	virtual ~DiveComputerDives()
+	{
+	}
+
+protected:
+
+	//! @return List of Associated Items from the Database
+	virtual std::vector<Dive::Ptr> load(DiveComputer::Ptr obj) const
+	{
+		IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(obj->session()->finder<Dive>());
+		return df->findByComputer(obj->id());
+	}
+
+	//! @brief Link this Object to the Owning Object
+	virtual void link(Dive::Ptr d, DiveComputer::Ptr t) const
+	{
+		d->setComputer(t);
+	}
+
+	//! @brief Check if the Owning Object is linked to this Object
+	virtual bool linked(Dive::Ptr d, DiveComputer::Ptr t) const
+	{
+		return (d->computer() == t);
+	}
+
+	//! @brief Unlink this Object to the Owning Object
+	virtual void unlink(Dive::Ptr d, DiveComputer::Ptr t) const
+	{
+		d->setComputer(boost::none);
+	}
+
+};
+
+class DiveComputerProfiles: public ObjectCollection<Profile, DiveComputer>
+{
+public:
+
+	//! Class Constructor
+	DiveComputerProfiles(DiveComputer::Ptr obj)
+		: ObjectCollection(obj)
+	{
+	}
+
+	//! Class Destructor
+	virtual ~DiveComputerProfiles()
+	{
+	}
+
+protected:
+
+	//! @return List of Associated Items from the Database
+	virtual std::vector<Profile::Ptr> load(DiveComputer::Ptr obj) const
+	{
+		IProfileFinder::Ptr df = boost::shared_dynamic_cast<IProfileFinder>(obj->session()->finder<Profile>());
+		return df->findByComputer(obj->id());
+	}
+
+	//! @brief Link this Object to the Owning Object
+	virtual void link(Profile::Ptr d, DiveComputer::Ptr t) const
+	{
+		d->setComputer(t);
+	}
+
+	//! @brief Check if the Owning Object is linked to this Object
+	virtual bool linked(Profile::Ptr d, DiveComputer::Ptr t) const
+	{
+		return (d->computer() == t);
+	}
+
+	//! @brief Unlink this Object to the Owning Object
+	virtual void unlink(Profile::Ptr d, DiveComputer::Ptr t) const
+	{
+		d->setComputer(boost::none);
+	}
+
+};
 
 DiveComputer::DiveComputer()
 	: TypedPersistent<DiveComputer>()
@@ -39,6 +130,42 @@ DiveComputer::DiveComputer()
 
 DiveComputer::~DiveComputer()
 {
+}
+
+IObjectCollection<Dive>::Ptr DiveComputer::dives()
+{
+	if (! m_dives)
+		m_dives = IObjectCollection<Dive>::Ptr(new DiveComputerDives(boost::dynamic_pointer_cast<DiveComputer>(shared_from_this())));
+	return m_dives;
+}
+
+IObjectCollection<Dive>::ConstPtr DiveComputer::dives() const
+{
+	if (! m_dives)
+		m_dives = IObjectCollection<Dive>::Ptr(
+			new DiveComputerDives(boost::dynamic_pointer_cast<DiveComputer>(
+				boost::const_pointer_cast<Persistent>(shared_from_this())
+			))
+		);
+	return m_dives;
+}
+
+IObjectCollection<Profile>::Ptr DiveComputer::profiles()
+{
+	if (! m_profiles)
+		m_profiles = IObjectCollection<Profile>::Ptr(new DiveComputerProfiles(boost::dynamic_pointer_cast<DiveComputer>(shared_from_this())));
+	return m_profiles;
+}
+
+IObjectCollection<Profile>::ConstPtr DiveComputer::profiles() const
+{
+	if (! m_profiles)
+		m_profiles = IObjectCollection<Profile>::Ptr(
+			new DiveComputerProfiles(boost::dynamic_pointer_cast<DiveComputer>(
+				boost::const_pointer_cast<Persistent>(shared_from_this())
+			))
+		);
+	return m_profiles;
 }
 
 const std::string & DiveComputer::driver() const

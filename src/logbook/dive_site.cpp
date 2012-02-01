@@ -30,8 +30,54 @@
 
 #include <stdexcept>
 #include "logbook/dive_site.hpp"
+#include "logbook/dive.hpp"
+#include "logbook/session.hpp"
 
 using namespace logbook;
+
+class DiveSiteDives: public ObjectCollection<Dive, DiveSite>
+{
+public:
+
+	//! Class Constructor
+	DiveSiteDives(DiveSite::Ptr obj)
+		: ObjectCollection(obj)
+	{
+	}
+
+	//! Class Destructor
+	virtual ~DiveSiteDives()
+	{
+	}
+
+protected:
+
+	//! @return List of Associated Items from the Database
+	virtual std::vector<Dive::Ptr> load(DiveSite::Ptr obj) const
+	{
+		IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(obj->session()->finder<Dive>());
+		return df->findBySite(obj->id());
+	}
+
+	//! @brief Link this Object to the Owning Object
+	virtual void link(Dive::Ptr d, DiveSite::Ptr t) const
+	{
+		d->setSite(t);
+	}
+
+	//! @brief Check if the Owning Object is linked to this Object
+	virtual bool linked(Dive::Ptr d, DiveSite::Ptr t) const
+	{
+		return (d->site() == t);
+	}
+
+	//! @brief Unlink this Object to the Owning Object
+	virtual void unlink(Dive::Ptr d, DiveSite::Ptr t) const
+	{
+		d->setSite(boost::none);
+	}
+
+};
 
 DiveSite::DiveSite()
 	: TypedPersistent<DiveSite>()
@@ -55,6 +101,24 @@ const boost::optional<std::string> & DiveSite::comments() const
 const boost::optional<country> & DiveSite::country_() const
 {
 	return m_country;
+}
+
+IObjectCollection<Dive>::Ptr DiveSite::dives()
+{
+	if (! m_dives)
+		m_dives = IObjectCollection<Dive>::Ptr(new DiveSiteDives(boost::dynamic_pointer_cast<DiveSite>(shared_from_this())));
+	return m_dives;
+}
+
+IObjectCollection<Dive>::ConstPtr DiveSite::dives() const
+{
+	if (! m_dives)
+		m_dives = IObjectCollection<Dive>::Ptr(
+			new DiveSiteDives(boost::dynamic_pointer_cast<DiveSite>(
+				boost::const_pointer_cast<Persistent>(shared_from_this())
+			))
+		);
+	return m_dives;
 }
 
 const boost::optional<double> & DiveSite::latitude() const

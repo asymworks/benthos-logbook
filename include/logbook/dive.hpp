@@ -54,6 +54,9 @@
 
 namespace logbook {
 
+// Forward Declaration of Profile
+class Profile;
+
 /**
  * @brief Dive Model Class
  */
@@ -116,9 +119,14 @@ public:
 
 	/**
 	 * Managed Collection Mappings:
-	 * - Profiles
 	 * - Equipment
 	 */
+
+	//! @return Profile Collection
+	IObjectCollection<Profile>::Ptr profiles();
+
+	//! @return Profile Collection
+	IObjectCollection<Profile>::ConstPtr profiles() const;
 
 	//! @return List of Tags
 	Tags::Ptr tags();
@@ -431,7 +439,8 @@ private:
 	boost::optional<int>			m_nofly;		///< No-Fly Time [minutes]
 	boost::optional<std::string>	m_algorithm;	///< Decompression Algorithm/Table Name
 
-	Tags::Ptr						m_tags;			///< List of Tags
+	Tags::Ptr								m_tags;		///< List of Tags
+	mutable IObjectCollection<Profile>::Ptr	m_profiles;	///< List of Profiles
 
 };
 
@@ -450,6 +459,20 @@ struct IDiveFinder: public IFinder<Dive>
 	 * @return List of Tags sorted alphabetically
 	 */
 	virtual std::vector<std::string> allTags() const = 0;
+
+	/**
+	 * @brief Find Dives from a given Dive Computer
+	 * @param[in] Dive Computer Id
+	 * @return List of Dives
+	 */
+	virtual std::vector<Dive::Ptr> findByComputer(int64_t computer_id) = 0;
+
+	/**
+	 * @brief Find Dives at a given Dive Site
+	 * @param[in] Dive Site Id
+	 * @return List of Dives
+	 */
+	virtual std::vector<Dive::Ptr> findBySite(int64_t site_id) = 0;
 
 };
 

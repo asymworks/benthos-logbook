@@ -30,8 +30,54 @@
 
 #include <stdexcept>
 #include "logbook/dive.hpp"
+#include "logbook/profile.hpp"
+#include "logbook/session.hpp"
 
 using namespace logbook;
+
+class DiveProfiles: public ObjectCollection<Profile, Dive>
+{
+public:
+
+	//! Class Constructor
+	DiveProfiles(Dive::Ptr obj)
+		: ObjectCollection(obj)
+	{
+	}
+
+	//! Class Destructor
+	virtual ~DiveProfiles()
+	{
+	}
+
+protected:
+
+	//! @return List of Associated Items from the Database
+	virtual std::vector<Profile::Ptr> load(Dive::Ptr obj) const
+	{
+		IProfileFinder::Ptr df = boost::shared_dynamic_cast<IProfileFinder>(obj->session()->finder<Profile>());
+		return df->findByDive(obj->id());
+	}
+
+	//! @brief Link this Object to the Owning Object
+	virtual void link(Profile::Ptr d, Dive::Ptr t) const
+	{
+		d->setDive(t);
+	}
+
+	//! @brief Check if the Owning Object is linked to this Object
+	virtual bool linked(Profile::Ptr d, Dive::Ptr t) const
+	{
+		return (d->dive() == t);
+	}
+
+	//! @brief Unlink this Object to the Owning Object
+	virtual void unlink(Profile::Ptr d, Dive::Ptr t) const
+	{
+		d->setDive(boost::none);
+	}
+
+};
 
 Dive::Tags::Tags()
 	: m_items()
@@ -157,6 +203,24 @@ const boost::optional<int> & Dive::nofly_time() const
 const boost::optional<int> & Dive::number() const
 {
 	return m_number;
+}
+
+IObjectCollection<Profile>::Ptr Dive::profiles()
+{
+	if (! m_profiles)
+		m_profiles = IObjectCollection<Profile>::Ptr(new DiveProfiles(boost::dynamic_pointer_cast<Dive>(shared_from_this())));
+	return m_profiles;
+}
+
+IObjectCollection<Profile>::ConstPtr Dive::profiles() const
+{
+	if (! m_profiles)
+		m_profiles = IObjectCollection<Profile>::Ptr(
+			new DiveProfiles(boost::dynamic_pointer_cast<Dive>(
+				boost::const_pointer_cast<Persistent>(shared_from_this())
+			))
+		);
+	return m_profiles;
 }
 
 const boost::optional<int> & Dive::rating() const
@@ -295,12 +359,30 @@ void Dive::setComputer(const boost::none_t &)
 
 void Dive::setComputer(DiveComputer::Ptr value)
 {
+	if (value && value->session() && session() && (value->session() != session()))
+		throw std::runtime_error("DiveComputer belongs to a different session as the Dive");
+
+	if (m_computer && ! m_computer->dives()->in_cascade())
+	{
+		m_computer->dives()->remove(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
+	}
+
+	if (value && ! value->dives()->in_cascade())
+	{
+		value->dives()->add(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
+	}
+
 	m_computer.swap(value);
 	mark_dirty();
 }
 
 void Dive::setDateTime(const boost::none_t &)
 {
+	if (m_computer && ! m_computer->dives()->in_cascade())
+	{
+		m_computer->dives()->remove(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
+	}
+
 	m_datetime.reset();
 	mark_dirty();
 }
@@ -516,12 +598,30 @@ void Dive::setSalinity(const std::string & value)
 
 void Dive::setSite(const boost::none_t &)
 {
+	if (m_site && ! m_site->dives()->in_cascade())
+	{
+		m_site->dives()->remove(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
+	}
+
 	m_site.reset();
 	mark_dirty();
 }
 
 void Dive::setSite(DiveSite::Ptr value)
 {
+	if (value && value->session() && session() && (value->session() != session()))
+		throw std::runtime_error("DiveSite belongs to a different session as the Dive");
+
+	if (m_site && ! m_site->dives()->in_cascade())
+	{
+		m_site->dives()->remove(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
+	}
+
+	if (value && ! value->dives()->in_cascade())
+	{
+		value->dives()->add(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
+	}
+
 	m_site.swap(value);
 	mark_dirty();
 }

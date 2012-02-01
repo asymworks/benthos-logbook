@@ -65,6 +65,8 @@ protected:
 
 	static std::string sql_find_all;	///< Find All Statement SQL String
 	static std::string sql_find_id;		///< Find By Id Statement SQL String
+	static std::string sql_find_site;	///< Find By Site Statement SQL String
+	static std::string sql_find_cpu;	///< Find By Computer Statement SQL String
 
 	static std::string sql_find_tags;	///< Find Tags by Dive SQL String
 	static std::string sql_drop_tags;	///< Drop Tags by Dive SQL String
@@ -100,6 +102,20 @@ public:
 	 */
 	virtual Dive::Ptr find(int64_t id);
 
+	/**
+	 * @brief Find Dives from a given Dive Computer
+	 * @param[in] Dive Computer Id
+	 * @return List of Dives
+	 */
+	virtual std::vector<Dive::Ptr> findByComputer(int64_t computer_id);
+
+	/**
+	 * @brief Find Dives at a given Dive Site
+	 * @param[in] Dive Site Id
+	 * @return List of Dives
+	 */
+	virtual std::vector<Dive::Ptr> findBySite(int64_t site_id);
+
 protected:
 
 	//! Perform Operations after Deleting a Persistent
@@ -128,6 +144,8 @@ protected:
 protected:
 	dbapi::statement::ptr		m_find_all_stmt;		///< Find All Prepared Statement
 	dbapi::statement::ptr		m_find_id_stmt;			///< Find By Id Prepared Statement
+	dbapi::statement::ptr		m_find_site_stmt;		///< Find By Site Prepared Statement
+	dbapi::statement::ptr		m_find_cpu_stmt;		///< Find By Computer Prepared Statement
 
 	dbapi::statement::ptr 		m_find_tags_stmt;		///< Find Tags by Dive Prepared Statement
 	dbapi::statement::ptr 		m_drop_tags_stmt;		///< Drop Tags by Dive Prepared Statement

@@ -43,9 +43,14 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <logbook/collection.hpp>
 #include <logbook/persistent.hpp>
 
 namespace logbook {
+
+// Forward Declaration of Dive and Profile
+class Dive;
+class Profile;
 
 /**
  * @brief Dive Computer Model Class
@@ -63,6 +68,20 @@ public:
 
 	//! Class Destructor
 	virtual ~DiveComputer();
+
+public:
+
+	//! @return Dive Collection
+	IObjectCollection<Dive>::Ptr dives();
+
+	//! @return Dive Collection
+	IObjectCollection<Dive>::ConstPtr dives() const;
+
+	//! @return Dive Collection
+	IObjectCollection<Profile>::Ptr profiles();
+
+	//! @return Dive Collection
+	IObjectCollection<Profile>::ConstPtr profiles() const;
 
 public:
 
@@ -182,6 +201,9 @@ private:
 	boost::optional<std::string>	m_model;			///< Model Name
 	boost::optional<std::string>	m_hw_version;		///< Hardware Version String
 	boost::optional<std::string>	m_sw_version;		///< Software Version String
+
+	mutable IObjectCollection<Dive>::Ptr	m_dives;	///< Dive Collection
+	mutable IObjectCollection<Profile>::Ptr	m_profiles;	///< Profile Collection
 
 };
 

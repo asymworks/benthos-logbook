@@ -42,10 +42,14 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <logbook/collection.hpp>
 #include <logbook/country.hpp>
 #include <logbook/persistent.hpp>
 
 namespace logbook {
+
+// Forward Definition of Dive
+class Dive;
 
 /**
  * @brief Dive Site Model Class
@@ -63,6 +67,14 @@ public:
 
 	//! Class Destructor
 	virtual ~DiveSite();
+
+public:
+
+	//! @return Dive Collection
+	IObjectCollection<Dive>::Ptr dives();
+
+	//! @return Dive Collection
+	IObjectCollection<Dive>::ConstPtr dives() const;
 
 public:
 
@@ -163,20 +175,22 @@ public:
 	void setWaterBody(const std::string & value);
 
 private:
-	std::string						m_name;			///< Site Name
-	boost::optional<std::string>	m_place;		///< Place Name
-	boost::optional<country>		m_country;		///< Country
+	std::string								m_name;			///< Site Name
+	boost::optional<std::string>			m_place;		///< Place Name
+	boost::optional<country>				m_country;		///< Country
 
-	boost::optional<double>			m_lat;			///< Latitude
-	boost::optional<double>			m_lng;			///< Longitude
+	boost::optional<double>					m_lat;			///< Latitude
+	boost::optional<double>					m_lng;			///< Longitude
 
-	boost::optional<std::string>	m_platform;		///< Dive Platform
-	boost::optional<std::string>	m_waterbody;	///< Body of Water
-	boost::optional<std::string>	m_bottom;		///< Bottom Composition
-	boost::optional<std::string>	m_salinity;		///< Salinity ('fresh' or 'salt')
+	boost::optional<std::string>			m_platform;		///< Dive Platform
+	boost::optional<std::string>			m_waterbody;	///< Body of Water
+	boost::optional<std::string>			m_bottom;		///< Bottom Composition
+	boost::optional<std::string>			m_salinity;		///< Salinity ('fresh' or 'salt')
 
-	boost::optional<std::string>	m_timezone;		///< Time Zone
-	boost::optional<std::string>	m_comments;		///< Comments
+	boost::optional<std::string>			m_timezone;		///< Time Zone
+	boost::optional<std::string>			m_comments;		///< Comments
+
+	mutable IObjectCollection<Dive>::Ptr	m_dives;		///< Dive Collection
 
 };
 

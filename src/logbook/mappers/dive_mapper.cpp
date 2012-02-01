@@ -55,6 +55,8 @@ std::string DiveMapper::sql_delete = "delete from dives where id=?1";
 
 std::string DiveMapper::sql_find_all = "select " + columns + " from dives";
 std::string DiveMapper::sql_find_id = "select " + columns + " from dives where id=?1";
+std::string DiveMapper::sql_find_site = "select " + columns + " from dives where site_id=?1";
+std::string DiveMapper::sql_find_cpu = "select " + columns + " from dives where computer_id=?1";
 
 std::string DiveMapper::sql_find_tags = "select tag from divetags where dive_id=?1 order by tag asc";
 std::string DiveMapper::sql_drop_tags = "delete from divetags where dive_id=?1";
@@ -70,6 +72,8 @@ DiveMapper::DiveMapper(boost::shared_ptr<Session> session)
 
 	m_find_all_stmt = statement::ptr(new statement(m_conn, sql_find_all));
 	m_find_id_stmt = statement::ptr(new statement(m_conn, sql_find_id));
+	m_find_site_stmt = statement::ptr(new statement(m_conn, sql_find_site));
+	m_find_cpu_stmt = statement::ptr(new statement(m_conn, sql_find_cpu));
 
 	m_find_tags_stmt = statement::ptr(new statement(m_conn, sql_find_tags));
 	m_drop_tags_stmt = statement::ptr(new statement(m_conn, sql_drop_tags));
@@ -321,4 +325,22 @@ Dive::Ptr DiveMapper::find(int64_t id)
 		return logbook::Dive::Ptr();
 
 	return load(r);
+}
+
+std::vector<Dive::Ptr> DiveMapper::findByComputer(int64_t computer_id)
+{
+	m_find_cpu_stmt->reset();
+	m_find_cpu_stmt->bind(1, computer_id);
+	dbapi::cursor::ptr c = m_find_cpu_stmt->exec();
+
+	return loadAll(c);
+}
+
+std::vector<Dive::Ptr> DiveMapper::findBySite(int64_t site_id)
+{
+	m_find_site_stmt->reset();
+	m_find_site_stmt->bind(1, site_id);
+	dbapi::cursor::ptr c = m_find_site_stmt->exec();
+
+	return loadAll(c);
 }
