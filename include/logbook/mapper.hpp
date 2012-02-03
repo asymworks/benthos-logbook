@@ -95,6 +95,18 @@ public:
 	 */
 	void update(Persistent::Ptr o);
 
+public:
+
+	/**
+	 * @brief Cleanup the Identity Map
+	 * @return Number of Items Released
+	 *
+	 * Garbage-collects the shared pointers in the mapper's identity map.  If
+	 * the mapper is holding the only ownership of the object, it will be
+	 * released.
+	 */
+	int cleanup();
+
 protected:
 
 	//! Perform Operations after Deleting a Persistent

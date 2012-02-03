@@ -70,6 +70,22 @@ void AbstractMapper::beforeUpdate(Persistent::Ptr o)
 {
 }
 
+int AbstractMapper::cleanup()
+{
+	int nloaded = m_loaded.size();
+
+	std::map<int64_t, Persistent::Ptr>::iterator it;
+	for (it = m_loaded.begin(); it != m_loaded.end(); )
+	{
+		if (it->second.unique())
+			it = m_loaded.erase(it);
+		else
+			++it;
+	}
+
+	return nloaded - m_loaded.size();
+}
+
 int64_t AbstractMapper::insert(Persistent::Ptr o)
 {
 	beforeInsert(o);
