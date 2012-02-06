@@ -75,6 +75,7 @@ class Persistent: public boost::noncopyable,
 {
 public:
 	typedef boost::shared_ptr<Persistent>	Ptr;
+	typedef boost::weak_ptr<Persistent>		WeakPtr;
 
 public:
 

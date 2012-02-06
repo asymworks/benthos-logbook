@@ -95,18 +95,6 @@ public:
 	 */
 	void update(Persistent::Ptr o);
 
-public:
-
-	/**
-	 * @brief Cleanup the Identity Map
-	 * @return Number of Items Released
-	 *
-	 * Garbage-collects the shared pointers in the mapper's identity map.  If
-	 * the mapper is holding the only ownership of the object, it will be
-	 * released.
-	 */
-	int cleanup();
-
 protected:
 
 	//! Perform Operations after Deleting a Persistent
@@ -148,9 +136,9 @@ protected:
 	virtual statement::ptr updateStatement() const = 0;
 
 protected:
-	boost::weak_ptr<Session>			m_session;	///< Database Session
-	connection::ptr						m_conn;		///< Database Connection
-	std::map<int64_t, Persistent::Ptr>	m_loaded;	///< Identity Map of Loaded Objects
+	boost::weak_ptr<Session>				m_session;	///< Database Session
+	connection::ptr							m_conn;		///< Database Connection
+	std::map<int64_t, Persistent::WeakPtr>	m_loaded;	///< Identity Map of Loaded Objects
 
 };
 
@@ -222,13 +210,13 @@ protected:
 	typename D::Ptr load(cursor::row_t r)
 	{
 		int64_t id = r[0].as<int64_t>();
-		if (m_loaded.find(id) != m_loaded.end())
-			return downcast(m_loaded[id]);
+		if ((m_loaded.find(id) != m_loaded.end()) && ! m_loaded[id].expired())
+			return downcast(m_loaded[id].lock());
 
 		typename D::Ptr result = doLoad(id, r);
 		set_persistent_session(result, m_session.lock());
-		m_loaded[id] = upcast(result);
-		afterLoaded(m_loaded[id]);
+		m_loaded[id] = Persistent::WeakPtr(upcast(result));
+		afterLoaded(result);
 		return result;
 	}
 

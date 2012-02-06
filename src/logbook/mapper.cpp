@@ -70,22 +70,6 @@ void AbstractMapper::beforeUpdate(Persistent::Ptr o)
 {
 }
 
-int AbstractMapper::cleanup()
-{
-	int nloaded = m_loaded.size();
-
-	std::map<int64_t, Persistent::Ptr>::iterator it;
-	for (it = m_loaded.begin(); it != m_loaded.end(); )
-	{
-		if (it->second.unique())
-			it = m_loaded.erase(it);
-		else
-			++it;
-	}
-
-	return nloaded - m_loaded.size();
-}
-
 int64_t AbstractMapper::insert(Persistent::Ptr o)
 {
 	beforeInsert(o);
@@ -98,7 +82,7 @@ int64_t AbstractMapper::insert(Persistent::Ptr o)
 	dbapi::cursor::ptr c = s->exec();
 
 	set_persistent_id(o, c->last_rowid());
-	m_loaded[o->id()] = o;
+	m_loaded[o->id()] = Persistent::WeakPtr(o);
 
 	afterInsert(o);
 
@@ -115,12 +99,7 @@ void AbstractMapper::remove(Persistent::Ptr o)
 	s->exec();
 
 	int64_t oId = o->id();
-
-	if (m_loaded[oId])
-		m_loaded.erase(oId);
-
 	set_persistent_id(o, -1);
-
 	afterDelete(o, oId);
 }
 
