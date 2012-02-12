@@ -30,6 +30,7 @@
 
 #include "dive_mapper.hpp"
 
+#include <logbook/profile.hpp>
 #include <logbook/session.hpp>
 
 using namespace logbook;
@@ -245,11 +246,32 @@ void DiveMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const
 	s->bind(32, o->algorithm());
 }
 
+std::list<Persistent::Ptr> DiveMapper::cascade_add(Persistent::Ptr p)
+{
+	std::list<Persistent::Ptr> result;
+	Dive::Ptr o = downcast(p);
+
+	if (! o)
+		return result;
+
+	std::list<Profile::Ptr> profiles = o->profiles()->all();
+	result.assign(profiles.begin(), profiles.end());
+
+	if (o->computer())
+		result.push_back(o->computer());
+	if (o->site())
+		result.push_back(o->site());
+
+	return result;
+}
+
 #define SET_VARIANT(o, f, v, t) if ((v).is_null()) o->f(boost::none); else o->f(v.as<t>())
 
 Dive::Ptr DiveMapper::doLoad(int64_t id, cursor::row_t r) const
 {
 	Dive::Ptr o(new logbook::Dive);
+
+	mark_persistent_loading(o);
 
 	IFinder<DiveComputer>::Ptr cmp_finder(m_session.lock()->finder<DiveComputer>());
 	IFinder<DiveSite>::Ptr site_finder(m_session.lock()->finder<DiveSite>());

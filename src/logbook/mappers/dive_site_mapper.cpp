@@ -28,6 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
+#include <logbook/dive.hpp>
+
 #include "dive_site_mapper.hpp"
 
 using namespace logbook;
@@ -105,11 +107,27 @@ void DiveSiteMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const
 	s->bind(12, o->comments());
 }
 
+std::list<Persistent::Ptr> DiveSiteMapper::cascade_add(Persistent::Ptr p)
+{
+	std::list<Persistent::Ptr> result;
+	DiveSite::Ptr o = downcast(p);
+
+	if (! o)
+		return result;
+
+	std::list<Dive::Ptr> dives = o->dives()->all();
+	result.assign(dives.begin(), dives.end());
+
+	return result;
+}
+
 #define SET_VARIANT(o, f, v, t) if ((v).is_null()) o->f(boost::none); else o->f(v.as<t>())
 
 DiveSite::Ptr DiveSiteMapper::doLoad(int64_t id, cursor::row_t r) const
 {
 	DiveSite::Ptr o(new logbook::DiveSite);
+
+	mark_persistent_loading(o);
 
 	set_persistent_id(o, id);
 	o->setName(r[1].as<std::string>());

@@ -74,9 +74,9 @@ Logbook::Ptr Logbook::Create(const std::string & filename, const std::string & c
 	mEANx36->setName("EANx36");
 	mEANx36->setO2PerMil(360);
 
-	lb->session()->registerNew(mAir);
-	lb->session()->registerNew(mEANx32);
-	lb->session()->registerNew(mEANx36);
+	lb->session()->add(mAir);
+	lb->session()->add(mEANx32);
+	lb->session()->add(mEANx36);
 	lb->session()->commit();
 
 	// Return new Logbook

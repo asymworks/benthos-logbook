@@ -34,7 +34,7 @@
 using namespace logbook;
 
 Persistent::Persistent()
-	: m_id(-1), m_session()
+	: m_deleted(false), m_dirty(false), m_id(-1), m_session()
 {
 }
 
@@ -49,13 +49,24 @@ int64_t Persistent::id() const
 
 void Persistent::mark_clean()
 {
+	m_deleted = false;
+	m_dirty = false;
+	m_loading = false;
+}
+
+void Persistent::mark_deleted()
+{
+	m_deleted = true;
 }
 
 void Persistent::mark_dirty()
 {
-	Session::Ptr s(m_session.lock());
-	if (s)
-		s->registerDirty(shared_from_this());
+	m_dirty = true;
+}
+
+void Persistent::mark_loading()
+{
+	m_loading = true;
 }
 
 Session::Ptr Persistent::session() const

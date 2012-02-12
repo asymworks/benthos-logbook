@@ -37,7 +37,9 @@
  * @author Jonathan Krauss <jkrauss@asymworks.com>
  */
 
+#include <list>
 #include <map>
+#include <vector>
 
 #include <logbook/dbapi.hpp>
 #include <logbook/persistent.hpp>
@@ -72,6 +74,27 @@ public:
 	virtual ~AbstractMapper();
 
 public:
+
+	/**
+	 * @brief Return the list of Persistent Objects to be Cascade-Updated on Session::add()
+	 * @param[in] Domain Object
+	 * @return List of Cascaded Objects
+	 */
+	virtual std::list<Persistent::Ptr> cascade_add(Persistent::Ptr o);
+
+	/**
+	 * @brief Return the list of Persistent Objects to be Cascade-Updated on Session::delete()
+	 * @param[in] Domain Object
+	 * @return List of Cascaded Objects
+	 */
+	virtual std::list<Persistent::Ptr> cascade_delete(Persistent::Ptr o);
+
+	/**
+	 * @brief Return the list of Persistent Objects to be Cascade-Updated on Session::expunge()
+	 * @param[in] Domain Object
+	 * @return List of Cascaded Objects
+	 */
+	virtual std::list<Persistent::Ptr> cascade_detach(Persistent::Ptr o);
 
 	/**
 	 * @brief Insert an Object into the Database
@@ -216,6 +239,7 @@ protected:
 		typename D::Ptr result = doLoad(id, r);
 		set_persistent_session(result, m_session.lock());
 		m_loaded[id] = Persistent::WeakPtr(upcast(result));
+		mark_persistent_clean(result);
 		afterLoaded(result);
 		return result;
 	}

@@ -73,6 +73,21 @@ typedef std::map<const_typeinfo_ptr, AbstractMapper::Ptr, typecmp> mapper_regist
 //! @brief Unit of Work Entry List
 typedef std::set<Persistent::Ptr> uow_registry;
 
+//! @brief Identity Map Key Type
+typedef std::pair<const_typeinfo_ptr, int64_t>	id_key_type;
+
+//! @brief Type Comparator for the Identity Map Key
+struct id_key_cmp
+{
+	bool operator()(const id_key_type & lhs, const id_key_type & rhs) const
+	{
+		return (lhs.first->before(* rhs.first) || (lhs.second < rhs.second));
+	}
+};
+
+//! @brief Identity Map Type
+typedef std::map<id_key_type, Persistent::WeakPtr, id_key_cmp> identity_map;
+
 /**
  * @brief Database Session Class
  *
@@ -103,17 +118,81 @@ public:
 public:
 
 	/**
-	 * @brief Commit Changes to the Database
+	 * @brief Add an Instance to the Session
+	 * @param[in] Domain Object Pointer
 	 *
-	 * Commits all current changes to the database, including inserting new
-	 * objects, removing deleted objects and updating changed objects.  The
-	 * operation runs within a single transaction and so all operations will
-	 * either succeed or fail together.
+	 * Registers the domain object with the session so that it will be added
+	 * or updated the next time flush() or commit() is called.  The opposite of
+	 * add() is expunge().
+	 */
+	void add(Persistent::Ptr p);
+
+	/**
+	 * @brief Begin a new Transaction
+	 *
+	 * Begins a new transaction.  If a transaction is already pending, this call
+	 * will throw an exception.
+	 */
+	void begin();
+
+	/**
+	 * @brief Commit the current Transaction
+	 *
+	 * Commits the current transaction.  If no transaction is pending this call
+	 * is a no-op.
 	 */
 	void commit();
 
 	//! @return Database Connection Pointer
 	inline connection::ptr conn() const { return m_conn; }
+
+	/**
+	 * @brief Mark and Instance as Deleted
+	 * @param[in] Domain Object Pointer
+	 *
+	 * Registers the domain object as deleted.  The delete operation will be
+	 * executed upon flush() or commit().
+	 */
+	void delete_(Persistent::Ptr p);
+
+	/**
+	 * @brief Expunge an Object from the Session
+	 * @param[in] Domain Object Pointer
+	 *
+	 * Unregisters an object with this Session.  All internal references to the
+	 * object will be removed and the object will no longer be associated with
+	 * the Session.  Related objects will also be expunged according to cascade
+	 * rules.
+	 */
+	void expunge(Persistent::Ptr p);
+
+	/**
+	 * @brief Flush Changes to the Database
+	 *
+	 * Flushes unsaved changes to the database, including inserting new objects,
+	 * removing deleted objects and updating changed objects.  This method will
+	 * start a new transaction if one is not active but will not commit.
+	 */
+	void flush();
+
+	/**
+	 * @brief Roll Back the current Transaction
+	 *
+	 * Rolls back the current transaction.  If no transaction is pending, this
+	 * call is a no-op.
+	 */
+	void rollback();
+
+public:
+
+	//! @return List of Deleted Instances
+	uow_registry deleted() const;
+
+	//! @return List of Dirty Instances
+	uow_registry dirty() const;
+
+	//! @return List of New Instances
+	uow_registry new_() const;
 
 public:
 
@@ -140,42 +219,6 @@ public:
 		m_mappers[ti] = mptr;
 	}
 
-	//! @return Check if the Object is Marked as Deleted
-	bool isDeleted(Persistent::Ptr p) const;
-
-	//! @return Check if the Object is Marked as Dirty
-	bool isDirty(Persistent::Ptr p) const;
-
-	//! @return Check if the Object is Marked as New
-	bool isNew(Persistent::Ptr p) const;
-
-	/**
-	 * @brief Register a Deleted Object
-	 * @param[in] Deleted Object Pointer
-	 *
-	 * Registers the Domain Object as deleted with the unit of work, so that
-	 * it will be deleted the next time Session::commit() is called.
-	 */
-	void registerDeleted(Persistent::Ptr p);
-
-	/**
-	 * @brief Register a Dirty Object
-	 * @param[in] Dirty Object Pointer
-	 *
-	 * Registers the Domain Object as dirty with the unit of work, so that
-	 * it will be updated the next time Session::commit() is called.
-	 */
-	void registerDirty(Persistent::Ptr p);
-
-	/**
-	 * @brief Register a New Object
-	 * @param[in] New Object Pointer
-	 *
-	 * Registers the Domain Object as a new object with the unit of work, so
-	 * that it will be inserted the next time Session::commit() is called.
-	 */
-	void registerNew(Persistent::Ptr p);
-
 public:
 
 	/**
@@ -201,6 +244,47 @@ public:
 		AbstractMapper::Ptr p(m_mappers[ti]);
 		return boost::shared_dynamic_cast<Mapper<D> >(p);
 	}
+
+	//! @return Data Mapper
+	AbstractMapper::Ptr mapper(const_typeinfo_ptr ti)
+	{
+		return m_mappers[ti];
+	}
+
+protected:
+
+	//! Attach an Object to this Session
+	void attach(Persistent::Ptr p);
+
+	//! Get a list of Cascaded Objects for an Add
+	std::list<Persistent::Ptr> cascade_add(Persistent::Ptr p);
+
+	//! Get a list of Cascaded Objects for an Delete
+	std::list<Persistent::Ptr> cascade_delete(Persistent::Ptr p);
+
+	//! Get a list of Cascaded Objects for an Detach
+	std::list<Persistent::Ptr> cascade_detach(Persistent::Ptr p);
+
+	//! Detach an Object from this Session
+	void detach(Persistent::Ptr p);
+
+	//! Finalize Flush Changes
+	void finalize_flush(std::list<Persistent::Ptr> & objects);
+
+	//! Prune the Identity Map
+	void prune();
+
+	//! Register an Object as Persistent with this Session (New or for Updates)
+	void register_(Persistent::Ptr p);
+
+	//! Register a new Object with the Session
+	void register_new(Persistent::Ptr p);
+
+	//! Register a Persisted Object with the Session
+	void register_update(Persistent::Ptr p);
+
+	//! Run the Flush Operation
+	void run_flush(std::list<Persistent::Ptr> & objects);
 
 protected:
 
@@ -230,13 +314,17 @@ protected:
 	std::list<Persistent::Ptr> sort(const uow_registry & registry) const;
 
 private:
-	connection::ptr		m_conn;		///< Database Connection
-	mapper_registry		m_mappers;	///< Registry of Data Mappers
-	logging::logger *	m_logger;	///< Logger Instance
+	connection::ptr		m_conn;			///< Database Connection
+	mapper_registry		m_mappers;		///< Registry of Data Mappers
+	logging::logger *	m_logger;		///< Logger Instance
 
-	uow_registry		m_new;		///< Registry of New Objects
-	uow_registry		m_dirty;	///< Registry of Dirty Objects
-	uow_registry		m_deleted;	///< Registry of Deleted Objects
+	uow_registry		m_new;			///< Registry of New Objects
+	uow_registry		m_deleted;		///< Registry of Deleted Objects
+	identity_map		m_idmap;		///< Registry of Persistent Objects
+
+	statement::ptr		m_beginsp;		///< Begin Savepoint Statement
+	statement::ptr		m_releasesp;	///< Release Savepoint Statement
+	statement::ptr		m_rollbacksp;	///< Rollback Savepoint Statement
 
 };
 

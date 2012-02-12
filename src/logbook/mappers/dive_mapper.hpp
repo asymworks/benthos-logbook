@@ -84,6 +84,15 @@ public:
 public:
 
 	/**
+	 * @brief Return the list of Persistent Objects to be Cascade-Updated
+	 * @param[in] Domain Object
+	 * @return List of Cascaded Objects
+	 */
+	virtual std::list<Persistent::Ptr> cascade_add(Persistent::Ptr o);
+
+public:
+
+	/**
 	 * @brief Find all Tags
 	 * @return List of Tags sorted alphabetically
 	 */

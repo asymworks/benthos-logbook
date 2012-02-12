@@ -29,6 +29,7 @@
  */
 
 #include "logbook/profile.hpp"
+#include "logbook/session.hpp"
 
 using namespace logbook;
 
@@ -83,24 +84,54 @@ const boost::optional<std::string> & Profile::vendor() const
 
 void Profile::setComputer(const boost::none_t &)
 {
+	if (m_computer && ! m_computer->profiles()->in_cascade())
+	{
+		m_computer->profiles()->remove(boost::dynamic_pointer_cast<Profile>(shared_from_this()), false);
+	}
+
 	m_computer.reset();
 	mark_dirty();
 }
 
 void Profile::setComputer(DiveComputer::Ptr value)
 {
+	if (m_computer && ! m_computer->profiles()->in_cascade())
+	{
+		m_computer->profiles()->remove(boost::dynamic_pointer_cast<Profile>(shared_from_this()), false);
+	}
+
+	if (value && ! value->profiles()->in_cascade())
+	{
+		value->profiles()->add(boost::dynamic_pointer_cast<Profile>(shared_from_this()), false);
+	}
+
 	m_computer.swap(value);
 	mark_dirty();
 }
 
 void Profile::setDive(const boost::none_t &)
 {
+	if (m_dive && ! m_dive->profiles()->in_cascade())
+	{
+		m_dive->profiles()->remove(boost::dynamic_pointer_cast<Profile>(shared_from_this()), false);
+	}
+
 	m_dive.reset();
 	mark_dirty();
 }
 
 void Profile::setDive(Dive::Ptr value)
 {
+	if (m_dive && ! m_dive->profiles()->in_cascade())
+	{
+		m_dive->profiles()->remove(boost::dynamic_pointer_cast<Profile>(shared_from_this()), false);
+	}
+
+	if (value && ! value->profiles()->in_cascade())
+	{
+		value->profiles()->add(boost::dynamic_pointer_cast<Profile>(shared_from_this()), false);
+	}
+
 	m_dive.swap(value);
 	mark_dirty();
 }

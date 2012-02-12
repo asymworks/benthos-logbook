@@ -89,6 +89,8 @@ Mix::Ptr MixMapper::doLoad(int64_t id, cursor::row_t r) const
 {
 	Mix::Ptr o(new logbook::Mix);
 
+	mark_persistent_loading(o);
+
 	set_persistent_id(o, id);
 	SET_VARIANT(o, setName, r[1], std::string);
 

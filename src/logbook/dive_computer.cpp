@@ -59,6 +59,12 @@ protected:
 		return df->findByComputer(obj->id());
 	}
 
+	//! @return Loaded Object from Database
+	virtual Dive::Ptr load(boost::shared_ptr<Session> s, int64_t id) const
+	{
+		return s->finder<Dive>()->find(id);
+	}
+
 	//! @brief Link this Object to the Owning Object
 	virtual void link(Dive::Ptr d, DiveComputer::Ptr t) const
 	{
@@ -101,6 +107,12 @@ protected:
 	{
 		IProfileFinder::Ptr df = boost::shared_dynamic_cast<IProfileFinder>(obj->session()->finder<Profile>());
 		return df->findByComputer(obj->id());
+	}
+
+	//! @return Loaded Object from Database
+	virtual Profile::Ptr load(boost::shared_ptr<Session> s, int64_t id) const
+	{
+		return s->finder<Profile>()->find(id);
 	}
 
 	//! @brief Link this Object to the Owning Object

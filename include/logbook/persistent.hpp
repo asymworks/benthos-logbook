@@ -90,6 +90,15 @@ public:
 	//! @return Identifier
 	int64_t id() const;
 
+	//! @return If the Persistent has been Deleted
+	inline bool is_deleted() const { return m_deleted; }
+
+	//! @return If the Persistent has been Modified
+	inline bool is_dirty() const { return m_dirty; }
+
+	//! @return If the Persistent is currently Loading
+	inline bool is_loading() const { return m_loading; }
+
 	//! @return Owning Session
 	SessionPtr session() const;
 
@@ -101,8 +110,14 @@ protected:
 	//! Mark the Persistent as Clean
 	virtual void mark_clean();
 
+	//! Mark the Persistent as Deleted
+	virtual void mark_deleted();
+
 	//! Mark the Persistent as Dirty
 	virtual void mark_dirty();
+
+	//! Mark the Persistent as Loading
+	virtual void mark_loading();
 
 	/**
 	 * @brief Set the Identifier Field
@@ -137,12 +152,18 @@ public:
 		virtual ~Access() { }
 	public:
 		void mark_persistent_clean(Ptr o) const { o->mark_clean(); }
+		void mark_persistent_deleted(Ptr o) const { o->mark_deleted(); }
 		void mark_persistent_dirty(Ptr o) const { o->mark_dirty(); }
+		void mark_persistent_loading(Ptr o) const { o->mark_loading(); }
 		void set_persistent_id(Ptr o, int64_t id) const { o->set_id(id); }
 		void set_persistent_session(Ptr o, SessionPtr p) const { o->set_session(p); }
 	};
 
 private:
+	bool				m_deleted;
+	bool				m_dirty;
+	bool				m_loading;
+
 	int64_t				m_id;
 	SessionWPtr			m_session;
 

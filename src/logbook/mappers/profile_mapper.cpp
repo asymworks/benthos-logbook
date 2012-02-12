@@ -119,11 +119,29 @@ void ProfileMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const
 	s->bind(8, o->raw_profile());
 }
 
+std::list<Persistent::Ptr> ProfileMapper::cascade_add(Persistent::Ptr p)
+{
+	std::list<Persistent::Ptr> result;
+	Profile::Ptr o = downcast(p);
+
+	if (! o)
+		return result;
+
+	if (o->computer())
+		result.push_back(o->computer());
+	if (o->dive())
+		result.push_back(o->dive());
+
+	return result;
+}
+
 #define SET_VARIANT(o, f, v, t) if ((v).is_null()) o->f(boost::none); else o->f(v.as<t >())
 
 Profile::Ptr ProfileMapper::doLoad(int64_t id, cursor::row_t r) const
 {
 	Profile::Ptr o(new logbook::Profile);
+
+	mark_persistent_loading(o);
 
 	IFinder<Dive>::Ptr dive_finder(m_session.lock()->finder<Dive>());
 	IFinder<DiveComputer>::Ptr cmp_finder(m_session.lock()->finder<DiveComputer>());

@@ -78,6 +78,15 @@ public:
 public:
 
 	/**
+	 * @brief Return the list of Persistent Objects to be Cascade-Updated
+	 * @param[in] Domain Object
+	 * @return List of Cascaded Objects
+	 */
+	virtual std::list<Persistent::Ptr> cascade_add(Persistent::Ptr o);
+
+public:
+
+	/**
 	 * @brief Return a list of all Dive Computers
 	 * @return List of Dive Computers
 	 */

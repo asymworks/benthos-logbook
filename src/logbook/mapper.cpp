@@ -70,6 +70,21 @@ void AbstractMapper::beforeUpdate(Persistent::Ptr o)
 {
 }
 
+std::list<Persistent::Ptr> AbstractMapper::cascade_add(Persistent::Ptr o)
+{
+	return std::list<Persistent::Ptr>();
+}
+
+std::list<Persistent::Ptr> AbstractMapper::cascade_delete(Persistent::Ptr o)
+{
+	return std::list<Persistent::Ptr>();
+}
+
+std::list<Persistent::Ptr> AbstractMapper::cascade_detach(Persistent::Ptr o)
+{
+	return std::list<Persistent::Ptr>();
+}
+
 int64_t AbstractMapper::insert(Persistent::Ptr o)
 {
 	beforeInsert(o);
@@ -98,9 +113,7 @@ void AbstractMapper::remove(Persistent::Ptr o)
 	s->bind(1, o->id());
 	s->exec();
 
-	int64_t oId = o->id();
-	set_persistent_id(o, -1);
-	afterDelete(o, oId);
+	afterDelete(o, o->id());
 }
 
 void AbstractMapper::update(Persistent::Ptr o)

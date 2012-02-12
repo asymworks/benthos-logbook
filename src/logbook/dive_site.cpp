@@ -59,6 +59,12 @@ protected:
 		return df->findBySite(obj->id());
 	}
 
+	//! @return Loaded Object from Database
+	virtual Dive::Ptr load(boost::shared_ptr<Session> s, int64_t id) const
+	{
+		return s->finder<Dive>()->find(id);
+	}
+
 	//! @brief Link this Object to the Owning Object
 	virtual void link(Dive::Ptr d, DiveSite::Ptr t) const
 	{

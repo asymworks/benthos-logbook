@@ -28,6 +28,9 @@
  * WITH THE SOFTWARE.
  */
 
+#include <logbook/dive.hpp>
+#include <logbook/profile.hpp>
+
 #include "dive_computer_mapper.hpp"
 
 using namespace logbook;
@@ -98,11 +101,30 @@ void DiveComputerMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const
 	s->bind(13, o->sw_version());
 }
 
+std::list<Persistent::Ptr> DiveComputerMapper::cascade_add(Persistent::Ptr p)
+{
+	std::list<Persistent::Ptr> result;
+	DiveComputer::Ptr o = downcast(p);
+
+	if (! o)
+		return result;
+
+	std::list<Dive::Ptr> dives = o->dives()->all();
+	result.assign(dives.begin(), dives.end());
+
+	std::list<Profile::Ptr> profiles = o->profiles()->all();
+	result.insert(result.end(), profiles.begin(), profiles.end());
+
+	return result;
+}
+
 #define SET_VARIANT(o, f, v, t) if ((v).is_null()) o->f(boost::none); else o->f(v.as<t>())
 
 DiveComputer::Ptr DiveComputerMapper::doLoad(int64_t id, cursor::row_t r) const
 {
 	DiveComputer::Ptr o(new logbook::DiveComputer);
+
+	mark_persistent_loading(o);
 
 	set_persistent_id(o, id);
 	o->setDriver(r[1].as<std::string>());
