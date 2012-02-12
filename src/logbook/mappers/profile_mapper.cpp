@@ -71,27 +71,7 @@ ProfileMapper::~ProfileMapper()
 
 void ProfileMapper::bindInsert(statement::ptr s, Persistent::Ptr p) const
 {
-	Profile::Ptr o = downcast(p);
-
-	if (o->dive())
-		s->bind(2, o->dive()->id());
-	else
-		s->bind(2);
-
-	if (o->computer())
-		s->bind(3, o->computer()->id());
-	else
-		s->bind(3);
-
-	if (o->profile().empty())
-		s->bind(5);
-	else
-		s->bind(5, profileToJSON(o->profile()));
-
-	s->bind(4, o->name());
-	s->bind(6, o->vendor());
-	s->bind(7, o->imported());
-	s->bind(8, o->raw_profile());
+	bindUpdate(s, p);
 }
 
 void ProfileMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const

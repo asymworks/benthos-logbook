@@ -63,13 +63,7 @@ MixMapper::~MixMapper()
 
 void MixMapper::bindInsert(statement::ptr s, Persistent::Ptr p) const
 {
-	Mix::Ptr o = downcast(p);
-
-	s->bind(2, o->name());
-	s->bind(3, (int)o->o2_permil());
-	s->bind(4, (int)o->he_permil());
-	s->bind(5, (int)o->h2_permil());
-	s->bind(6, (int)o->ar_permil());
+	bindUpdate(s, p);
 }
 
 void MixMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const

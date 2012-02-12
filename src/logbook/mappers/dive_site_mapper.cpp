@@ -63,25 +63,7 @@ DiveSiteMapper::~DiveSiteMapper()
 
 void DiveSiteMapper::bindInsert(statement::ptr s, Persistent::Ptr p) const
 {
-	DiveSite::Ptr o = downcast(p);
-
-	s->bind(2, o->name());
-	s->bind(3, o->place());
-
-	// Country type is special case
-	if (! o->country_().is_initialized())
-		s->bind(4, boost::none);
-	else
-		s->bind(4, o->country_()->code());
-
-	s->bind(5, o->latitude());
-	s->bind(6, o->longitude());
-	s->bind(7, o->platform());
-	s->bind(8, o->water_body());
-	s->bind(9, o->bottom());
-	s->bind(10, o->salinity());
-	s->bind(11, o->timezone());
-	s->bind(12, o->comments());
+	bindUpdate(s, p);
 }
 
 void DiveSiteMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const

@@ -146,53 +146,7 @@ std::vector<std::string> DiveMapper::allTags() const
 
 void DiveMapper::bindInsert(statement::ptr s, Persistent::Ptr p) const
 {
-	Dive::Ptr o = downcast(p);
-
-	s->bind(2, o->datetime());
-	s->bind(3, o->utc_offset());
-	s->bind(4, o->number());
-
-	if (o->site())
-		s->bind(5, o->site()->id());
-	else
-		s->bind(5, boost::none);
-
-	if (o->computer())
-		s->bind(6, o->computer()->id());
-	else
-		s->bind(6, boost::none);
-
-	s->bind(7, o->repetition());
-	s->bind(8, o->interval());
-	s->bind(9, o->duration());
-	s->bind(10, o->max_depth());
-	s->bind(11, o->avg_depth());
-	s->bind(12, o->air_temp());
-	s->bind(13, o->max_temp());
-	s->bind(14, o->min_temp());
-	s->bind(15, o->start_pressure());
-	s->bind(16, o->end_pressure());
-
-	if (o->mix())
-		s->bind(17, o->mix()->id());
-	else
-		s->bind(17, boost::none);
-
-	s->bind(18, o->salinity());
-	s->bind(19, o->comments());
-	s->bind(20, o->rating());
-	s->bind(21, o->safety_stop() ? 1 : 0);
-	s->bind(22, o->stop_depth());
-	s->bind(23, o->stop_time());
-	s->bind(24, o->weight());
-	s->bind(25, o->visibility_category());
-	s->bind(26, o->visibility_distance());
-	s->bind(27, o->start_pressure_group());
-	s->bind(28, o->end_pressure_group());
-	s->bind(29, o->rnt());
-	s->bind(30, o->desat_time());
-	s->bind(31, o->nofly_time());
-	s->bind(32, o->algorithm());
+	bindUpdate(s, p);
 }
 
 void DiveMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const

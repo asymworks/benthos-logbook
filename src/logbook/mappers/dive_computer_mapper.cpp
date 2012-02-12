@@ -67,20 +67,7 @@ DiveComputerMapper::~DiveComputerMapper()
 
 void DiveComputerMapper::bindInsert(statement::ptr s, Persistent::Ptr p) const
 {
-	DiveComputer::Ptr o = downcast(p);
-
-	s->bind(2, o->driver());
-	s->bind(3, o->serial());
-	s->bind(4, o->parser());
-	s->bind(5, o->token());
-	s->bind(6, o->last_transfer());
-	s->bind(7, o->driver_args());
-	s->bind(8, o->parser_args());
-	s->bind(9, o->name());
-	s->bind(10, o->manufacturer());
-	s->bind(11, o->model());
-	s->bind(12, o->hw_version());
-	s->bind(13, o->sw_version());
+	bindUpdate(s, p);
 }
 
 void DiveComputerMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const
