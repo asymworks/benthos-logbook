@@ -111,7 +111,7 @@ public:
 	 * the emit() function should be raised as exceptions which subclass
 	 * std::exception to ensure handleError is called.
 	 */
-	virtual void emit(const log_record & rec) = 0;
+	virtual void emit_(const log_record & rec) = 0;
 
 	/**
 	 * @brief Apply Filters to the Log Record
