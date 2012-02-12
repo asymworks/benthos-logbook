@@ -353,6 +353,16 @@ void Session::register_(Persistent::Ptr p)
 		register_update(p);
 }
 
+void Session::register_loaded(Persistent::Ptr p)
+{
+	id_key_type key(p->type_info(), p->id());
+	if ((m_idmap.find(key) != m_idmap.end()) && (! m_idmap[key].expired()) && (m_idmap[key].lock() != p))
+		throw std::runtime_error("Stale data detected in Identity Map: %s[%d]",
+			p->type_info()->name(), p->id());
+
+	m_idmap[key] = p;
+}
+
 void Session::register_new(Persistent::Ptr p)
 {
 	if (p->id() != -1)

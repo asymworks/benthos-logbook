@@ -58,6 +58,15 @@ void AbstractMapper::afterUpdate(Persistent::Ptr o)
 {
 }
 
+void AbstractMapper::attachToSession(Persistent::Ptr o)
+{
+	Session::Ptr s = m_session.lock();
+	if (! s)
+		throw std::runtime_error("Session Pointer has Expired");
+	s->register_loaded(o);
+	set_persistent_session(o, s);
+}
+
 void AbstractMapper::beforeDelete(Persistent::Ptr o)
 {
 }

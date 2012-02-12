@@ -277,6 +277,9 @@ protected:
 	//! Register an Object as Persistent with this Session (New or for Updates)
 	void register_(Persistent::Ptr p);
 
+	//! Register a newly loaded Object with the Session (Called by AbstractMapper)
+	void register_loaded(Persistent::Ptr p);
+
 	//! Register a new Object with the Session
 	void register_new(Persistent::Ptr p);
 
@@ -325,6 +328,9 @@ private:
 	statement::ptr		m_beginsp;		///< Begin Savepoint Statement
 	statement::ptr		m_releasesp;	///< Release Savepoint Statement
 	statement::ptr		m_rollbacksp;	///< Rollback Savepoint Statement
+
+private:
+	friend class AbstractMapper;
 
 };
 

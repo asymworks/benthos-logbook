@@ -143,6 +143,9 @@ protected:
 
 protected:
 
+	//! Attach a newly-loaded Object to the Session
+	void attachToSession(Persistent::Ptr o);
+
 	//! Bind an Object to the Insert Statement
 	virtual void bindInsert(statement::ptr s, Persistent::Ptr o) const = 0;
 
@@ -237,10 +240,10 @@ protected:
 			return downcast(m_loaded[id].lock());
 
 		typename D::Ptr result = doLoad(id, r);
-		set_persistent_session(result, m_session.lock());
 		m_loaded[id] = Persistent::WeakPtr(upcast(result));
-		mark_persistent_clean(result);
+		attachToSession(result);
 		afterLoaded(result);
+		mark_persistent_clean(result);
 		return result;
 	}
 
