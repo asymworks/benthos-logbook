@@ -47,7 +47,7 @@ void stream_handler::flush()
 	m_stream.flush();
 }
 
-void stream_handler::emit(const log_record & rec)
+void stream_handler::emit_(const log_record & rec)
 {
 	m_stream << format(rec);
 }

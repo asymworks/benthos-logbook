@@ -76,7 +76,7 @@ public:
 	 *
 	 * Emits the log record to the output stream using the format() method.
 	 */
-	virtual void emit(const log_record & rec);
+	virtual void emit_(const log_record & rec);
 
 private:
 	std::ostream &		m_stream;
