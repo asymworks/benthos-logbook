@@ -118,7 +118,8 @@ void Dive::Tags::remove(const std::string & tag)
 }
 
 Dive::Dive()
-	: TypedPersistent<Dive>(), m_repetition(1), m_tags(new Tags)
+	: TypedPersistent<Dive>(), m_repetition(1), m_interval(0), m_duration(0),
+	  m_maxdepth(0), m_stop(false), m_tags(new Tags)
 {
 }
 
