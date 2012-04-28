@@ -11,5 +11,6 @@ This code is released under a BSD license.
 
 BUILD DEPENDENCIES
 ------------------
+boost (headers only)
 sqlite3
 yajl

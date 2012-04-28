@@ -169,7 +169,7 @@ public:
 		_COUNTRIES["LB"] = "Lebanon";
 		_COUNTRIES["LS"] = "Lesotho";
 		_COUNTRIES["LR"] = "Liberia";
-		_COUNTRIES["LY"] = "Libyan Arab Jamahiriya";
+		_COUNTRIES["LY"] = "Libya";
 		_COUNTRIES["LI"] = "Liechtenstein";
 		_COUNTRIES["LT"] = "Lithuania";
 		_COUNTRIES["LU"] = "Luxembourg";
@@ -423,7 +423,7 @@ public:
 		_COUNTRIES_PLUS["LB"] = "Lebanon";
 		_COUNTRIES_PLUS["LS"] = "Lesotho";
 		_COUNTRIES_PLUS["LR"] = "Liberia";
-		_COUNTRIES_PLUS["LY"] = "Libyan Arab Jamahiriya";
+		_COUNTRIES_PLUS["LY"] = "Libya";
 		_COUNTRIES_PLUS["LI"] = "Liechtenstein";
 		_COUNTRIES_PLUS["LT"] = "Lithuania";
 		_COUNTRIES_PLUS["LU"] = "Luxembourg";
@@ -683,7 +683,7 @@ public:
 		_OFFICIAL_COUNTRIES["LB"] = "LEBANON";
 		_OFFICIAL_COUNTRIES["LS"] = "LESOTHO";
 		_OFFICIAL_COUNTRIES["LR"] = "LIBERIA";
-		_OFFICIAL_COUNTRIES["LY"] = "LIBYAN ARAB JAMAHIRIYA";
+		_OFFICIAL_COUNTRIES["LY"] = "LIBYA";
 		_OFFICIAL_COUNTRIES["LI"] = "LIECHTENSTEIN";
 		_OFFICIAL_COUNTRIES["LT"] = "LITHUANIA";
 		_OFFICIAL_COUNTRIES["LU"] = "LUXEMBOURG";
