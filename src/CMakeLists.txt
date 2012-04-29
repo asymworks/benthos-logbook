@@ -34,7 +34,7 @@
 #
 
 # C++ Flags
-add_definitions(-std=c++0x)
+add_definitions( -std=c++0x -fPIC )
 
 # Boost Headers Required
 find_package( Boost 1.39 REQUIRED )
@@ -59,7 +59,7 @@ add_subdirectory(logging)
 add_subdirectory(dbapi)
 
 # Build the logbook library
-add_library(logbook
+add_library(logbook SHARED
 	$<TARGET_OBJECTS:logbook_module>
 	$<TARGET_OBJECTS:logging_module>
 	$<TARGET_OBJECTS:dbapi_module>
