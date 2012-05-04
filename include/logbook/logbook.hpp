@@ -40,6 +40,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 
+#include <logbook/config.hpp>
 #include <logbook/dbapi.hpp>
 #include <logbook/logging.hpp>
 

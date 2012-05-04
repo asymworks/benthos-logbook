@@ -48,10 +48,14 @@ find_package( Yajl REQUIRED )
 # Setup Include Directories
 include_directories(
 	${CMAKE_SOURCE_DIR}/include
+	${CMAKE_CURRENT_BINARY_DIR}/include
 	${BOOST_INCLUDE_DIRS}
 	${SQLITE3_INCLUDE_DIRS}
 	${YAJL_INCLUDE_DIRS}
 )
+
+# Configure Files
+configure_file(${CMAKE_SOURCE_DIR}/include/logbook/config.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/include/logbook/config.hpp)
 
 # Build the logbook, logging and dbapi modules
 add_subdirectory(logbook)
@@ -60,6 +64,7 @@ add_subdirectory(dbapi)
 
 # Build the logbook library
 add_library(logbook SHARED
+	${CMAKE_CURRENT_BINARY_DIR}/include/logbook/config.hpp
 	$<TARGET_OBJECTS:logbook_module>
 	$<TARGET_OBJECTS:logging_module>
 	$<TARGET_OBJECTS:dbapi_module>
@@ -70,3 +75,14 @@ target_link_libraries(logbook
 	${SQLITE3_LIBRARIES}
 	${YAJL_LIBRARIES}
 )
+
+# Install Shared Library
+install(TARGETS logbook
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib/static
+)
+
+# Install Headers
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include
+	PATTERN "*.in" EXCLUDE)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/logbook/config.hpp DESTINATION include/logbook)
