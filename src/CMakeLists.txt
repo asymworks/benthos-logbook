@@ -61,6 +61,12 @@ configure_file(
 	@ONLY
 )
 
+configure_file(
+	${CMAKE_SOURCE_DIR}/liblogbook.pc.in
+	${CMAKE_BINARY_DIR}/liblogbook.pc
+	@ONLY
+)
+
 # Build the logbook, logging and dbapi modules
 add_subdirectory(logbook)
 add_subdirectory(logging)
@@ -90,3 +96,4 @@ install(TARGETS logbook
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include
 	PATTERN "*.in" EXCLUDE)
 install(FILES ${CMAKE_BINARY_DIR}/include/logbook/config.hpp DESTINATION include/logbook)
+install(FILES ${CMAKE_BINARY_DIR}/liblogbook.pc DESTINATION lib/pkgconfig)
