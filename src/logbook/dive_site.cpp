@@ -142,6 +142,14 @@ const std::string & DiveSite::name() const
 	return m_name;
 }
 
+unsigned int DiveSite::num_dives() const
+{
+	if (id() == -1)
+		return 0;
+	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
+	return df->countBySite(id());
+}
+
 const boost::optional<std::string> & DiveSite::place() const
 {
 	return m_place;
@@ -150,6 +158,26 @@ const boost::optional<std::string> & DiveSite::place() const
 const boost::optional<std::string> & DiveSite::platform() const
 {
 	return m_platform;
+}
+
+const boost::optional<double> & DiveSite::rating() const
+{
+	static boost::optional<double> o;
+	if (id() == -1)
+	{
+		o.reset();
+		return o;
+	}
+
+	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
+	dbapi::variant v = df->ratingForSite(id());
+
+	if (v.is_null())
+		o.reset();
+	else
+		o = v.get<double>();
+
+	return o;
 }
 
 const boost::optional<std::string> & DiveSite::salinity() const

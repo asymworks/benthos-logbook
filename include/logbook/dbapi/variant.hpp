@@ -47,6 +47,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <stdexcept>
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>

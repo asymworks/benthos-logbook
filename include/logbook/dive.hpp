@@ -46,6 +46,8 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <logbook/dbapi/variant.hpp>
+
 #include <logbook/collection.hpp>
 #include <logbook/dive_computer.hpp>
 #include <logbook/dive_site.hpp>
@@ -461,6 +463,20 @@ struct IDiveFinder: public IFinder<Dive>
 	virtual std::vector<std::string> allTags() const = 0;
 
 	/**
+	 * @brief Count Dives from a give Dive Computer
+	 * @param[in] Dive Computer Id
+	 * @return Number of Dives
+	 */
+	virtual unsigned int countByComputer(int64_t computer_id) const = 0;
+
+	/**
+	 * @brief Count Dives at a give Dive Site
+	 * @param[in] Dive Site Id
+	 * @return Number of Dives
+	 */
+	virtual unsigned int countBySite(int64_t computer_id) const = 0;
+
+	/**
 	 * @brief Find Dives from a given Dive Computer
 	 * @param[in] Dive Computer Id
 	 * @return List of Dives
@@ -473,6 +489,13 @@ struct IDiveFinder: public IFinder<Dive>
 	 * @return List of Dives
 	 */
 	virtual std::vector<Dive::Ptr> findBySite(int64_t site_id) = 0;
+
+	/**
+	 * @brief Get the Average Rating of Dives at a given Site
+	 * @param[in] Dive Site Id
+	 * @return Average Rating or NULL
+	 */
+	virtual dbapi::variant ratingForSite(int64_t site_id) const = 0;
 
 };
 

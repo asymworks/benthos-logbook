@@ -67,6 +67,9 @@ protected:
 	static std::string sql_find_id;		///< Find By Id Statement SQL String
 	static std::string sql_find_site;	///< Find By Site Statement SQL String
 	static std::string sql_find_cpu;	///< Find By Computer Statement SQL String
+	static std::string sql_count_site;	///< Count By Site Statement SQL String
+	static std::string sql_count_cpu;	///< Count By Computer Statement SQL String
+	static std::string sql_avgrating;	///< Average Rating by Site Statement SQL String
 
 	static std::string sql_find_tags;	///< Find Tags by Dive SQL String
 	static std::string sql_drop_tags;	///< Drop Tags by Dive SQL String
@@ -99,6 +102,20 @@ public:
 	virtual std::vector<std::string> allTags() const;
 
 	/**
+	 * @brief Count Dives from a give Dive Computer
+	 * @param[in] Dive Computer Id
+	 * @return Number of Dives
+	 */
+	virtual unsigned int countByComputer(int64_t computer_id) const;
+
+	/**
+	 * @brief Count Dives at a give Dive Site
+	 * @param[in] Dive Site Id
+	 * @return Number of Dives
+	 */
+	virtual unsigned int countBySite(int64_t computer_id) const;
+
+	/**
 	 * @brief Return a list of all Dives
 	 * @return List of Dives
 	 */
@@ -124,6 +141,13 @@ public:
 	 * @return List of Dives
 	 */
 	virtual std::vector<Dive::Ptr> findBySite(int64_t site_id);
+
+	/**
+	 * @brief Get the Average Rating of Dives at a given Site
+	 * @param[in] Dive Site Id
+	 * @return Average Rating or NULL
+	 */
+	variant ratingForSite(int64_t site_id) const;
 
 protected:
 
@@ -155,6 +179,9 @@ protected:
 	dbapi::statement::ptr		m_find_id_stmt;			///< Find By Id Prepared Statement
 	dbapi::statement::ptr		m_find_site_stmt;		///< Find By Site Prepared Statement
 	dbapi::statement::ptr		m_find_cpu_stmt;		///< Find By Computer Prepared Statement
+	dbapi::statement::ptr		m_count_site_stmt;		///< Count By Site Prepared Statement
+	dbapi::statement::ptr		m_count_cpu_stmt;		///< Count By Computer Prepared Statement
+	dbapi::statement::ptr		m_avgrating_stmt;		///< Average Rating for Site Prepared Statement
 
 	dbapi::statement::ptr 		m_find_tags_stmt;		///< Find Tags by Dive Prepared Statement
 	dbapi::statement::ptr 		m_drop_tags_stmt;		///< Drop Tags by Dive Prepared Statement

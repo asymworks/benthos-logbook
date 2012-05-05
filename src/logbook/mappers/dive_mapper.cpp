@@ -58,6 +58,9 @@ std::string DiveMapper::sql_find_all = "select " + columns + " from dives";
 std::string DiveMapper::sql_find_id = "select " + columns + " from dives where id=?1";
 std::string DiveMapper::sql_find_site = "select " + columns + " from dives where site_id=?1";
 std::string DiveMapper::sql_find_cpu = "select " + columns + " from dives where computer_id=?1";
+std::string DiveMapper::sql_count_site = "select count(*) from dives where site_id=?1";
+std::string DiveMapper::sql_count_cpu = "select count(*) from dives where computer_id=?1";
+std::string DiveMapper::sql_avgrating = "select avg(rating) from dives where site_id=?1";
 
 std::string DiveMapper::sql_find_tags = "select tag from divetags where dive_id=?1 order by tag asc";
 std::string DiveMapper::sql_drop_tags = "delete from divetags where dive_id=?1";
@@ -75,6 +78,9 @@ DiveMapper::DiveMapper(boost::shared_ptr<Session> session)
 	m_find_id_stmt = statement::ptr(new statement(m_conn, sql_find_id));
 	m_find_site_stmt = statement::ptr(new statement(m_conn, sql_find_site));
 	m_find_cpu_stmt = statement::ptr(new statement(m_conn, sql_find_cpu));
+	m_count_site_stmt = statement::ptr(new statement(m_conn, sql_count_site));
+	m_count_cpu_stmt = statement::ptr(new statement(m_conn, sql_count_cpu));
+	m_avgrating_stmt = statement::ptr(new statement(m_conn, sql_avgrating));
 
 	m_find_tags_stmt = statement::ptr(new statement(m_conn, sql_find_tags));
 	m_drop_tags_stmt = statement::ptr(new statement(m_conn, sql_drop_tags));
@@ -219,6 +225,28 @@ std::list<Persistent::Ptr> DiveMapper::cascade_add(Persistent::Ptr p)
 	return result;
 }
 
+unsigned int DiveMapper::countByComputer(int64_t computer_id) const
+{
+	m_count_cpu_stmt->reset();
+	m_count_cpu_stmt->bind(1, computer_id);
+	variant res = m_count_cpu_stmt->exec_scalar();
+	int ires = res.get<int>();
+	if (ires <= 0)
+		return 0;
+	return (unsigned int)(ires);
+}
+
+unsigned int DiveMapper::countBySite(int64_t site_id) const
+{
+	m_count_site_stmt->reset();
+	m_count_site_stmt->bind(1, site_id);
+	variant res = m_count_site_stmt->exec_scalar();
+	int ires = res.get<int>();
+	if (ires <= 0)
+		return 0;
+	return (unsigned int)(ires);
+}
+
 #define SET_VARIANT(o, f, v, t) if ((v).is_null()) o->f(boost::none); else o->f(v.as<t>())
 
 Dive::Ptr DiveMapper::doLoad(int64_t id, cursor::row_t r) const
@@ -319,4 +347,11 @@ std::vector<Dive::Ptr> DiveMapper::findBySite(int64_t site_id)
 	dbapi::cursor::ptr c = m_find_site_stmt->exec();
 
 	return loadAll(c);
+}
+
+variant DiveMapper::ratingForSite(int64_t site_id) const
+{
+	m_avgrating_stmt->reset();
+	m_avgrating_stmt->bind(1, site_id);
+	return m_avgrating_stmt->exec_scalar();
 }

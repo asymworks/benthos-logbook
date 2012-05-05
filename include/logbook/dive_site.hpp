@@ -78,6 +78,14 @@ public:
 
 public:
 
+	//! @return Number of Dives at the Site
+	unsigned int num_dives() const;
+
+	//! @return Average Dive Rating
+	const boost::optional<double> & rating() const;
+
+public:
+
 	//! @return Bottom Composition
 	const boost::optional<std::string> & bottom() const;
 
