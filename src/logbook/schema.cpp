@@ -204,6 +204,7 @@ void Schema::create_sites_tbl(dbapi::connection::ptr conn) const
 		"platform varchar, "
 		"waterbody varchar, "
 		"bottom varchar, "
+		"altitude float, "
 		"salinity varchar check (salinity in (\"fresh\",\"salt\")), "
 		"timezone varchar, "
 		"comments text"

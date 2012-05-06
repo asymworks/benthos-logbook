@@ -50,7 +50,7 @@ namespace logbook { namespace mappers {
  * Data Mapper which implements CRUD operations for Dive Site domain objects
  * within the Logbook database.
  */
-class DiveSiteMapper: public Mapper<DiveSite>, public IFinder<DiveSite>
+class DiveSiteMapper: public Mapper<DiveSite>, public IDiveSiteFinder
 {
 public:
 	typedef Mapper<DiveSite>::Ptr	Ptr;
@@ -65,6 +65,10 @@ protected:
 
 	static std::string sql_find_all;	///< Find All Statement SQL String
 	static std::string sql_find_id;		///< Find By Id Statement SQL String
+
+	static std::string sql_distinct_bottom;		///< Find Distinct Values for Bottom SQL String
+	static std::string sql_distinct_platform;	///< Find Distinct Values for Platform SQL String
+	static std::string sql_distinct_waterbody;	///< Find Distinct Values for Water Body SQL String
 
 public:
 
@@ -98,6 +102,15 @@ public:
 	 */
 	virtual DiveSite::Ptr find(int64_t id);
 
+	//! @return Unique Field Values for DiveSite::bottom
+	virtual std::vector<std::string> bottomValues() const;
+
+	//! @return Unique Field Values for DiveSite::platform
+	virtual std::vector<std::string> platformValues() const;
+
+	//! @return Unique Field Values for DiveSite::water_body
+	virtual std::vector<std::string> waterBodyValues() const;
+
 protected:
 
 	//! Bind an Object to the Insert Statement
@@ -110,8 +123,12 @@ protected:
 	virtual DiveSite::Ptr doLoad(int64_t id, dbapi::cursor::row_t r) const;
 
 protected:
-	dbapi::statement::ptr		m_find_all_stmt;		///< Find All Prepared Statement
-	dbapi::statement::ptr		m_find_id_stmt;			///< Find By Id Prepared Statement
+	dbapi::statement::ptr		m_find_all_stmt;			///< Find All Prepared Statement
+	dbapi::statement::ptr		m_find_id_stmt;				///< Find By Id Prepared Statement
+
+	dbapi::statement::ptr		m_distinct_bottom_stmt;		///< Find Distinct Values for Bottom Prepared Statement
+	dbapi::statement::ptr		m_distinct_platform_stmt;	///< Find Distinct Values for Platform Prepared Statement
+	dbapi::statement::ptr		m_distinct_waterbody_stmt;	///< Find Distinct Values for Water Body Prepared Statement
 
 };
 

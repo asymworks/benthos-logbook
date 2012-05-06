@@ -94,6 +94,11 @@ DiveSite::~DiveSite()
 {
 }
 
+const boost::optional<double> & DiveSite::altitude() const
+{
+	return m_altitude;
+}
+
 const boost::optional<std::string> & DiveSite::bottom() const
 {
 	return m_bottom;
@@ -193,6 +198,18 @@ const boost::optional<std::string> & DiveSite::timezone() const
 const boost::optional<std::string> & DiveSite::water_body() const
 {
 	return m_waterbody;
+}
+
+void DiveSite::setAltitude(const boost::none_t &)
+{
+	m_altitude.reset();
+	mark_dirty();
+}
+
+void DiveSite::setAltitude(double value)
+{
+	m_altitude = value;
+	mark_dirty();
 }
 
 void DiveSite::setBottom(const boost::none_t &)

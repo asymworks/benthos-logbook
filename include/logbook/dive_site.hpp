@@ -86,6 +86,9 @@ public:
 
 public:
 
+	//! @return Altitude
+	const boost::optional<double> & altitude() const;
+
 	//! @return Bottom Composition
 	const boost::optional<std::string> & bottom() const;
 
@@ -118,6 +121,12 @@ public:
 
 	//! @return Water Body
 	const boost::optional<std::string> & water_body() const;
+
+	//! @brief Set the Altitude to NULL
+	void setAltitude(const boost::none_t &);
+
+	//! @param[in] Altitude
+	void setAltitude(double value);
 
 	//! @brief Set the Bottom Composition to NULL
 	void setBottom(const boost::none_t &);
@@ -194,11 +203,33 @@ private:
 	boost::optional<std::string>			m_waterbody;	///< Body of Water
 	boost::optional<std::string>			m_bottom;		///< Bottom Composition
 	boost::optional<std::string>			m_salinity;		///< Salinity ('fresh' or 'salt')
+	boost::optional<double>					m_altitude;		///< Altitude [m]
 
 	boost::optional<std::string>			m_timezone;		///< Time Zone
 	boost::optional<std::string>			m_comments;		///< Comments
 
 	mutable IObjectCollection<Dive>::Ptr	m_dives;		///< Dive Collection
+
+};
+
+/**
+ * @brief Dive Finder Interface
+ *
+ * Extends IFinder<DiveSite> to add various lookup methods for field values.
+ */
+struct IDiveSiteFinder: public IFinder<DiveSite>
+{
+	typedef boost::shared_ptr<IDiveSiteFinder>	Ptr;
+	virtual ~IDiveSiteFinder() { }
+
+	//! @return Unique Field Values for DiveSite::bottom
+	virtual std::vector<std::string> bottomValues() const = 0;
+
+	//! @return Unique Field Values for DiveSite::platform
+	virtual std::vector<std::string> platformValues() const = 0;
+
+	//! @return Unique Field Values for DiveSite::water_body
+	virtual std::vector<std::string> waterBodyValues() const = 0;
 
 };
 

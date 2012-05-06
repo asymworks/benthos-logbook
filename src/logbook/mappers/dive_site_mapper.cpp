@@ -36,15 +36,20 @@ using namespace logbook;
 using namespace logbook::mappers;
 
 std::string DiveSiteMapper::columns = "id, name, place, country, latitude, "
-		"longitude, platform, waterbody, bottom, salinity, timezone, comments";
+		"longitude, platform, waterbody, bottom, altitude, salinity, timezone, "
+		"comments";
 
-std::string DiveSiteMapper::sql_insert = "insert into sites values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)";
+std::string DiveSiteMapper::sql_insert = "insert into sites values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)";
 std::string DiveSiteMapper::sql_update = "update sites set name=?2, place=?3, country=?4, latitude=?5, longitude=?6, "
-		"platform=?7, waterbody=?8, bottom=?9, salinity=?10, timezone=?11, comments=?12 where id=?1";
+		"platform=?7, waterbody=?8, bottom=?9, altitude=?10, salinity=?11, timezone=?12, comments=?13 where id=?1";
 std::string DiveSiteMapper::sql_delete = "delete from sites where id=?1";
 
 std::string DiveSiteMapper::sql_find_all = "select " + columns + " from sites";
 std::string DiveSiteMapper::sql_find_id = "select " + columns + " from sites where id=?1";
+
+std::string DiveSiteMapper::sql_distinct_bottom = "select distinct bottom from sites where bottom is not null order by bottom asc";
+std::string DiveSiteMapper::sql_distinct_platform = "select distinct platform from sites where platform is not null order by platform asc";
+std::string DiveSiteMapper::sql_distinct_waterbody = "select distinct waterbody from sites where waterbody is not null order by waterbody asc";
 
 DiveSiteMapper::DiveSiteMapper(boost::shared_ptr<Session> session)
 	: Mapper<DiveSite>(session)
@@ -55,6 +60,10 @@ DiveSiteMapper::DiveSiteMapper(boost::shared_ptr<Session> session)
 
 	m_find_all_stmt = statement::ptr(new statement(m_conn, sql_find_all));
 	m_find_id_stmt = statement::ptr(new statement(m_conn, sql_find_id));
+
+	m_distinct_bottom_stmt = statement::ptr(new statement(m_conn, sql_distinct_bottom));
+	m_distinct_platform_stmt = statement::ptr(new statement(m_conn, sql_distinct_platform));
+	m_distinct_waterbody_stmt = statement::ptr(new statement(m_conn, sql_distinct_waterbody));
 }
 
 DiveSiteMapper::~DiveSiteMapper()
@@ -84,9 +93,10 @@ void DiveSiteMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const
 	s->bind(7, o->platform());
 	s->bind(8, o->water_body());
 	s->bind(9, o->bottom());
-	s->bind(10, o->salinity());
-	s->bind(11, o->timezone());
-	s->bind(12, o->comments());
+	s->bind(10, boost::none);
+	s->bind(11, o->salinity());
+	s->bind(12, o->timezone());
+	s->bind(13, o->comments());
 }
 
 std::list<Persistent::Ptr> DiveSiteMapper::cascade_add(Persistent::Ptr p)
@@ -127,9 +137,10 @@ DiveSite::Ptr DiveSiteMapper::doLoad(int64_t id, cursor::row_t r) const
 	SET_VARIANT(o, setPlatform, r[6], std::string);
 	SET_VARIANT(o, setWaterBody, r[7], std::string);
 	SET_VARIANT(o, setBottom, r[8], std::string);
-	SET_VARIANT(o, setSalinity, r[9], std::string);
-	SET_VARIANT(o, setTimezone, r[10], std::string);
-	SET_VARIANT(o, setComments, r[11], std::string);
+	//SET_VARIANT(o, setAltitude, r[9], double);
+	SET_VARIANT(o, setSalinity, r[10], std::string);
+	SET_VARIANT(o, setTimezone, r[11], std::string);
+	SET_VARIANT(o, setComments, r[12], std::string);
 
 	return o;
 }
@@ -153,4 +164,49 @@ DiveSite::Ptr DiveSiteMapper::find(int64_t id)
 		return logbook::DiveSite::Ptr();
 
 	return load(r);
+}
+
+std::vector<std::string> DiveSiteMapper::bottomValues() const
+{
+	dbapi::cursor::ptr c = m_distinct_bottom_stmt->exec();
+	std::vector<std::string> result;
+
+	std::vector<dbapi::cursor::row_t> rows = c->fetchall();
+	std::vector<dbapi::cursor::row_t>::const_iterator it;
+	for (it = rows.begin(); it != rows.end(); it++)
+	{
+		result.push_back((* it)[0].get<std::string>());
+	}
+
+	return result;
+}
+
+std::vector<std::string> DiveSiteMapper::platformValues() const
+{
+	dbapi::cursor::ptr c = m_distinct_platform_stmt->exec();
+	std::vector<std::string> result;
+
+	std::vector<dbapi::cursor::row_t> rows = c->fetchall();
+	std::vector<dbapi::cursor::row_t>::const_iterator it;
+	for (it = rows.begin(); it != rows.end(); it++)
+	{
+		result.push_back((* it)[0].get<std::string>());
+	}
+
+	return result;
+}
+
+std::vector<std::string> DiveSiteMapper::waterBodyValues() const
+{
+	dbapi::cursor::ptr c = m_distinct_waterbody_stmt->exec();
+	std::vector<std::string> result;
+
+	std::vector<dbapi::cursor::row_t> rows = c->fetchall();
+	std::vector<dbapi::cursor::row_t>::const_iterator it;
+	for (it = rows.begin(); it != rows.end(); it++)
+	{
+		result.push_back((* it)[0].get<std::string>());
+	}
+
+	return result;
 }
