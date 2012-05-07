@@ -99,6 +99,36 @@ const boost::optional<double> & DiveSite::altitude() const
 	return m_altitude;
 }
 
+const boost::optional<double> & DiveSite::avg_depth() const
+{
+	static boost::optional<double> o;
+	if (id() == -1)
+	{
+		o.reset();
+		return o;
+	}
+
+	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
+	o = df->avgDepthForSite(id());
+
+	return o;
+}
+
+const boost::optional<double> & DiveSite::avg_temp() const
+{
+	static boost::optional<double> o;
+	if (id() == -1)
+	{
+		o.reset();
+		return o;
+	}
+
+	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
+	o = df->avgTempForSite(id());
+
+	return o;
+}
+
 const boost::optional<std::string> & DiveSite::bottom() const
 {
 	return m_bottom;
@@ -142,6 +172,21 @@ const boost::optional<double> & DiveSite::longitude() const
 	return m_lng;
 }
 
+const boost::optional<double> & DiveSite::max_depth() const
+{
+	static boost::optional<double> o;
+	if (id() == -1)
+	{
+		o.reset();
+		return o;
+	}
+
+	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
+	o = df->maxDepthForSite(id());
+
+	return o;
+}
+
 const std::string & DiveSite::name() const
 {
 	return m_name;
@@ -175,12 +220,7 @@ const boost::optional<double> & DiveSite::rating() const
 	}
 
 	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
-	dbapi::variant v = df->ratingForSite(id());
-
-	if (v.is_null())
-		o.reset();
-	else
-		o = v.get<double>();
+	o = df->ratingForSite(id());
 
 	return o;
 }

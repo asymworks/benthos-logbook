@@ -78,6 +78,15 @@ public:
 
 public:
 
+	//! @return Average Depth of Dives at the Site
+	const boost::optional<double> & avg_depth() const;
+
+	//! @return Average Temperature of Dives at the Site
+	const boost::optional<double> & avg_temp() const;
+
+	//! @return Maximum Depth of Dives at the Site
+	const boost::optional<double> & max_depth() const;
+
 	//! @return Number of Dives at the Site
 	unsigned int num_dives() const;
 

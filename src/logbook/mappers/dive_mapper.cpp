@@ -58,9 +58,14 @@ std::string DiveMapper::sql_find_all = "select " + columns + " from dives";
 std::string DiveMapper::sql_find_id = "select " + columns + " from dives where id=?1";
 std::string DiveMapper::sql_find_site = "select " + columns + " from dives where site_id=?1";
 std::string DiveMapper::sql_find_cpu = "select " + columns + " from dives where computer_id=?1";
+
 std::string DiveMapper::sql_count_site = "select count(*) from dives where site_id=?1";
 std::string DiveMapper::sql_count_cpu = "select count(*) from dives where computer_id=?1";
+
 std::string DiveMapper::sql_avgrating = "select avg(rating) from dives where site_id=?1";
+std::string DiveMapper::sql_maxdepth = "select max(max_depth) from dives where site_id=?1";
+std::string DiveMapper::sql_avgdepth = "select avg(max_depth) from dives where site_id=?1";
+std::string DiveMapper::sql_avgtemp = "select avg(min_temp) from dives where site_id=?1";
 
 std::string DiveMapper::sql_find_tags = "select tag from divetags where dive_id=?1 order by tag asc";
 std::string DiveMapper::sql_drop_tags = "delete from divetags where dive_id=?1";
@@ -78,9 +83,14 @@ DiveMapper::DiveMapper(boost::shared_ptr<Session> session)
 	m_find_id_stmt = statement::ptr(new statement(m_conn, sql_find_id));
 	m_find_site_stmt = statement::ptr(new statement(m_conn, sql_find_site));
 	m_find_cpu_stmt = statement::ptr(new statement(m_conn, sql_find_cpu));
+
 	m_count_site_stmt = statement::ptr(new statement(m_conn, sql_count_site));
 	m_count_cpu_stmt = statement::ptr(new statement(m_conn, sql_count_cpu));
+
 	m_avgrating_stmt = statement::ptr(new statement(m_conn, sql_avgrating));
+	m_maxdepth_stmt = statement::ptr(new statement(m_conn, sql_maxdepth));
+	m_avgdepth_stmt = statement::ptr(new statement(m_conn, sql_avgdepth));
+	m_avgtemp_stmt = statement::ptr(new statement(m_conn, sql_avgtemp));
 
 	m_find_tags_stmt = statement::ptr(new statement(m_conn, sql_find_tags));
 	m_drop_tags_stmt = statement::ptr(new statement(m_conn, sql_drop_tags));
@@ -349,9 +359,42 @@ std::vector<Dive::Ptr> DiveMapper::findBySite(int64_t site_id)
 	return loadAll(c);
 }
 
-variant DiveMapper::ratingForSite(int64_t site_id) const
+boost::optional<double> DiveMapper::maxDepthForSite(int64_t site_id) const
+{
+	m_maxdepth_stmt->reset();
+	m_maxdepth_stmt->bind(1, site_id);
+	variant res = m_maxdepth_stmt->exec_scalar();
+	if (res.is_null())
+		return boost::optional<double>();
+	return boost::optional<double>(res.as<double>());
+}
+
+boost::optional<double> DiveMapper::avgDepthForSite(int64_t site_id) const
+{
+	m_avgdepth_stmt->reset();
+	m_avgdepth_stmt->bind(1, site_id);
+	variant res = m_avgdepth_stmt->exec_scalar();
+	if (res.is_null())
+		return boost::optional<double>();
+	return boost::optional<double>(res.as<double>());
+}
+
+boost::optional<double> DiveMapper::avgTempForSite(int64_t site_id) const
+{
+	m_avgtemp_stmt->reset();
+	m_avgtemp_stmt->bind(1, site_id);
+	variant res = m_avgtemp_stmt->exec_scalar();
+	if (res.is_null())
+		return boost::optional<double>();
+	return boost::optional<double>(res.as<double>());
+}
+
+boost::optional<double> DiveMapper::ratingForSite(int64_t site_id) const
 {
 	m_avgrating_stmt->reset();
 	m_avgrating_stmt->bind(1, site_id);
-	return m_avgrating_stmt->exec_scalar();
+	variant res = m_avgrating_stmt->exec_scalar();
+	if (res.is_null())
+		return boost::optional<double>();
+	return boost::optional<double>(res.as<double>());
 }

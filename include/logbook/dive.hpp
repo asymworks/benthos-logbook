@@ -491,11 +491,32 @@ struct IDiveFinder: public IFinder<Dive>
 	virtual std::vector<Dive::Ptr> findBySite(int64_t site_id) = 0;
 
 	/**
+	 * @brief Get the Average Maximum Depth of Dives at a given Site
+	 * @param[in] Dive Site Id
+	 * @return Average Depth
+	 */
+	virtual boost::optional<double> avgDepthForSite(int64_t site_id) const = 0;
+
+	/**
+	 * @brief Get the Average Minimum Temperature of Dives at a given Site
+	 * @param[in] Dive Site Id
+	 * @return Average Temperature
+	 */
+	virtual boost::optional<double> avgTempForSite(int64_t site_id) const = 0;
+
+	/**
+	 * @brief Get the Maximum Depth of Dives at a given Site
+	 * @param[in] Dive Site Id
+	 * @return Maximum Depth
+	 */
+	virtual boost::optional<double> maxDepthForSite(int64_t site_id) const = 0;
+
+	/**
 	 * @brief Get the Average Rating of Dives at a given Site
 	 * @param[in] Dive Site Id
-	 * @return Average Rating or NULL
+	 * @return Average Rating
 	 */
-	virtual dbapi::variant ratingForSite(int64_t site_id) const = 0;
+	virtual boost::optional<double> ratingForSite(int64_t site_id) const = 0;
 
 };
 

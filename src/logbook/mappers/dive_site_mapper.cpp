@@ -93,7 +93,7 @@ void DiveSiteMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const
 	s->bind(7, o->platform());
 	s->bind(8, o->water_body());
 	s->bind(9, o->bottom());
-	s->bind(10, boost::none);
+	s->bind(10, o->altitude());
 	s->bind(11, o->salinity());
 	s->bind(12, o->timezone());
 	s->bind(13, o->comments());
@@ -137,7 +137,7 @@ DiveSite::Ptr DiveSiteMapper::doLoad(int64_t id, cursor::row_t r) const
 	SET_VARIANT(o, setPlatform, r[6], std::string);
 	SET_VARIANT(o, setWaterBody, r[7], std::string);
 	SET_VARIANT(o, setBottom, r[8], std::string);
-	//SET_VARIANT(o, setAltitude, r[9], double);
+	SET_VARIANT(o, setAltitude, r[9], double);
 	SET_VARIANT(o, setSalinity, r[10], std::string);
 	SET_VARIANT(o, setTimezone, r[11], std::string);
 	SET_VARIANT(o, setComments, r[12], std::string);

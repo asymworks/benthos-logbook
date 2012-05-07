@@ -70,6 +70,9 @@ protected:
 	static std::string sql_count_site;	///< Count By Site Statement SQL String
 	static std::string sql_count_cpu;	///< Count By Computer Statement SQL String
 	static std::string sql_avgrating;	///< Average Rating by Site Statement SQL String
+	static std::string sql_maxdepth;	///< Maximum Depth by Site Statement SQL String
+	static std::string sql_avgdepth;	///< Average Depth by Site Statement SQL String
+	static std::string sql_avgtemp;		///< Average Temperature by Site Statement SQL String
 
 	static std::string sql_find_tags;	///< Find Tags by Dive SQL String
 	static std::string sql_drop_tags;	///< Drop Tags by Dive SQL String
@@ -143,11 +146,32 @@ public:
 	virtual std::vector<Dive::Ptr> findBySite(int64_t site_id);
 
 	/**
+	 * @brief Get the Average Maximum Depth of Dives at a given Site
+	 * @param[in] Dive Site Id
+	 * @return Average Depth
+	 */
+	virtual boost::optional<double> avgDepthForSite(int64_t site_id) const;
+
+	/**
+	 * @brief Get the Average Minimum Temperature of Dives at a given Site
+	 * @param[in] Dive Site Id
+	 * @return Average Temperature
+	 */
+	virtual boost::optional<double> avgTempForSite(int64_t site_id) const;
+
+	/**
+	 * @brief Get the Maximum Depth of Dives at a given Site
+	 * @param[in] Dive Site Id
+	 * @return Maximum Depth
+	 */
+	virtual boost::optional<double> maxDepthForSite(int64_t site_id) const;
+
+	/**
 	 * @brief Get the Average Rating of Dives at a given Site
 	 * @param[in] Dive Site Id
 	 * @return Average Rating or NULL
 	 */
-	variant ratingForSite(int64_t site_id) const;
+	virtual boost::optional<double> ratingForSite(int64_t site_id) const;
 
 protected:
 
@@ -182,6 +206,9 @@ protected:
 	dbapi::statement::ptr		m_count_site_stmt;		///< Count By Site Prepared Statement
 	dbapi::statement::ptr		m_count_cpu_stmt;		///< Count By Computer Prepared Statement
 	dbapi::statement::ptr		m_avgrating_stmt;		///< Average Rating for Site Prepared Statement
+	dbapi::statement::ptr		m_maxdepth_stmt;		///< Maximum Depth for Site Prepared Statement
+	dbapi::statement::ptr		m_avgdepth_stmt;		///< Average Depth for Site Prepared Statement
+	dbapi::statement::ptr		m_avgtemp_stmt;			///< Average Temperature for Site Prepared Statement
 
 	dbapi::statement::ptr 		m_find_tags_stmt;		///< Find Tags by Dive Prepared Statement
 	dbapi::statement::ptr 		m_drop_tags_stmt;		///< Drop Tags by Dive Prepared Statement
