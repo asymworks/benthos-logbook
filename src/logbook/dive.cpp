@@ -167,7 +167,7 @@ int Dive::duration() const
 	return m_duration;
 }
 
-const boost::optional<double> Dive::end_pressure() const
+const boost::optional<double> & Dive::end_pressure() const
 {
 	return m_endpx;
 }

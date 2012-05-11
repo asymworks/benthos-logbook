@@ -163,7 +163,7 @@ public:
 	int duration() const;
 
 	//! @return Ending Tank Pressure in bar
-	const boost::optional<double> end_pressure() const;
+	const boost::optional<double> & end_pressure() const;
 
 	//! @return Ending Pressure Group
 	const boost::optional<std::string> & end_pressure_group() const;
