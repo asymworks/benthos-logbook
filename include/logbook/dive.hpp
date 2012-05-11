@@ -159,7 +159,7 @@ public:
 	//! @return Desaturation Time in Minutes
 	const boost::optional<int> & desat_time() const;
 
-	//! @return Dive Duration in Seconds
+	//! @return Dive Duration in Minutes
 	int duration() const;
 
 	//! @return Ending Tank Pressure in bar
@@ -273,7 +273,7 @@ public:
 	//! @param[in] Desaturation Time in Minutes
 	void setDesatTime(int value);
 
-	//! @param[in] Dive Duration in Seconds
+	//! @param[in] Dive Duration in Minutes
 	void setDuration(int value);
 
 	//! @brief Set the Ending Pressure to NULL
