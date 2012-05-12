@@ -477,11 +477,34 @@ struct IDiveFinder: public IFinder<Dive>
 	virtual unsigned int countBySite(int64_t computer_id) const = 0;
 
 	/**
+	 * @brief Find Dives imported within the given number of days
+	 * @param[in] Number of Days
+	 * @param[in] Maximum Number to Return
+	 * @return List of Dives
+	 */
+	virtual std::vector<Dive::Ptr> findRecentlyImported(unsigned int days, int max) = 0;
+
+	/**
 	 * @brief Find Dives from a given Dive Computer
 	 * @param[in] Dive Computer Id
 	 * @return List of Dives
 	 */
 	virtual std::vector<Dive::Ptr> findByComputer(int64_t computer_id) = 0;
+
+	/**
+	 * @brief Find Dives in a given Country
+	 * @param[in] Country
+	 * @return List of Dives
+	 */
+	virtual std::vector<Dive::Ptr> findByCountry(const country & country_) = 0;
+
+	/**
+	 * @brief Find Dives in a given Time Span
+	 * @param[in] Start Time
+	 * @param[in] End Time
+	 * @return List of Dives
+	 */
+	virtual std::vector<Dive::Ptr> findByDates(time_t start, time_t end) = 0;
 
 	/**
 	 * @brief Find Dives at a given Dive Site

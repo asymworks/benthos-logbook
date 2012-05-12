@@ -48,6 +48,7 @@ std::string DiveSiteMapper::sql_find_all = "select " + columns + " from sites";
 std::string DiveSiteMapper::sql_find_id = "select " + columns + " from sites where id=?1";
 
 std::string DiveSiteMapper::sql_distinct_bottom = "select distinct bottom from sites where bottom is not null order by bottom asc";
+std::string DiveSiteMapper::sql_distinct_countries = "select distinct country from sites where country is not null order by country asc";
 std::string DiveSiteMapper::sql_distinct_platform = "select distinct platform from sites where platform is not null order by platform asc";
 std::string DiveSiteMapper::sql_distinct_waterbody = "select distinct waterbody from sites where waterbody is not null order by waterbody asc";
 
@@ -62,6 +63,7 @@ DiveSiteMapper::DiveSiteMapper(boost::shared_ptr<Session> session)
 	m_find_id_stmt = statement::ptr(new statement(m_conn, sql_find_id));
 
 	m_distinct_bottom_stmt = statement::ptr(new statement(m_conn, sql_distinct_bottom));
+	m_distinct_countries_stmt = statement::ptr(new statement(m_conn, sql_distinct_countries));
 	m_distinct_platform_stmt = statement::ptr(new statement(m_conn, sql_distinct_platform));
 	m_distinct_waterbody_stmt = statement::ptr(new statement(m_conn, sql_distinct_waterbody));
 }
@@ -164,6 +166,27 @@ DiveSite::Ptr DiveSiteMapper::find(int64_t id)
 		return logbook::DiveSite::Ptr();
 
 	return load(r);
+}
+
+std::vector<country> DiveSiteMapper::countries() const
+{
+	dbapi::cursor::ptr c = m_distinct_countries_stmt->exec();
+	std::vector<country> result;
+
+	std::vector<dbapi::cursor::row_t> rows = c->fetchall();
+	std::vector<dbapi::cursor::row_t>::const_iterator it;
+	for (it = rows.begin(); it != rows.end(); it++)
+	{
+		try
+		{
+			result.push_back(country((* it)[0].get<std::string>()));
+		}
+		catch (std::exception & e)
+		{
+		}
+	}
+
+	return result;
 }
 
 std::vector<std::string> DiveSiteMapper::bottomValues() const

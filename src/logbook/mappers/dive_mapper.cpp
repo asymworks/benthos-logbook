@@ -59,6 +59,11 @@ std::string DiveMapper::sql_find_id = "select " + columns + " from dives where i
 std::string DiveMapper::sql_find_site = "select " + columns + " from dives where site_id=?1";
 std::string DiveMapper::sql_find_cpu = "select " + columns + " from dives where computer_id=?1";
 
+std::string DiveMapper::sql_find_ctry = "select " + columns + " from dives where site_id in (select id from sites where country=?1)";
+std::string DiveMapper::sql_find_dates = "select " + columns + " from dives where dive_datetime >= ?1 and dive_datetime <= ?2";
+
+std::string DiveMapper::sql_find_recent = "select " + columns + " from dives where id in (select distinct dive_id from profiles where imported is not null and imported >= ?1 order by imported desc) limit ?2";
+
 std::string DiveMapper::sql_count_site = "select count(*) from dives where site_id=?1";
 std::string DiveMapper::sql_count_cpu = "select count(*) from dives where computer_id=?1";
 
@@ -83,6 +88,11 @@ DiveMapper::DiveMapper(boost::shared_ptr<Session> session)
 	m_find_id_stmt = statement::ptr(new statement(m_conn, sql_find_id));
 	m_find_site_stmt = statement::ptr(new statement(m_conn, sql_find_site));
 	m_find_cpu_stmt = statement::ptr(new statement(m_conn, sql_find_cpu));
+
+	m_find_ctry_stmt = statement::ptr(new statement(m_conn, sql_find_ctry));
+	m_find_dates_stmt = statement::ptr(new statement(m_conn, sql_find_dates));
+
+	m_find_recent_stmt = statement::ptr(new statement(m_conn, sql_find_recent));
 
 	m_count_site_stmt = statement::ptr(new statement(m_conn, sql_count_site));
 	m_count_cpu_stmt = statement::ptr(new statement(m_conn, sql_count_cpu));
@@ -341,11 +351,47 @@ Dive::Ptr DiveMapper::find(int64_t id)
 	return load(r);
 }
 
+std::vector<Dive::Ptr> DiveMapper::findRecentlyImported(unsigned int days, int max)
+{
+	struct tm * tm;
+	time_t now = std::time(NULL);
+	tm = gmtime(& now);
+	tm->tm_mday -= days;
+	tm->tm_isdst = -1;
+	time_t cutoff = mktime(tm);
+
+	m_find_recent_stmt->reset();
+	m_find_recent_stmt->bind(1, cutoff);
+	m_find_recent_stmt->bind(2, max);
+	dbapi::cursor::ptr c = m_find_recent_stmt->exec();
+
+	return loadAll(c);
+}
+
 std::vector<Dive::Ptr> DiveMapper::findByComputer(int64_t computer_id)
 {
 	m_find_cpu_stmt->reset();
 	m_find_cpu_stmt->bind(1, computer_id);
 	dbapi::cursor::ptr c = m_find_cpu_stmt->exec();
+
+	return loadAll(c);
+}
+
+std::vector<Dive::Ptr> DiveMapper::findByCountry(const country & country_)
+{
+	m_find_ctry_stmt->reset();
+	m_find_ctry_stmt->bind(1, country_.code());
+	dbapi::cursor::ptr c = m_find_ctry_stmt->exec();
+
+	return loadAll(c);
+}
+
+std::vector<Dive::Ptr> DiveMapper::findByDates(time_t start, time_t end)
+{
+	m_find_dates_stmt->reset();
+	m_find_dates_stmt->bind(1, start);
+	m_find_dates_stmt->bind(2, end);
+	dbapi::cursor::ptr c = m_find_dates_stmt->exec();
 
 	return loadAll(c);
 }

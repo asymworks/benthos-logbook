@@ -67,6 +67,11 @@ protected:
 	static std::string sql_find_id;		///< Find By Id Statement SQL String
 	static std::string sql_find_site;	///< Find By Site Statement SQL String
 	static std::string sql_find_cpu;	///< Find By Computer Statement SQL String
+	static std::string sql_find_ctry;	///< Find By Country Statement SQL String
+	static std::string sql_find_dates;	///< Find By Dates Statement SQL String
+
+	static std::string sql_find_recent;	///< Find Recently-Imported Statement SQL String
+
 	static std::string sql_count_site;	///< Count By Site Statement SQL String
 	static std::string sql_count_cpu;	///< Count By Computer Statement SQL String
 	static std::string sql_avgrating;	///< Average Rating by Site Statement SQL String
@@ -132,11 +137,34 @@ public:
 	virtual Dive::Ptr find(int64_t id);
 
 	/**
+	 * @brief Find Dives imported within the given number of days
+	 * @param[in] Number of Days
+	 * @param[in] Maximum Number to Return
+	 * @return List of Dives
+	 */
+	virtual std::vector<Dive::Ptr> findRecentlyImported(unsigned int days, int max);
+
+	/**
 	 * @brief Find Dives from a given Dive Computer
 	 * @param[in] Dive Computer Id
 	 * @return List of Dives
 	 */
 	virtual std::vector<Dive::Ptr> findByComputer(int64_t computer_id);
+
+	/**
+	 * @brief Find Dives in a given Country
+	 * @param[in] Country
+	 * @return List of Dives
+	 */
+	virtual std::vector<Dive::Ptr> findByCountry(const country & country_);
+
+	/**
+	 * @brief Find Dives in a given Time Span
+	 * @param[in] Start Time
+	 * @param[in] End Time
+	 * @return List of Dives
+	 */
+	virtual std::vector<Dive::Ptr> findByDates(time_t start, time_t end);
 
 	/**
 	 * @brief Find Dives at a given Dive Site
@@ -203,6 +231,9 @@ protected:
 	dbapi::statement::ptr		m_find_id_stmt;			///< Find By Id Prepared Statement
 	dbapi::statement::ptr		m_find_site_stmt;		///< Find By Site Prepared Statement
 	dbapi::statement::ptr		m_find_cpu_stmt;		///< Find By Computer Prepared Statement
+	dbapi::statement::ptr		m_find_ctry_stmt;		///< Find By Country Prepared Statement
+	dbapi::statement::ptr		m_find_dates_stmt;		///< Find By Dates Prepared Statement
+	dbapi::statement::ptr		m_find_recent_stmt;		///< Find Recently-Imported Prepared Statement
 	dbapi::statement::ptr		m_count_site_stmt;		///< Count By Site Prepared Statement
 	dbapi::statement::ptr		m_count_cpu_stmt;		///< Count By Computer Prepared Statement
 	dbapi::statement::ptr		m_avgrating_stmt;		///< Average Rating for Site Prepared Statement

@@ -234,6 +234,9 @@ struct IDiveSiteFinder: public IFinder<DiveSite>
 	typedef boost::shared_ptr<IDiveSiteFinder>	Ptr;
 	virtual ~IDiveSiteFinder() { }
 
+	//! @return List of Countries
+	virtual std::vector<country> countries() const = 0;
+
 	//! @return Unique Field Values for DiveSite::bottom
 	virtual std::vector<std::string> bottomValues() const = 0;
 

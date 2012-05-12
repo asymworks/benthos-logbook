@@ -67,6 +67,7 @@ protected:
 	static std::string sql_find_id;		///< Find By Id Statement SQL String
 
 	static std::string sql_distinct_bottom;		///< Find Distinct Values for Bottom SQL String
+	static std::string sql_distinct_countries;	///< Find Distinct Values for Country SQL String
 	static std::string sql_distinct_platform;	///< Find Distinct Values for Platform SQL String
 	static std::string sql_distinct_waterbody;	///< Find Distinct Values for Water Body SQL String
 
@@ -102,6 +103,9 @@ public:
 	 */
 	virtual DiveSite::Ptr find(int64_t id);
 
+	//! @return List of Countries
+	virtual std::vector<country> countries() const;
+
 	//! @return Unique Field Values for DiveSite::bottom
 	virtual std::vector<std::string> bottomValues() const;
 
@@ -127,6 +131,7 @@ protected:
 	dbapi::statement::ptr		m_find_id_stmt;				///< Find By Id Prepared Statement
 
 	dbapi::statement::ptr		m_distinct_bottom_stmt;		///< Find Distinct Values for Bottom Prepared Statement
+	dbapi::statement::ptr		m_distinct_countries_stmt;	///< Find Distinct Values for Platform Prepared Statement
 	dbapi::statement::ptr		m_distinct_platform_stmt;	///< Find Distinct Values for Platform Prepared Statement
 	dbapi::statement::ptr		m_distinct_waterbody_stmt;	///< Find Distinct Values for Water Body Prepared Statement
 
