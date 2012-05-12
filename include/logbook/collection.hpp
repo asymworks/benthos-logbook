@@ -174,7 +174,7 @@ public:
 				catch (std::exception & e)
 				{
 					m_cascade = false;
-					throw e;
+					throw;
 				}
 
 				typename std::vector<typename D::Ptr>::iterator itl;
@@ -228,7 +228,7 @@ public:
 			catch (std::exception & e)
 			{
 				m_cascade = false;
-				throw e;
+				throw;
 			}
 		}
 	}
@@ -262,7 +262,7 @@ public:
 		catch (std::exception & e)
 		{
 			m_cascade = false;
-			throw e;
+			throw;
 		}
 	}
 
@@ -318,7 +318,7 @@ public:
 			catch (std::exception & e)
 			{
 				m_cascade = false;
-				throw e;
+				throw;
 			}
 		}
 	}

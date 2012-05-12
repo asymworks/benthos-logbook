@@ -172,6 +172,21 @@ const boost::optional<double> & DiveSite::longitude() const
 	return m_lng;
 }
 
+const std::string & DiveSite::long_name() const
+{
+	static std::string ln;
+
+	std::stringstream ss;
+	ss << m_name;
+	if (m_place.is_initialized())
+		ss << ", " << m_place.get();
+	if (m_country.is_initialized())
+		ss << ", " << m_country.get().name();
+
+	ln = ss.str();
+	return ln;
+}
+
 const boost::optional<double> & DiveSite::max_depth() const
 {
 	static boost::optional<double> o;

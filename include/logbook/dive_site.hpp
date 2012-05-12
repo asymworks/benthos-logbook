@@ -84,6 +84,9 @@ public:
 	//! @return Average Temperature of Dives at the Site
 	const boost::optional<double> & avg_temp() const;
 
+	//! @return Long Name of the Dive Site
+	const std::string & long_name() const;
+
 	//! @return Maximum Depth of Dives at the Site
 	const boost::optional<double> & max_depth() const;
 

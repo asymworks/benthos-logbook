@@ -318,7 +318,7 @@ void Session::flush()
 	catch (std::exception & e)
 	{
 		m_rollbacksp->exec();
-		throw e;
+		throw;
 	}
 }
 
