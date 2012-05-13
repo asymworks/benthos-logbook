@@ -132,7 +132,7 @@ void walk_cascade_tree(Persistent::Ptr p, std::set<Persistent::Ptr> & set_, pmfC
 	std::list<Persistent::Ptr>::iterator it;
 	for (it = items.begin(); it != items.end(); it++)
 	{
-		if (set_.find(* it) == set_.end())
+		if ((* it) && (set_.find(* it) == set_.end()))
 		{
 			set_.insert(* it);
 			walk_cascade_tree(* it, set_, fn, s);
