@@ -522,10 +522,14 @@ void Dive::setNumber(const boost::none_t &)
 
 void Dive::setNumber(int value)
 {
-	if (value < 1)
+	if (value < 0)
 		throw std::invalid_argument("Dive number must be greater than 0");
 
-	m_number = value;
+	if (! value)
+		m_number.reset();
+	else
+		m_number = value;
+
 	mark_dirty();
 }
 

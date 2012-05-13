@@ -367,10 +367,6 @@ void Session::prune()
 	}
 
 	m_logger->debug("Pruned identity map (currently %u items, removed %u expired pointers)", m_idmap.size(), sl - m_idmap.size());
-	for (it = m_idmap.begin(); it != m_idmap.end(); it++)
-	{
-		m_logger->debug("  Item %s[%d]", it->second.lock()->type_name().c_str(), it->second.lock()->id());
-	}
 }
 
 void Session::rollback()
