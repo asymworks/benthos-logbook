@@ -28,6 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
+#include "logbook/logging.hpp"
+
 #include "logbook/session.hpp"
 
 #include "mappers/dive_computer_mapper.hpp"
@@ -86,7 +88,7 @@ Session::~Session()
 void Session::add(Persistent::Ptr p)
 {
 	if (m_mappers.find(p->type_info()) == m_mappers.end())
-		throw std::runtime_error(std::string("No mapper found for class ") + p->type_info()->name());
+		throw std::runtime_error(std::string("No mapper found for class ") + p->type_name());
 
 	register_(p);
 
@@ -102,7 +104,7 @@ void Session::attach(Persistent::Ptr p)
 		throw std::runtime_error("Object is already registered with a different Session");
 
 	id_key_type key(p->type_info(), p->id());
-	if (p->id() && (m_idmap.find(key) != m_idmap.end()) &&
+	if ((p->id() != -1) && (m_idmap.find(key) != m_idmap.end()) &&
 		! m_idmap[key].expired() && (m_idmap[key].lock() != p))
 	{
 		throw std::runtime_error("Cannot register instance; another instance with "
@@ -122,42 +124,52 @@ void Session::begin()
 
 typedef std::list<Persistent::Ptr> (AbstractMapper::*pmfCascade)(Persistent::Ptr);
 
-void walk_cascade_tree(Persistent::Ptr p, std::set<Persistent::Ptr> & set_, pmfCascade fn, Session::Ptr s)
+void walk_cascade_tree(Persistent::Ptr p, std::set<Persistent::Ptr> & set_, pmfCascade fn, Session::Ptr s, logging::logger * l)
 {
 	AbstractMapper::Ptr m = s->mapper(p->type_info());
 	if (! m)
-		throw std::runtime_error(std::string("No mapper found for class ") + p->type_info()->name());
+		throw std::runtime_error(std::string("No mapper found for class ") + p->type_name().c_str());
+
+	if (set_.find(p) != set_.end())
+		return;
+
+	l->debug("Walking cascade tree for %s[%d][%p]", p->type_name().c_str(), p->id(), p.get());
 
 	std::list<Persistent::Ptr> items = (m.get()->*fn)(p);
 	std::list<Persistent::Ptr>::iterator it;
 	for (it = items.begin(); it != items.end(); it++)
 	{
-		if ((* it) && (set_.find(* it) == set_.end()))
+		Persistent::Ptr item = * it;
+		if (item && (set_.find(item) == set_.end()))
 		{
+			l->debug("Adding cascaded object of type %s[%d][%p]", (* it)->type_name().c_str(), (* it)->id(), (* it).get());
+
 			set_.insert(* it);
-			walk_cascade_tree(* it, set_, fn, s);
+			walk_cascade_tree(* it, set_, fn, s, l);
 		}
 	}
+
+	l->debug("Done walking cascade tree");
 }
 
 std::list<Persistent::Ptr> Session::cascade_add(Persistent::Ptr p)
 {
 	std::set<Persistent::Ptr> result;
-	walk_cascade_tree(p, result, & AbstractMapper::cascade_add, shared_from_this());
+	walk_cascade_tree(p, result, & AbstractMapper::cascade_add, shared_from_this(), m_logger);
 	return std::list<Persistent::Ptr>(result.begin(), result.end());
 }
 
 std::list<Persistent::Ptr> Session::cascade_delete(Persistent::Ptr p)
 {
 	std::set<Persistent::Ptr> result;
-	walk_cascade_tree(p, result, & AbstractMapper::cascade_delete, shared_from_this());
+	walk_cascade_tree(p, result, & AbstractMapper::cascade_delete, shared_from_this(), m_logger);
 	return std::list<Persistent::Ptr>(result.begin(), result.end());
 }
 
 std::list<Persistent::Ptr> Session::cascade_detach(Persistent::Ptr p)
 {
 	std::set<Persistent::Ptr> result;
-	walk_cascade_tree(p, result, & AbstractMapper::cascade_detach, shared_from_this());
+	walk_cascade_tree(p, result, & AbstractMapper::cascade_detach, shared_from_this(), m_logger);
 	return std::list<Persistent::Ptr>(result.begin(), result.end());
 }
 
@@ -173,7 +185,7 @@ void Session::commit()
 void Session::delete_(Persistent::Ptr p)
 {
 	if (m_mappers.find(p->type_info()) == m_mappers.end())
-		throw std::runtime_error(std::string("No mapper found for class ") + p->type_info()->name());
+		throw std::runtime_error(std::string("No mapper found for class ") + p->type_name());
 
 	if (p->id() == -1)
 		throw std::runtime_error("Object is not persisted");
@@ -188,7 +200,7 @@ void Session::delete_(Persistent::Ptr p)
 	std::list<Persistent::Ptr>::iterator it;
 
 	m_deleted.insert(p);
-	m_idmap[key] = p;
+	m_idmap.insert(std::pair<id_key_type, Persistent::WeakPtr>(key, Persistent::WeakPtr(p)));
 
 	for (it = cascade.begin(); it != cascade.end(); it++)
 	{
@@ -197,8 +209,8 @@ void Session::delete_(Persistent::Ptr p)
 			continue;
 
 		attach(* it);
-		m_deleted.insert(p);
-		m_idmap[itkey] = p;
+		m_deleted.insert(* it);
+		m_idmap.insert(std::pair<id_key_type, Persistent::WeakPtr>(key, Persistent::WeakPtr(* it)));
 	}
 }
 
@@ -229,8 +241,12 @@ uow_registry Session::dirty() const
 	identity_map::const_iterator it;
 	for (it = m_idmap.begin(); it != m_idmap.end(); it++)
 	{
-		if (! it->second.expired() && (m_deleted.find(it->second.lock()) == m_deleted.end()))
-			dirty.insert(it->second.lock());
+		if (it->first.second == -1)
+			m_logger->warning("Found identity map entry with key of -1");
+
+		Persistent::Ptr p(it->second.lock());
+		if (p && (m_deleted.find(p) == m_deleted.end()) && p->is_dirty())
+			dirty.insert(p);
 	}
 
 	return dirty;
@@ -239,7 +255,7 @@ uow_registry Session::dirty() const
 void Session::expunge(Persistent::Ptr p)
 {
 	if (m_mappers.find(p->type_info()) == m_mappers.end())
-		throw std::runtime_error(std::string("No mapper found for class ") + p->type_info()->name());
+		throw std::runtime_error(std::string("No mapper found for class ") + p->type_name());
 
 	if (! p->session() || (p->session().get() != this))
 		throw std::runtime_error("Object is not present within this session");
@@ -259,8 +275,11 @@ void Session::finalize_flush(std::list<Persistent::Ptr> & objects)
 	for (it = objects.begin(); it != objects.end(); it++)
 	{
 		id_key_type key((* it)->type_info(), (* it)->id());
+
 		if (m_deleted.find(* it) != m_deleted.end())
 		{
+			m_logger->debug("Removing deleted item %s[%d] from session", (* it)->type_name().c_str(), (* it)->id());
+
 			set_persistent_session(* it, Ptr());
 			mark_persistent_deleted(* it);
 
@@ -269,12 +288,14 @@ void Session::finalize_flush(std::list<Persistent::Ptr> & objects)
 		}
 		else if (m_new.find(* it) != m_new.end())
 		{
+			m_logger->debug("Adding inserted item %s[%d] to session", (* it)->type_name().c_str(), (* it)->id());
+
 			if ((* it)->id() == -1)
 				throw std::runtime_error("The new instance has an id of -1");
 
 			mark_persistent_clean(* it);
 
-			m_idmap[key] = * it;
+			m_idmap.insert(std::pair<id_key_type, Persistent::WeakPtr>(key, Persistent::WeakPtr(* it)));
 			m_new.erase(* it);
 		}
 		else
@@ -286,11 +307,16 @@ void Session::finalize_flush(std::list<Persistent::Ptr> & objects)
 
 void Session::flush()
 {
+	logging::logger * l = logging::getLogger("session");
+
 	uow_registry dirty_ = dirty();
 	uow_registry objs;
 
 	if (m_new.empty() && m_deleted.empty() && dirty_.empty())
 		return;
+
+	m_logger->debug("Calling Session::flush with %u insertions, %u deletions and %u updates",
+		m_new.size(), m_deleted.size(), dirty_.size());
 
 	objs.insert(m_deleted.begin(), m_deleted.end());
 	objs.insert(m_new.begin(), m_new.end());
@@ -329,6 +355,8 @@ uow_registry Session::new_() const
 
 void Session::prune()
 {
+	ssize_t sl = m_idmap.size();
+
 	identity_map::iterator it;
 	for (it = m_idmap.begin(); it != m_idmap.end(); )
 	{
@@ -336,6 +364,12 @@ void Session::prune()
 			it = m_idmap.erase(it);
 		else
 			++it;
+	}
+
+	m_logger->debug("Pruned identity map (currently %u items, removed %u expired pointers)", m_idmap.size(), sl - m_idmap.size());
+	for (it = m_idmap.begin(); it != m_idmap.end(); it++)
+	{
+		m_logger->debug("  Item %s[%d]", it->second.lock()->type_name().c_str(), it->second.lock()->id());
 	}
 }
 
@@ -359,11 +393,11 @@ void Session::register_loaded(Persistent::Ptr p)
 	if ((m_idmap.find(key) != m_idmap.end()) && (! m_idmap[key].expired()) && (m_idmap[key].lock() != p))
 	{
 		char msg[255];
-		sprintf(msg, "Stale data detected in Identity Map: %s[%ld]", p->type_info()->name(), p->id());
+		sprintf(msg, "Stale data detected in Identity Map: %s[%ld]", p->type_name().c_str(), p->id());
 		throw std::runtime_error(std::string(msg));
 	}
 
-	m_idmap[key] = p;
+	m_idmap.insert(std::pair<id_key_type, Persistent::WeakPtr>(key, Persistent::WeakPtr(p)));
 }
 
 void Session::register_new(Persistent::Ptr p)
@@ -373,7 +407,7 @@ void Session::register_new(Persistent::Ptr p)
 
 	attach(p);
 
-	m_logger->debug("Registering new object of type %s", p->type_info()->name());
+	m_logger->debug("Registering new object of type %s", p->type_name().c_str());
 	m_new.insert(p);
 }
 
@@ -392,7 +426,7 @@ void Session::register_update(Persistent::Ptr p)
 
 	attach(p);
 	m_deleted.erase(p);
-	m_idmap[key] = p;
+	m_idmap.insert(std::pair<id_key_type, Persistent::WeakPtr>(key, Persistent::WeakPtr(p)));
 }
 
 void Session::run_flush(std::list<Persistent::Ptr> & objects)
@@ -402,19 +436,30 @@ void Session::run_flush(std::list<Persistent::Ptr> & objects)
 	{
 		AbstractMapper::Ptr mapper(m_mappers[(* it)->type_info()]);
 		if (! mapper)
-			throw std::runtime_error(std::string("No mapper found for class ") + (* it)->type_info()->name());
+			throw std::runtime_error(std::string("No mapper found for class ") + (* it)->type_name());
 
 		if (m_deleted.find(* it) != m_deleted.end())
+		{
+			m_logger->debug("Calling remove() on %s[%d]", (* it)->type_name().c_str(), (* it)->id());
 			mapper->remove(* it);
+		}
 		else if (m_new.find(* it) != m_new.end())
+		{
+			m_logger->debug("Calling insert() on %s[%p]", (* it)->type_name().c_str(), (* it).get());
 			mapper->insert(* it);
+		}
 		else
+		{
+			m_logger->debug("Calling update() on %s[%d]", (* it)->type_name().c_str(), (* it)->id());
 			mapper->update(* it);
+		}
 	}
 }
 
 std::list<Persistent::Ptr> Session::sort(const uow_registry & registry) const
 {
+	m_logger->debug("Sorting %u items in Session::sort()", registry.size());
+
 	/*
 	 * Hard-coded, inefficient topological sort.  This should be adequate for
 	 * most use cases but can certainly be improved.
@@ -457,6 +502,9 @@ std::list<Persistent::Ptr> Session::sort(const uow_registry & registry) const
 	// Append remainder of the Items (Profiles, others)
 	for (it = items.begin(); it != items.end(); it++)
 		result.push_back(* it);
+
+	// Print how many items we ended up with
+	m_logger->debug("Sorted %u items in Session::sort()", result.size());
 
 	// Return sorted list
 	items.clear();

@@ -28,6 +28,7 @@
  * WITH THE SOFTWARE.
  */
 
+#include "logbook/config.hpp"
 #include "logbook/persistent.hpp"
 #include "logbook/session.hpp"
 
@@ -82,4 +83,22 @@ void Persistent::set_id(int64_t id)
 void Persistent::set_session(Session::Ptr p)
 {
 	m_session = p;
+}
+
+#ifdef HAVE_CXXABI_H
+#include <cxxabi.h>
+#endif
+
+std::string Persistent::type_name() const
+{
+#ifdef HAVE_CXA_DEMANGLE
+	int status = -4;
+	const char * tn = type_info()->name();
+	char * res = abi::__cxa_demangle(tn, NULL, NULL, & status);
+	std::string ret(status == 0 ? res : tn);
+	free(res);
+	return ret;
+#else
+	return std::string(type_info()->name());
+#endif
 }

@@ -33,8 +33,33 @@
 # WITH THE SOFTWARE.
 #
 
+INCLUDE (CheckIncludeFileCXX)
+INCLUDE (CheckCXXSourceCompiles)
+
 # C++ Flags
-add_definitions( -std=c++0x -fPIC )
+add_definitions( -std=c++0x -fPIC -g )
+
+# Check for include files
+check_include_file_cxx( cxxabi.h HAVE_CXXABI_H )
+
+if ( HAVE_CXXABI_H )
+
+	check_cxx_source_compiles( "
+#include <stdlib.h>
+#include <typeinfo>
+#include <cxxabi.h>
+int main(int argc, char ** argv)
+{
+	int status;
+	char * res = abi::__cxa_demangle(\"int\", NULL, NULL, & status);
+	free(res);
+	return 0;
+}
+" HAVE_CXA_DEMANGLE )
+
+else ( HAVE_CXXABI_H )
+	set ( HAVE_CXA_DEMANGLE FALSE )
+endif ( HAVE_CXXABI_H )
 
 # Boost Headers Required
 find_package( Boost 1.39 REQUIRED )

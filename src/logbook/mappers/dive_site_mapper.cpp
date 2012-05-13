@@ -103,16 +103,7 @@ void DiveSiteMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const
 
 std::list<Persistent::Ptr> DiveSiteMapper::cascade_add(Persistent::Ptr p)
 {
-	std::list<Persistent::Ptr> result;
-	DiveSite::Ptr o = downcast(p);
-
-	if (! o)
-		return result;
-
-	std::list<Dive::Ptr> dives = o->dives()->all();
-	result.assign(dives.begin(), dives.end());
-
-	return result;
+	return std::list<Persistent::Ptr>();
 }
 
 #define SET_VARIANT(o, f, v, t) if ((v).is_null()) o->f(boost::none); else o->f(v.as<t>())

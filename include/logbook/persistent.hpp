@@ -105,6 +105,9 @@ public:
 	//! @return Type Information for the Domain Model
 	virtual const std::type_info * type_info() const = 0;
 
+	//! @return Type Name for the Domain Model
+	virtual std::string type_name() const;
+
 protected:
 
 	//! Mark the Persistent as Clean

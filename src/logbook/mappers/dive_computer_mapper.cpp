@@ -96,9 +96,6 @@ std::list<Persistent::Ptr> DiveComputerMapper::cascade_add(Persistent::Ptr p)
 	if (! o)
 		return result;
 
-	std::list<Dive::Ptr> dives = o->dives()->all();
-	result.assign(dives.begin(), dives.end());
-
 	std::list<Profile::Ptr> profiles = o->profiles()->all();
 	result.insert(result.end(), profiles.begin(), profiles.end());
 

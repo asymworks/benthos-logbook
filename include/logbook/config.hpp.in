@@ -43,4 +43,7 @@
  
  #define LIBLOGBOOK_VERSION_STRING 	"(@LIBLOGBOOK_VERSION@)"
  
+ #cmakedefine HAVE_CXXABI_H
+ #cmakedefine HAVE_CXA_DEMANGLE
+ 
  #endif // LOGBOOK_CONFIG_HPP_
