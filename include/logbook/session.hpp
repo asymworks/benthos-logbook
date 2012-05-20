@@ -44,6 +44,7 @@
 
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/signals2/signal.hpp>
 #include <boost/utility.hpp>
 
 #include <logbook/dbapi.hpp>
@@ -102,6 +103,15 @@ public:
 	typedef boost::shared_ptr<Session>	Ptr;
 	typedef boost::weak_ptr<Session>	WPtr;
 
+public:
+
+	//! Session Event Structure
+	typedef struct
+	{
+		boost::signals2::signal<void (Ptr, Persistent::Ptr)>	after_attach;
+
+	} Events;
+
 protected:
 
 	//! Class Constructor
@@ -154,6 +164,9 @@ public:
 	 * executed upon flush() or commit().
 	 */
 	void delete_(Persistent::Ptr p);
+
+	//! @return Session Event Signals
+	Events & events();
 
 	/**
 	 * @brief Expunge an Object from the Session
@@ -328,6 +341,8 @@ private:
 	statement::ptr		m_beginsp;		///< Begin Savepoint Statement
 	statement::ptr		m_releasesp;	///< Release Savepoint Statement
 	statement::ptr		m_rollbacksp;	///< Rollback Savepoint Statement
+
+	Events				m_events;		///< Session Event Signals
 
 private:
 	friend class AbstractMapper;

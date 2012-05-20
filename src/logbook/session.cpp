@@ -112,6 +112,7 @@ void Session::attach(Persistent::Ptr p)
 	}
 
 	set_persistent_session(p, shared_from_this());
+	m_events.after_attach(shared_from_this(), p);
 }
 
 void Session::begin()
@@ -250,6 +251,11 @@ uow_registry Session::dirty() const
 	}
 
 	return dirty;
+}
+
+Session::Events & Session::events()
+{
+	return m_events;
 }
 
 void Session::expunge(Persistent::Ptr p)

@@ -92,6 +92,12 @@ private:
 
 };
 
+//! @brief Country Equality Test
+inline bool operator== (country & lhs, country & rhs) { return lhs.code() == rhs.code(); }
+
+//! @brief Country Less-Than Test (required for membership in ordered lists)
+inline bool operator< (country & lhs, country & rhs) { return lhs.code() < rhs.code(); }
+
 } /* logbook */
 
 #endif /* LOGBOOK_COUNTRY_HPP_ */

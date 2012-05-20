@@ -94,8 +94,14 @@ std::list<Persistent::Ptr> AbstractMapper::cascade_detach(Persistent::Ptr o)
 	return std::list<Persistent::Ptr>();
 }
 
+AbstractMapper::Events & AbstractMapper::events()
+{
+	return m_events;
+}
+
 int64_t AbstractMapper::insert(Persistent::Ptr o)
 {
+	m_events.before_insert(shared_from_this(), o);
 	beforeInsert(o);
 
 	dbapi::statement::ptr s(insertStatement());
@@ -109,12 +115,14 @@ int64_t AbstractMapper::insert(Persistent::Ptr o)
 	m_loaded[o->id()] = Persistent::WeakPtr(o);
 
 	afterInsert(o);
+	m_events.after_insert(shared_from_this(), o);
 
 	return o->id();
 }
 
 void AbstractMapper::remove(Persistent::Ptr o)
 {
+	m_events.before_delete(shared_from_this(), o);
 	beforeDelete(o);
 
 	dbapi::statement::ptr s(removeStatement());
@@ -123,10 +131,12 @@ void AbstractMapper::remove(Persistent::Ptr o)
 	s->exec();
 
 	afterDelete(o, o->id());
+	m_events.after_delete(shared_from_this(), o);
 }
 
 void AbstractMapper::update(Persistent::Ptr o)
 {
+	m_events.before_update(shared_from_this(), o);
 	beforeUpdate(o);
 
 	dbapi::statement::ptr s(updateStatement());
@@ -136,4 +146,5 @@ void AbstractMapper::update(Persistent::Ptr o)
 	s->exec();
 
 	afterUpdate(o);
+	m_events.after_update(shared_from_this(), o);
 }

@@ -41,6 +41,9 @@
 #include <map>
 #include <vector>
 
+#include <boost/signals2/signal.hpp>
+#include <boost/utility.hpp>
+
 #include <logbook/dbapi.hpp>
 #include <logbook/persistent.hpp>
 
@@ -59,11 +62,26 @@ typedef boost::weak_ptr<Session>	SessionWPtr;
  *
  * Base class for all Object Mappers which access Persistent objects.
  */
-class AbstractMapper: public Persistent::Access
+class AbstractMapper: public Persistent::Access,
+	public boost::enable_shared_from_this<AbstractMapper>
 {
 public:
 	typedef boost::shared_ptr<AbstractMapper>	Ptr;
 	typedef boost::weak_ptr<AbstractMapper>		WPtr;
+
+public:
+
+	//! Mapper Event Structure
+	typedef struct
+	{
+		boost::signals2::signal<void (Ptr, Persistent::Ptr)>	after_delete;
+		boost::signals2::signal<void (Ptr, Persistent::Ptr)>	after_insert;
+		boost::signals2::signal<void (Ptr, Persistent::Ptr)>	after_update;
+		boost::signals2::signal<void (Ptr, Persistent::Ptr)>	before_delete;
+		boost::signals2::signal<void (Ptr, Persistent::Ptr)>	before_insert;
+		boost::signals2::signal<void (Ptr, Persistent::Ptr)>	before_update;
+
+	} Events;
 
 public:
 
@@ -95,6 +113,9 @@ public:
 	 * @return List of Cascaded Objects
 	 */
 	virtual std::list<Persistent::Ptr> cascade_detach(Persistent::Ptr o);
+
+	//! @return Mapper Event Signals
+	Events & events();
 
 	/**
 	 * @brief Insert an Object into the Database
@@ -165,6 +186,8 @@ protected:
 	boost::weak_ptr<Session>				m_session;	///< Database Session
 	connection::ptr							m_conn;		///< Database Connection
 	std::map<int64_t, Persistent::WeakPtr>	m_loaded;	///< Identity Map of Loaded Objects
+
+	Events 									m_events;	///< Mapper Event Signals
 
 };
 
