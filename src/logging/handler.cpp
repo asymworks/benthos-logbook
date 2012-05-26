@@ -28,9 +28,9 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/logging/filter.hpp"
-#include "logbook/logging/formatter.hpp"
-#include "logbook/logging/handler.hpp"
+#include "benthos/logbook/logging/filter.hpp"
+#include "benthos/logbook/logging/formatter.hpp"
+#include "benthos/logbook/logging/handler.hpp"
 
 using namespace logbook::logging;
 

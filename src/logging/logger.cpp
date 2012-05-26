@@ -30,9 +30,9 @@
 
 #include <cstdlib>
 
-#include "logbook/logging/handler.hpp"
-#include "logbook/logging/logger.hpp"
-#include "logbook/logging/record.hpp"
+#include "benthos/logbook/logging/handler.hpp"
+#include "benthos/logbook/logging/logger.hpp"
+#include "benthos/logbook/logging/record.hpp"
 
 using namespace logbook::logging;
 

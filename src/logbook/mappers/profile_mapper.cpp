@@ -35,7 +35,7 @@
 #include <yajl/yajl_parse.h>
 #include <yajl/yajl_gen.h>
 
-#include <logbook/session.hpp>
+#include <benthos/logbook/session.hpp>
 
 using namespace logbook;
 using namespace logbook::mappers;

@@ -29,9 +29,9 @@
  */
 
 #include <stdexcept>
-#include "logbook/dive_site.hpp"
-#include "logbook/dive.hpp"
-#include "logbook/session.hpp"
+#include "benthos/logbook/dive_site.hpp"
+#include "benthos/logbook/dive.hpp"
+#include "benthos/logbook/session.hpp"
 
 using namespace logbook;
 

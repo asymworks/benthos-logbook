@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/logging/formatter.hpp"
-#include "logbook/logging/record.hpp"
+#include "benthos/logbook/logging/formatter.hpp"
+#include "benthos/logbook/logging/record.hpp"
 
 using namespace logbook::logging;
 

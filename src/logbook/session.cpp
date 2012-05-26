@@ -28,9 +28,9 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/logging.hpp"
+#include "benthos/logbook/logging.hpp"
 
-#include "logbook/session.hpp"
+#include "benthos/logbook/session.hpp"
 
 #include "mappers/dive_computer_mapper.hpp"
 #include "mappers/dive_site_mapper.hpp"

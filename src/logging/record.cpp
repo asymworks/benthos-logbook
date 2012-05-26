@@ -32,7 +32,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#include "logbook/logging/record.hpp"
+#include "benthos/logbook/logging/record.hpp"
 
 using namespace logbook::logging;
 

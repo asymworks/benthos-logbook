@@ -28,7 +28,7 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/schema.hpp"
+#include "benthos/logbook/schema.hpp"
 
 using namespace logbook;
 

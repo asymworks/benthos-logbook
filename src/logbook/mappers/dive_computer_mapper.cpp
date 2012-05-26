@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#include <logbook/dive.hpp>
-#include <logbook/profile.hpp>
+#include <benthos/logbook/dive.hpp>
+#include <benthos/logbook/profile.hpp>
 
 #include "dive_computer_mapper.hpp"
 

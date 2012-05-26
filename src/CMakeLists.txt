@@ -81,14 +81,14 @@ include_directories(
 
 # Configure Files
 configure_file(
-	${CMAKE_SOURCE_DIR}/include/logbook/config.hpp.in 
-	${CMAKE_BINARY_DIR}/include/logbook/config.hpp 
+	${CMAKE_SOURCE_DIR}/include/benthos/logbook/config.hpp.in 
+	${CMAKE_BINARY_DIR}/include/benthos/logbook/config.hpp 
 	@ONLY
 )
 
 configure_file(
-	${CMAKE_SOURCE_DIR}/liblogbook.pc.in
-	${CMAKE_BINARY_DIR}/liblogbook.pc
+	${CMAKE_SOURCE_DIR}/benthos-logbook.pc.in
+	${CMAKE_BINARY_DIR}/benthos-logbook.pc
 	@ONLY
 )
 
@@ -98,21 +98,21 @@ add_subdirectory(logging)
 add_subdirectory(dbapi)
 
 # Build the logbook library
-add_library(logbook SHARED
-	${CMAKE_BINARY_DIR}/include/logbook/config.hpp
+add_library(benthos-logbook SHARED
+	${CMAKE_BINARY_DIR}/include/benthos/logbook/config.hpp
 	$<TARGET_OBJECTS:logbook_module>
 	$<TARGET_OBJECTS:logging_module>
 	$<TARGET_OBJECTS:dbapi_module>
 )
 
 # Link the logbook library
-target_link_libraries(logbook
+target_link_libraries(benthos-logbook
 	${SQLITE3_LIBRARIES}
 	${YAJL_LIBRARIES}
 )
 
 # Install Shared Library
-install(TARGETS logbook
+install(TARGETS benthos-logbook
 	LIBRARY DESTINATION lib
 	ARCHIVE DESTINATION lib/static
 )
@@ -120,5 +120,5 @@ install(TARGETS logbook
 # Install Headers
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include
 	PATTERN "*.in" EXCLUDE)
-install(FILES ${CMAKE_BINARY_DIR}/include/logbook/config.hpp DESTINATION include/logbook)
-install(FILES ${CMAKE_BINARY_DIR}/liblogbook.pc DESTINATION lib/pkgconfig)
+install(FILES ${CMAKE_BINARY_DIR}/include/benthos/logbook/config.hpp DESTINATION include/benthos/logbook)
+install(FILES ${CMAKE_BINARY_DIR}/benthos-logbook.pc DESTINATION lib/pkgconfig)

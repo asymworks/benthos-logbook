@@ -28,10 +28,10 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/dive_computer.hpp"
-#include "logbook/dive.hpp"
-#include "logbook/profile.hpp"
-#include "logbook/session.hpp"
+#include "benthos/logbook/dive_computer.hpp"
+#include "benthos/logbook/dive.hpp"
+#include "benthos/logbook/profile.hpp"
+#include "benthos/logbook/session.hpp"
 
 using namespace logbook;
 

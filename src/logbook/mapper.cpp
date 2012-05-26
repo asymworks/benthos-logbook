@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/mapper.hpp"
-#include "logbook/session.hpp"
+#include "benthos/logbook/mapper.hpp"
+#include "benthos/logbook/session.hpp"
 
 using namespace logbook;
 

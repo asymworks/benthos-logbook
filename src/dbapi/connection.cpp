@@ -28,9 +28,9 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/dbapi/connection.hpp"
-#include "logbook/dbapi/dbapi_error.hpp"
-#include "logbook/dbapi/statement.hpp"
+#include "benthos/logbook/dbapi/connection.hpp"
+#include "benthos/logbook/dbapi/dbapi_error.hpp"
+#include "benthos/logbook/dbapi/statement.hpp"
 
 using namespace logbook::dbapi;
 

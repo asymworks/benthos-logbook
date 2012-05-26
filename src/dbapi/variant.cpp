@@ -30,7 +30,7 @@
 
 #include <stdexcept>
 
-#include "logbook/dbapi/variant.hpp"
+#include "benthos/logbook/dbapi/variant.hpp"
 
 using namespace logbook::dbapi;
 

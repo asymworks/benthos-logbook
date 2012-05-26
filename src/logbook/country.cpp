@@ -32,8 +32,8 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "logbook/country.hpp"
-#include "logbook/countries.hpp"
+#include "benthos/logbook/country.hpp"
+#include "benthos/logbook/countries.hpp"
 
 using namespace logbook;
 

@@ -28,9 +28,9 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/dbapi/cursor.hpp"
-#include "logbook/dbapi/dbapi_error.hpp"
-#include "logbook/dbapi/statement.hpp"
+#include "benthos/logbook/dbapi/cursor.hpp"
+#include "benthos/logbook/dbapi/dbapi_error.hpp"
+#include "benthos/logbook/dbapi/statement.hpp"
 
 #include <stdexcept>
 

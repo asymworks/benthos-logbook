@@ -32,9 +32,9 @@
 #include <map>
 #include <vector>
 
-#include "logbook/logging/logger.hpp"
-#include "logbook/logging/record.hpp"
-#include "logbook/logging/registry.hpp"
+#include "benthos/logbook/logging/logger.hpp"
+#include "benthos/logbook/logging/record.hpp"
+#include "benthos/logbook/logging/registry.hpp"
 
 using namespace logbook::logging;
 

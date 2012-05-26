@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/logging/record.hpp"
-#include "logbook/logging/stream_handler.hpp"
+#include "benthos/logbook/logging/record.hpp"
+#include "benthos/logbook/logging/stream_handler.hpp"
 
 using namespace logbook::logging;
 

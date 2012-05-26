@@ -28,9 +28,9 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/config.hpp"
-#include "logbook/persistent.hpp"
-#include "logbook/session.hpp"
+#include "benthos/logbook/config.hpp"
+#include "benthos/logbook/persistent.hpp"
+#include "benthos/logbook/session.hpp"
 
 using namespace logbook;
 

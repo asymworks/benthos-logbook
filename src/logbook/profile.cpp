@@ -28,8 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
-#include "logbook/profile.hpp"
-#include "logbook/session.hpp"
+#include "benthos/logbook/profile.hpp"
+#include "benthos/logbook/session.hpp"
 
 using namespace logbook;
 

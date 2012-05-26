@@ -31,7 +31,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "logbook/mix.hpp"
+#include "benthos/logbook/mix.hpp"
 
 using namespace logbook;
 

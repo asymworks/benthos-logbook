@@ -37,10 +37,10 @@
  * @author Jonathan Krauss <jkrauss@asymworks.com>
  */
 
-#include <logbook/dbapi.hpp>
-#include <logbook/mapper.hpp>
-#include <logbook/persistent.hpp>
-#include <logbook/profile.hpp>
+#include <benthos/logbook/dbapi.hpp>
+#include <benthos/logbook/mapper.hpp>
+#include <benthos/logbook/persistent.hpp>
+#include <benthos/logbook/profile.hpp>
 
 namespace logbook { namespace mappers {
 

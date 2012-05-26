@@ -32,7 +32,7 @@
 #include <pthread.h>
 #include <stdexcept>
 
-#include "logbook/logging/mutex.hpp"
+#include "benthos/logbook/logging/mutex.hpp"
 
 using namespace logbook::logging;
 

@@ -28,7 +28,7 @@
  * WITH THE SOFTWARE.
  */
 
-#include <logbook/dive.hpp>
+#include <benthos/logbook/dive.hpp>
 
 #include "dive_site_mapper.hpp"
 

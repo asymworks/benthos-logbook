@@ -37,10 +37,10 @@
  * @author Jonathan Krauss <jkrauss@asymworks.com>
  */
 
-#include <logbook/dbapi.hpp>
-#include <logbook/mapper.hpp>
-#include <logbook/mix.hpp>
-#include <logbook/persistent.hpp>
+#include <benthos/logbook/dbapi.hpp>
+#include <benthos/logbook/mapper.hpp>
+#include <benthos/logbook/mix.hpp>
+#include <benthos/logbook/persistent.hpp>
 
 namespace logbook { namespace mappers {
 

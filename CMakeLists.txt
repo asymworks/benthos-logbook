@@ -32,7 +32,7 @@
 #
 
 cmake_minimum_required(VERSION 2.8.8)
-project(liblogbook)
+project(benthos_logbook)
 
 set(LIBLOGBOOK_MAJOR_VERSION 0)
 set(LIBLOGBOOK_MINOR_VERSION 1)
