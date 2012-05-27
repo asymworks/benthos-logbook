@@ -44,7 +44,7 @@
 #include <boost/utility.hpp>
 #include <boost/weak_ptr.hpp>
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 // Forward Definition of Session class
 class Session;
@@ -224,6 +224,6 @@ struct IFinder
 
 };
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* LOGBOOK_PERSISTENT_HPP_ */

@@ -40,7 +40,7 @@
 #include <ctime>
 #include <string>
 
-namespace logbook { namespace logging {
+namespace benthos { namespace logbook { namespace logging {
 
 // Forward Definition of log_record
 class log_record;
@@ -69,6 +69,6 @@ struct log_filter
 
 };
 
-} } /* logbook::logging */
+} } } /* benthos::logbook::logging */
 
 #endif /* LOGGING_LOG_FILTER_HPP_ */

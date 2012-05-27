@@ -52,9 +52,9 @@
 #include <benthos/logbook/mapper.hpp>
 #include <benthos/logbook/persistent.hpp>
 
-using namespace logbook::dbapi;
+using namespace benthos::logbook::dbapi;
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 //! @brief Const Type Info Pointer (for use as std::map key)
 typedef const std::type_info * const_typeinfo_ptr;
@@ -349,6 +349,6 @@ private:
 
 };
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* LOGBOOK_SESSION_HPP_ */

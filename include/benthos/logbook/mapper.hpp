@@ -47,9 +47,9 @@
 #include <benthos/logbook/dbapi.hpp>
 #include <benthos/logbook/persistent.hpp>
 
-using namespace logbook::dbapi;
+using namespace benthos::logbook::dbapi;
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 // Forward Definition of Session class
 class Session;
@@ -316,6 +316,6 @@ protected:
 
 };
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* MAPPER_HPP_ */

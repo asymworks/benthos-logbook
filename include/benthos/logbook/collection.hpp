@@ -46,7 +46,7 @@
 
 #include <benthos/logbook/persistent.hpp>
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 /**
  * @brief Related Object Collection Interface
@@ -364,6 +364,6 @@ struct cicmp
 	}
 };
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* COLLECTION_HPP_ */

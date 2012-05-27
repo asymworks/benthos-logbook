@@ -34,7 +34,7 @@
 
 #include "benthos/logbook/logging/record.hpp"
 
-using namespace logbook::logging;
+using namespace benthos::logbook::logging;
 
 const int level::NOTSET = -1;
 const int level::DEBUG = 0;

@@ -31,7 +31,7 @@
 #include "benthos/logbook/profile.hpp"
 #include "benthos/logbook/session.hpp"
 
-using namespace logbook;
+using namespace benthos::logbook;
 
 Profile::Profile()
 	: TypedPersistent<Profile>()

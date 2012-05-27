@@ -39,7 +39,7 @@
 
 #include <string>
 
-namespace logbook { namespace logging {
+namespace benthos { namespace logbook { namespace logging {
 
 // Forward Definition of logger
 class logger;
@@ -57,6 +57,6 @@ class logger;
  */
 logger * getLogger(const std::string & name = std::string());
 
-} } /* sqlitekit::logging */
+} } } /* benthos::sqlitekit::logging */
 
 #endif /* LOGGING_REGISTRY_HPP_ */

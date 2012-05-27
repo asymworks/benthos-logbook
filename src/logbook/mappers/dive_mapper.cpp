@@ -33,8 +33,8 @@
 #include <benthos/logbook/profile.hpp>
 #include <benthos/logbook/session.hpp>
 
-using namespace logbook;
-using namespace logbook::mappers;
+using namespace benthos::logbook;
+using namespace benthos::logbook::mappers;
 
 std::string DiveMapper::columns = "id, dive_datetime, dive_utcoffset, dive_number, "
 		"site_id, computer_id, repetition, interval, duration, max_depth, avg_depth, "

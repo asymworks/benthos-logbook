@@ -32,7 +32,7 @@
 
 #include "benthos/logbook/dbapi/variant.hpp"
 
-using namespace logbook::dbapi;
+using namespace benthos::logbook::dbapi;
 
 variant::variant()
 	: m_value()
@@ -111,7 +111,7 @@ struct printer: boost::static_visitor<std::ostream &>
 	}
 };
 
-std::ostream & logbook::dbapi::operator<< (std::ostream & out, const variant & v)
+std::ostream & benthos::logbook::dbapi::operator<< (std::ostream & out, const variant & v)
 {
 	if (v.is_null())
 	{

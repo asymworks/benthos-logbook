@@ -34,7 +34,7 @@
 #include <boost/lexical_cast.hpp>
 #include <climits>
 
-using namespace logbook::dbapi;
+using namespace benthos::logbook::dbapi;
 
 // Catch-all converter: throws runtime_error
 template <typename T, typename U>

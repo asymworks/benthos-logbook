@@ -40,7 +40,7 @@
 #include <ctime>
 #include <string>
 
-namespace logbook { namespace logging {
+namespace benthos { namespace logbook { namespace logging {
 
 /**@{
  * @name Log Level Constants
@@ -126,6 +126,6 @@ private:
 
 };
 
-} } /* logbook::logging */
+} } } /* benthos::logbook::logging */
 
 #endif /* LOGGING_LOG_RECORD_HPP_ */

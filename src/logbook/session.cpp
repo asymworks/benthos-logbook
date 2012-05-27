@@ -38,7 +38,7 @@
 #include "mappers/mix_mapper.hpp"
 #include "mappers/profile_mapper.hpp"
 
-using namespace logbook;
+using namespace benthos::logbook;
 
 Session::Session(connection::ptr conn)
 	: m_conn(conn), m_mappers(), m_logger(logging::getLogger("orm.session"))

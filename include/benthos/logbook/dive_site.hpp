@@ -46,7 +46,7 @@
 #include <benthos/logbook/country.hpp>
 #include <benthos/logbook/persistent.hpp>
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 // Forward Definition of Dive
 class Dive;
@@ -248,6 +248,6 @@ struct IDiveSiteFinder: public IFinder<DiveSite>
 
 };
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* LOGBOOK_DIVE_SITE_HPP_ */

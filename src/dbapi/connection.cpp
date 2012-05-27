@@ -32,7 +32,7 @@
 #include "benthos/logbook/dbapi/dbapi_error.hpp"
 #include "benthos/logbook/dbapi/statement.hpp"
 
-using namespace logbook::dbapi;
+using namespace benthos::logbook::dbapi;
 
 int _authorize_handler(void * p, int evcode, const char * p1, const char * p2, const char * dbname, const char * tvname)
 {

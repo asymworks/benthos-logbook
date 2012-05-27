@@ -37,7 +37,7 @@
  * @author Jonathan Krauss <jkrauss@asymworks.com>
  */
 
-namespace logbook { namespace logging {
+namespace benthos { namespace logbook { namespace logging {
 
 /**
  * @brief Mutex Class
@@ -65,6 +65,6 @@ private:
 
 };
 
-} } /* logbook::logging */
+} } } /* benthos::logbook::logging */
 
 #endif /* LOGGING_MUTEX_HPP_ */

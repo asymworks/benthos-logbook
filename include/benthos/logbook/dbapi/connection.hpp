@@ -44,7 +44,7 @@
 
 #include <sqlite3.h>
 
-namespace logbook { namespace dbapi {
+namespace benthos { namespace logbook { namespace dbapi {
 
 class cursor;
 
@@ -274,6 +274,6 @@ private:
 
 };
 
-} } /* logbook::dbapi */
+} } } /* benthos::logbook::dbapi */
 
 #endif /* DBAPI_CONNECTION_HPP_ */

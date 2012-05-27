@@ -42,7 +42,7 @@
 #include <benthos/logbook/mapper.hpp>
 #include <benthos/logbook/persistent.hpp>
 
-namespace logbook { namespace mappers {
+namespace benthos { namespace logbook { namespace mappers {
 
 /**
  * @brief Dive Site Data Mapper
@@ -137,6 +137,6 @@ protected:
 
 };
 
-} } /* logbook::mappers */
+} } } /* benthos::logbook::mappers */
 
 #endif /* LOGBOOKMAPPERS_DIVE_SITE_MAPPER_HPP_ */

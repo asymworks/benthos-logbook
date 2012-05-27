@@ -30,7 +30,7 @@
 
 #include "benthos/logbook/logbook.hpp"
 
-using namespace logbook;
+using namespace benthos::logbook;
 
 Logbook::Logbook(const std::string & filename, dbapi::connection::ptr conn)
 	: m_filename(filename), m_conn(conn), m_session(Session::Create(conn))

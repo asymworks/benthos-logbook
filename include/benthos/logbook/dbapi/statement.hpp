@@ -50,7 +50,7 @@
 
 #include <sqlite3.h>
 
-namespace logbook { namespace dbapi {
+namespace benthos { namespace logbook { namespace dbapi {
 
 // Forward Definition of cursor
 class cursor;
@@ -282,7 +282,7 @@ private:
 
 };
 
-} } /* logbook::dbapi */
+} } } /* benthos::logbook::dbapi */
 
 #include "statement_impl.hpp"
 

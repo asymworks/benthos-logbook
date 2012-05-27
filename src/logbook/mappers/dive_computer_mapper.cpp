@@ -33,8 +33,8 @@
 
 #include "dive_computer_mapper.hpp"
 
-using namespace logbook;
-using namespace logbook::mappers;
+using namespace benthos::logbook;
+using namespace benthos::logbook::mappers;
 
 std::string DiveComputerMapper::columns = "id, driver, serial, parser, token, "
 		"last_transfer, driver_args, parser_args, name, manufacturer, model, "

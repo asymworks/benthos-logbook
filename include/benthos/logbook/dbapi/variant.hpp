@@ -52,7 +52,7 @@
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
 
-namespace logbook { namespace dbapi {
+namespace benthos { namespace logbook { namespace dbapi {
 
 /**
  * @brief SQLite Value Variant
@@ -165,7 +165,7 @@ private:
  */
 std::ostream & operator<< (std::ostream & out, const variant & v);
 
-} } /* logbook::dbapi */
+} } } /* benthos::logbook::dbapi */
 
 #include "variant_conv.hpp"
 #include "variant_impl.hpp"

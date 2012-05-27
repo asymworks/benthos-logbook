@@ -35,7 +35,7 @@
 #include "benthos/logbook/country.hpp"
 #include "benthos/logbook/countries.hpp"
 
-using namespace logbook;
+using namespace benthos::logbook;
 
 country::country()
 	: m_code()

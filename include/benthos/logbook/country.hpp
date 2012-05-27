@@ -40,7 +40,7 @@
 #include <iostream>
 #include <string>
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 /**
  * @brief Country Class
@@ -98,6 +98,6 @@ inline bool operator== (country & lhs, country & rhs) { return lhs.code() == rhs
 //! @brief Country Less-Than Test (required for membership in ordered lists)
 inline bool operator< (country & lhs, country & rhs) { return lhs.code() < rhs.code(); }
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* LOGBOOK_COUNTRY_HPP_ */

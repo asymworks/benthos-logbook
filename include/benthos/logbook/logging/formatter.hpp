@@ -40,7 +40,7 @@
 #include <ctime>
 #include <string>
 
-namespace logbook { namespace logging {
+namespace benthos { namespace logbook { namespace logging {
 
 // Forward Definition of log_record
 class log_record;
@@ -88,6 +88,6 @@ struct default_formatter: public formatter
 
 };
 
-} } /* logbook::logging */
+} } } /* benthos::logbook::logging */
 
 #endif /* LOGGING_FORMATTER_HPP_ */

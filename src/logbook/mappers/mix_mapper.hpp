@@ -42,7 +42,7 @@
 #include <benthos/logbook/mix.hpp>
 #include <benthos/logbook/persistent.hpp>
 
-namespace logbook { namespace mappers {
+namespace benthos { namespace logbook { namespace mappers {
 
 /**
  * @brief Gas Mixture Data Mapper
@@ -129,6 +129,6 @@ protected:
 
 };
 
-} } /* logbook::mappers */
+} } } /* benthos::logbook::mappers */
 
 #endif /* LOGBOOKMAPPERS_MIX_MAPPER_HPP_ */

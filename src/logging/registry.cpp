@@ -36,7 +36,7 @@
 #include "benthos/logbook/logging/record.hpp"
 #include "benthos/logbook/logging/registry.hpp"
 
-using namespace logbook::logging;
+using namespace benthos::logbook::logging;
 
 struct logger_tree_item
 {
@@ -141,7 +141,7 @@ logger_tree_item * getChildOf(logger_tree_item * t, const std::string & name)
 	return i;
 }
 
-logger * logbook::logging::getLogger(const std::string & name)
+logger * benthos::logbook::logging::getLogger(const std::string & name)
 {
 	if (name.empty())
 		return _root;

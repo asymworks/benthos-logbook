@@ -31,7 +31,7 @@
 #include "benthos/logbook/logging/formatter.hpp"
 #include "benthos/logbook/logging/record.hpp"
 
-using namespace logbook::logging;
+using namespace benthos::logbook::logging;
 
 // Defined in log_handler.cpp
 extern std::string default_format(const log_record & rec);

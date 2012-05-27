@@ -54,7 +54,7 @@
 #include <benthos/logbook/mix.hpp>
 #include <benthos/logbook/persistent.hpp>
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 // Forward Declaration of Profile
 class Profile;
@@ -543,6 +543,6 @@ struct IDiveFinder: public IFinder<Dive>
 
 };
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* LOGBOOK_DIVE_HPP_ */

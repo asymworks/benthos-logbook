@@ -32,8 +32,8 @@
 
 #include "dive_site_mapper.hpp"
 
-using namespace logbook;
-using namespace logbook::mappers;
+using namespace benthos::logbook;
+using namespace benthos::logbook::mappers;
 
 std::string DiveSiteMapper::columns = "id, name, place, country, latitude, "
 		"longitude, platform, waterbody, bottom, altitude, salinity, timezone, "

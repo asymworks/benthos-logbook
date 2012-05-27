@@ -31,7 +31,7 @@
 #include "benthos/logbook/mapper.hpp"
 #include "benthos/logbook/session.hpp"
 
-using namespace logbook;
+using namespace benthos::logbook;
 
 AbstractMapper::AbstractMapper(boost::shared_ptr<Session> session)
 	: m_session(session), m_conn(session->conn()), m_loaded()

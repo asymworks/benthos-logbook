@@ -37,8 +37,8 @@
 
 #include <benthos/logbook/session.hpp>
 
-using namespace logbook;
-using namespace logbook::mappers;
+using namespace benthos::logbook;
+using namespace benthos::logbook::mappers;
 
 std::string ProfileMapper::columns = "id, dive_id, computer_id, name, profile, vendor, imported, raw_profile";
 

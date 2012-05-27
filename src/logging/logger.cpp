@@ -34,7 +34,7 @@
 #include "benthos/logbook/logging/logger.hpp"
 #include "benthos/logbook/logging/record.hpp"
 
-using namespace logbook::logging;
+using namespace benthos::logbook::logging;
 
 logger::logger(logger * parent, const std::string & name)
 	: m_parent(parent), m_name(name), m_level(level::NOTSET),

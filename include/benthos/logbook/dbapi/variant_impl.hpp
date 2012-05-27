@@ -31,7 +31,7 @@
 #ifndef DBAPI_VARIANT_IMPL_HPP_
 #define DBAPI_VARIANT_IMPL_HPP_
 
-using namespace logbook::dbapi;
+using namespace benthos::logbook::dbapi;
 
 template <typename T>
 variant::variant(const T & v)

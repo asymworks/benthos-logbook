@@ -44,7 +44,7 @@
 
 #include <benthos/logbook/persistent.hpp>
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 /**
  * @brief Gas Mixture Model Class
@@ -181,6 +181,6 @@ struct IMixFinder: public IFinder<Mix>
 
 };
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* LOGBOOK_MIX_HPP_ */

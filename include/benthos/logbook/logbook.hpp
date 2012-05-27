@@ -51,7 +51,7 @@
 #include <benthos/logbook/schema.hpp>
 #include <benthos/logbook/session.hpp>
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 /**
  * @brief Logbook Class
@@ -143,6 +143,6 @@ private:
 
 };
 
-} /* logbook */
+} } /* logbook */
 
 #endif /* LOGBOOK_LOGBOOK_HPP_ */

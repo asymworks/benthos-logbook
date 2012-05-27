@@ -30,7 +30,7 @@
 
 #include "benthos/logbook/schema.hpp"
 
-using namespace logbook;
+using namespace benthos::logbook;
 
 #define SCHEMA_VERSION	1
 

@@ -42,7 +42,7 @@
 #include <list>
 #include <string>
 
-namespace logbook { namespace logging {
+namespace benthos { namespace logbook { namespace logging {
 
 // Forward Definition of log_handler and log_record
 class log_handler;
@@ -322,6 +322,6 @@ protected:
 
 };
 
-} } /* logbook::logging */
+} } } /* benthos::logbook::logging */
 
 #endif /* LOGGING_LOGGER_HPP_ */

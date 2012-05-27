@@ -34,7 +34,7 @@
 
 #include <stdexcept>
 
-using namespace logbook::dbapi;
+using namespace benthos::logbook::dbapi;
 
 cursor::cursor(statement::ptr stmt, bool empty)
 	: m_stmt(stmt), m_done(empty), m_names(), m_tblnames(), m_orgnames()

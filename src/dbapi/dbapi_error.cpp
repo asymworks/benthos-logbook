@@ -31,7 +31,7 @@
 #include "benthos/logbook/dbapi/connection.hpp"
 #include "benthos/logbook/dbapi/dbapi_error.hpp"
 
-using namespace logbook::dbapi;
+using namespace benthos::logbook::dbapi;
 
 dbapi_error::dbapi_error(const std::string & msg)
 	: std::runtime_error(msg)

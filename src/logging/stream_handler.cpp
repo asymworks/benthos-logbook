@@ -31,7 +31,7 @@
 #include "benthos/logbook/logging/record.hpp"
 #include "benthos/logbook/logging/stream_handler.hpp"
 
-using namespace logbook::logging;
+using namespace benthos::logbook::logging;
 
 stream_handler::stream_handler(std::ostream & stream, int level)
 	: log_handler(level), m_stream(stream)

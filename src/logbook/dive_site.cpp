@@ -33,7 +33,7 @@
 #include "benthos/logbook/dive.hpp"
 #include "benthos/logbook/session.hpp"
 
-using namespace logbook;
+using namespace benthos::logbook;
 
 class DiveSiteDives: public ObjectCollection<Dive, DiveSite>
 {

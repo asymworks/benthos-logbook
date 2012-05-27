@@ -30,8 +30,8 @@
 
 #include "mix_mapper.hpp"
 
-using namespace logbook;
-using namespace logbook::mappers;
+using namespace benthos::logbook;
+using namespace benthos::logbook::mappers;
 
 std::string MixMapper::columns = "id, name, o2, he, h2, ar";
 

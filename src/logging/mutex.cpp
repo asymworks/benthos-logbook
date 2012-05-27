@@ -34,7 +34,7 @@
 
 #include "benthos/logbook/logging/mutex.hpp"
 
-using namespace logbook::logging;
+using namespace benthos::logbook::logging;
 
 struct mutex::_data
 {

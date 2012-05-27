@@ -44,7 +44,7 @@
 #include <benthos/logbook/logging/mutex.hpp>
 #include <benthos/logbook/logging/record.hpp>
 
-namespace logbook { namespace logging {
+namespace benthos { namespace logbook { namespace logging {
 
 // Forward Definition of log_filter and log_formatter
 struct log_filter;
@@ -216,6 +216,6 @@ private:
 
 };
 
-} } /* logbook::logging */
+} } } /* benthos::logbook::logging */
 
 #endif /* LOGGING_LOG_HANDLER_HPP_ */

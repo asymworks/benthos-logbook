@@ -32,7 +32,7 @@
 #include "benthos/logbook/logging/formatter.hpp"
 #include "benthos/logbook/logging/handler.hpp"
 
-using namespace logbook::logging;
+using namespace benthos::logbook::logging;
 
 log_handler::log_handler(int level)
 	: m_level(level), m_formatter(0), m_mutex()

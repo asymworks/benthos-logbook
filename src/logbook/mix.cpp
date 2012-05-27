@@ -33,7 +33,7 @@
 
 #include "benthos/logbook/mix.hpp"
 
-using namespace logbook;
+using namespace benthos::logbook;
 
 Mix::Mix()
 	: TypedPersistent<Mix>(), m_fO2(0), m_fHe(0), m_fH2(0), m_fAr(0)

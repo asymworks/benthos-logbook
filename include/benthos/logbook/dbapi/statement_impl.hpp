@@ -33,7 +33,7 @@
 
 #include "dbapi_error.hpp"
 
-using namespace logbook::dbapi;
+using namespace benthos::logbook::dbapi;
 
 /**
  * @brief Parameter Bind Helper Class

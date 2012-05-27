@@ -52,7 +52,7 @@
 #include <benthos/logbook/mix.hpp>
 #include <benthos/logbook/persistent.hpp>
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 /**
  * @brief Waypoint Structure
@@ -198,6 +198,6 @@ struct IProfileFinder: public IFinder<Profile>
 
 };
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* LOGBOOK_PROFILE_HPP_ */

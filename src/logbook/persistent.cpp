@@ -32,7 +32,7 @@
 #include "benthos/logbook/persistent.hpp"
 #include "benthos/logbook/session.hpp"
 
-using namespace logbook;
+using namespace benthos::logbook;
 
 Persistent::Persistent()
 	: m_deleted(false), m_dirty(false), m_id(-1), m_session()

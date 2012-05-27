@@ -46,7 +46,7 @@
 #include <benthos/logbook/collection.hpp>
 #include <benthos/logbook/persistent.hpp>
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 // Forward Declaration of Dive and Profile
 class Dive;
@@ -228,6 +228,6 @@ struct IDiveComputerFinder: public IFinder<DiveComputer>
 
 };
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* LOGBOOK_DIVE_COMPUTER_HPP_ */

@@ -43,7 +43,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-namespace logbook { namespace dbapi {
+namespace benthos { namespace logbook { namespace dbapi {
 
 // Forward Definition of dbapi::connection
 class connection;
@@ -109,6 +109,6 @@ public:
 	virtual ~bind_error() throw () { }
 };
 
-} } /* logbook::dbapi */
+} } } /* benthos::logbook::dbapi */
 
 #endif /* DBAPI_ERROR_HPP_ */

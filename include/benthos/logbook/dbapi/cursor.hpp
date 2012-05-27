@@ -43,7 +43,7 @@
 #include <benthos/logbook/dbapi/statement.hpp>
 #include <benthos/logbook/dbapi/variant.hpp>
 
-namespace logbook { namespace dbapi {
+namespace benthos { namespace logbook { namespace dbapi {
 
 /**
  * @brief Database Cursor Class
@@ -177,6 +177,6 @@ private:
 
 };
 
-} } /* logbook::dbapi */
+} } } /* bethos::logbook::dbapi */
 
 #endif /* DBAPI_CURSOR_HPP_ */

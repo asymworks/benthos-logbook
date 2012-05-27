@@ -43,7 +43,7 @@
 
 #include <benthos/logbook/logging/handler.hpp>
 
-namespace logbook { namespace logging {
+namespace benthos { namespace logbook { namespace logging {
 
 /**
  * @brief Stream Log Handler Class
@@ -83,6 +83,6 @@ private:
 
 };
 
-} } /* logbook::logging */
+} } } /* benthos::logbook::logging */
 
 #endif /* LOGGING_STREAM_HANDLER_HPP_ */

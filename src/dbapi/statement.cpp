@@ -35,7 +35,7 @@
 #include "benthos/logbook/dbapi/statement.hpp"
 #include "benthos/logbook/dbapi/dbapi_error.hpp"
 
-using namespace logbook::dbapi;
+using namespace benthos::logbook::dbapi;
 
 enum
 {

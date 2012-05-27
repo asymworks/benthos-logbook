@@ -39,7 +39,7 @@
 
 #include <benthos/logbook/dbapi.hpp>
 
-namespace logbook {
+namespace benthos { namespace logbook {
 
 /**
  * @brief Logbook Database Schema Class
@@ -103,6 +103,6 @@ private:
 
 };
 
-} /* logbook */
+} } /* benthos::logbook */
 
 #endif /* LOGBOOK_SCHEMA_HPP_ */
