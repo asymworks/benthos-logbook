@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# Master CMake File for the Scuba Logbook C++ Library (liblogbook)
+# CMake File for the Scuba Logbook C++ Library (benthos-logbook)
 #------------------------------------------------------------------------------
 #
 # Copyright (C) 2011 Asymworks, LLC.  All Rights Reserved.
@@ -31,22 +31,18 @@
 # WITH THE SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 2.8.8)
-project(benthos_logbook)
-
-set(LIBLOGBOOK_MAJOR_VERSION 0)
-set(LIBLOGBOOK_MINOR_VERSION 1)
-set(LIBLOGBOOK_PATCH_VERSION 0)
-set(LIBLOGBOOK_VERSION
-	${LIBLOGBOOK_MAJOR_VERSION}.${LIBLOGBOOK_MINOR_VERSION}.${LIBLOGBOOK_PATCH_VERSION})
-
-set(CMAKE_MODULE_PATH 
-	${CMAKE_MODULE_PATH} 
-	${CMAKE_SOURCE_DIR}/cmake/modules/
-)
-
-# All source files are in the src directory
-add_subdirectory(src)
-
-# Generate documentation in the doc directory
-add_subdirectory(doc)
+# Find Doxygen and build documentation
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+	configure_file(
+		${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+		${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+		@ONLY
+	)
+	
+	add_custom_target(doc
+		${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+		COMMENT "Generating API Documentation with Doxygen" VERBATIM
+	)
+endif (DOXYGEN_FOUND)
