@@ -85,6 +85,9 @@ public:
 
 public:
 
+	//! @return Device Name
+	const boost::optional<std::string> & device() const;
+
 	//! @return Driver Name
 	const std::string & driver() const;
 
@@ -120,6 +123,12 @@ public:
 
 	//! @return Transfer Token
 	const boost::optional<std::string> & token() const;
+
+	//! @brief Set the Device Name to NULL
+	void setDevice(const boost::none_t & value);
+
+	//! @param[in] Device Name
+	void setDevice(const std::string & value);
 
 	//! @param[in] Driver Name
 	void setDriver(const std::string & value);
@@ -190,6 +199,7 @@ public:
 private:
 	std::string						m_serial;			///< Serial Number
 	std::string						m_driver;			///< Driver Name
+	boost::optional<std::string>	m_device;			///< Device Name
 	boost::optional<std::string>	m_parser;			///< Parser Name
 	boost::optional<std::string>	m_token;			///< Token
 	boost::optional<time_t>			m_last_transfer;	///< Last Transfer

@@ -36,13 +36,13 @@
 using namespace benthos::logbook;
 using namespace benthos::logbook::mappers;
 
-std::string DiveComputerMapper::columns = "id, driver, serial, parser, token, "
-		"last_transfer, driver_args, parser_args, name, manufacturer, model, "
-		"hw_version, sw_version";
+std::string DiveComputerMapper::columns = "id, driver, device, serial, parser, "
+		"token, last_transfer, driver_args, parser_args, name, manufacturer, "
+		"model, hw_version, sw_version";
 
-std::string DiveComputerMapper::sql_insert = "insert into computers values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)";
-std::string DiveComputerMapper::sql_update = "update computers set driver=?2, serial=?3, parser=?4, token=?5, last_transfer=?6, driver_args=?7, "
-		"parser_args=?8, name=?9, manufacturer=?10, model=?11, hw_version=?12, sw_version=?13 where id=?1";
+std::string DiveComputerMapper::sql_insert = "insert into computers values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)";
+std::string DiveComputerMapper::sql_update = "update computers set driver=?2, serial=?3, device=?4, parser=?5, token=?6, last_transfer=?7, "
+		"driver_args=?8, parser_args=?9, name=?10, manufacturer=?11, model=?12, hw_version=?13, sw_version=?14 where id=?1";
 std::string DiveComputerMapper::sql_delete = "delete from computers where id=?1";
 
 std::string DiveComputerMapper::sql_find_all = "select " + columns + " from computers";
@@ -76,16 +76,17 @@ void DiveComputerMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const
 
 	s->bind(2, o->driver());
 	s->bind(3, o->serial());
-	s->bind(4, o->parser());
-	s->bind(5, o->token());
-	s->bind(6, o->last_transfer());
-	s->bind(7, o->driver_args());
-	s->bind(8, o->parser_args());
-	s->bind(9, o->name());
-	s->bind(10, o->manufacturer());
-	s->bind(11, o->model());
-	s->bind(12, o->hw_version());
-	s->bind(13, o->sw_version());
+	s->bind(4, o->device());
+	s->bind(5, o->parser());
+	s->bind(6, o->token());
+	s->bind(7, o->last_transfer());
+	s->bind(8, o->driver_args());
+	s->bind(9, o->parser_args());
+	s->bind(10, o->name());
+	s->bind(11, o->manufacturer());
+	s->bind(12, o->model());
+	s->bind(13, o->hw_version());
+	s->bind(14, o->sw_version());
 }
 
 std::list<Persistent::Ptr> DiveComputerMapper::cascade_add(Persistent::Ptr p)
@@ -114,16 +115,17 @@ DiveComputer::Ptr DiveComputerMapper::doLoad(int64_t id, cursor::row_t r) const
 	o->setDriver(r[1].as<std::string>());
 	o->setSerial(r[2].as<std::string>());
 
-	SET_VARIANT(o, setParser, r[3], std::string);
-	SET_VARIANT(o, setToken, r[4], std::string);
-	SET_VARIANT(o, setLastTransfer, r[5], time_t);
-	SET_VARIANT(o, setDriverArgs, r[6], std::string);
-	SET_VARIANT(o, setParserArgs, r[7], std::string);
-	SET_VARIANT(o, setName, r[8], std::string);
-	SET_VARIANT(o, setManufacturer, r[9], std::string);
-	SET_VARIANT(o, setModel, r[10], std::string);
-	SET_VARIANT(o, setHWVersion, r[11], std::string);
-	SET_VARIANT(o, setSWVersion, r[12], std::string);
+	SET_VARIANT(o, setDevice, r[3], std::string);
+	SET_VARIANT(o, setParser, r[4], std::string);
+	SET_VARIANT(o, setToken, r[5], std::string);
+	SET_VARIANT(o, setLastTransfer, r[6], time_t);
+	SET_VARIANT(o, setDriverArgs, r[7], std::string);
+	SET_VARIANT(o, setParserArgs, r[8], std::string);
+	SET_VARIANT(o, setName, r[9], std::string);
+	SET_VARIANT(o, setManufacturer, r[10], std::string);
+	SET_VARIANT(o, setModel, r[11], std::string);
+	SET_VARIANT(o, setHWVersion, r[12], std::string);
+	SET_VARIANT(o, setSWVersion, r[13], std::string);
 
 	return o;
 }

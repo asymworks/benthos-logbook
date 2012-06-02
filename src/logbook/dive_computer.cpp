@@ -180,6 +180,11 @@ IObjectCollection<Profile>::ConstPtr DiveComputer::profiles() const
 	return m_profiles;
 }
 
+const boost::optional<std::string> & DiveComputer::device() const
+{
+	return m_device;
+}
+
 const std::string & DiveComputer::driver() const
 {
 	return m_driver;
@@ -238,6 +243,18 @@ const boost::optional<std::string> & DiveComputer::sw_version() const
 const boost::optional<std::string> & DiveComputer::token() const
 {
 	return m_token;
+}
+
+void DiveComputer::setDevice(const boost::none_t &)
+{
+	m_device.reset();
+	mark_dirty();
+}
+
+void DiveComputer::setDevice(const std::string & value)
+{
+	m_device = value;
+	mark_dirty();
 }
 
 void DiveComputer::setDriver(const std::string & value)

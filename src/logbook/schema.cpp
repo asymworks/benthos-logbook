@@ -80,6 +80,7 @@ void Schema::create_computers_tbl(dbapi::connection::ptr conn) const
 		"id integer primary key, "
 		"driver varchar not null, "
 		"serial varchar not null, "
+		"device varchar, "
 		"parser varchar, "
 		"token varchar, "
 		"last_transfer datetime, "
