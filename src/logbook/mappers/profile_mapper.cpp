@@ -30,6 +30,7 @@
 
 #include "profile_mapper.hpp"
 
+#include <set>
 #include <sstream>
 
 #include <yajl/yajl_parse.h>
@@ -111,6 +112,15 @@ std::list<Persistent::Ptr> ProfileMapper::cascade_add(Persistent::Ptr p)
 		result.push_back(o->computer());
 	if (o->dive())
 		result.push_back(o->dive());
+
+	std::set<Mix::Ptr> mixes;
+	std::list<waypoint>::const_iterator it;
+	for (it = o->profile().begin(); it != o->profile().end(); it++)
+		mixes.insert(it->mix);
+
+	std::set<Mix::Ptr>::iterator it2;
+	for (it2 = mixes.begin(); it2 != mixes.end(); it2++)
+		result.push_back(* it2);
 
 	return result;
 }
