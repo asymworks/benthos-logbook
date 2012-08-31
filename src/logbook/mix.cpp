@@ -108,6 +108,7 @@ void Mix::setAr(double value)
 		throw std::invalid_argument("Total gas fraction may not exceed 100%");
 	m_fAr = v;
 	mark_dirty();
+	events().attr_set(ptr(), "ar", boost::any(v / (double)1000));
 }
 
 void Mix::setArPerMil(unsigned int value)
@@ -116,6 +117,7 @@ void Mix::setArPerMil(unsigned int value)
 		throw std::invalid_argument("Total gas fraction may not exceed 100%");
 	m_fAr = value;
 	mark_dirty();
+	events().attr_set(ptr(), "ar", boost::any(value / (double)1000));
 }
 
 void Mix::setH2(double value)
@@ -127,6 +129,7 @@ void Mix::setH2(double value)
 		throw std::invalid_argument("Total gas fraction may not exceed 100%");
 	m_fH2 = v;
 	mark_dirty();
+	events().attr_set(ptr(), "h2", boost::any(v / (double)1000));
 }
 
 void Mix::setH2PerMil(unsigned int value)
@@ -135,6 +138,7 @@ void Mix::setH2PerMil(unsigned int value)
 		throw std::invalid_argument("Total gas fraction may not exceed 100%");
 	m_fH2 = value;
 	mark_dirty();
+	events().attr_set(ptr(), "h2", boost::any(value / (double)1000));
 }
 
 void Mix::setHe(double value)
@@ -146,6 +150,7 @@ void Mix::setHe(double value)
 		throw std::invalid_argument("Total gas fraction may not exceed 100%");
 	m_fHe = v;
 	mark_dirty();
+	events().attr_set(ptr(), "he", boost::any(v / (double)1000));
 }
 
 void Mix::setHePerMil(unsigned int value)
@@ -154,18 +159,21 @@ void Mix::setHePerMil(unsigned int value)
 		throw std::invalid_argument("Total gas fraction may not exceed 100%");
 	m_fHe = value;
 	mark_dirty();
+	events().attr_set(ptr(), "he", boost::any(value / (double)1000));
 }
 
 void Mix::setName(const boost::none_t &)
 {
 	m_name.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "name", boost::any());
 }
 
 void Mix::setName(const std::string & value)
 {
 	m_name = value;
 	mark_dirty();
+	events().attr_set(ptr(), "name", boost::any(value));
 }
 
 void Mix::setO2(double value)
@@ -177,6 +185,7 @@ void Mix::setO2(double value)
 		throw std::invalid_argument("Total gas fraction may not exceed 100%");
 	m_fO2 = v;
 	mark_dirty();
+	events().attr_set(ptr(), "o2", boost::any(v / (double)1000));
 }
 
 void Mix::setO2PerMil(unsigned int value)
@@ -185,5 +194,6 @@ void Mix::setO2PerMil(unsigned int value)
 		throw std::invalid_argument("Total gas fraction may not exceed 100%");
 	m_fO2 = value;
 	mark_dirty();
+	events().attr_set(ptr(), "o2", boost::any(value / (double)1000));
 }
 

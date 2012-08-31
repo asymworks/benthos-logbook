@@ -39,8 +39,10 @@
 
 #include <cstdint>
 
+#include <boost/any.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/signals2.hpp>
 #include <boost/utility.hpp>
 #include <boost/weak_ptr.hpp>
 
@@ -74,8 +76,20 @@ class Persistent: public boost::noncopyable,
 	public boost::enable_shared_from_this<Persistent>
 {
 public:
-	typedef boost::shared_ptr<Persistent>	Ptr;
-	typedef boost::weak_ptr<Persistent>		WeakPtr;
+	typedef boost::shared_ptr<Persistent>		Ptr;
+	typedef boost::shared_ptr<Persistent const>	CPtr;
+	typedef boost::weak_ptr<Persistent>			WeakPtr;
+
+public:
+
+	//! Instance Events Structure
+	typedef struct
+	{
+		boost::signals2::signal<void (Ptr, const std::string &, const boost::any &)>	attr_append;
+		boost::signals2::signal<void (Ptr, const std::string &, const boost::any &)>	attr_remove;
+		boost::signals2::signal<void (Ptr, const std::string &, const boost::any &)>	attr_set;
+
+	} Events;
 
 public:
 
@@ -86,6 +100,9 @@ public:
 	virtual ~Persistent();
 
 public:
+
+	//! @return Events
+	Events & events();
 
 	//! @return Identifier
 	int64_t id() const;
@@ -110,6 +127,15 @@ public:
 
 protected:
 
+	//! Called when the Persistent is attached to a Session
+	virtual void attached(SessionPtr);
+
+	//! @return Events for a Class
+	virtual Events & class_events() = 0;
+
+	//! Called when the Persistent is detached from a Session
+	virtual void detached(SessionPtr);
+
 	//! Mark the Persistent as Clean
 	virtual void mark_clean();
 
@@ -121,6 +147,12 @@ protected:
 
 	//! Mark the Persistent as Loading
 	virtual void mark_loading();
+
+	//! @return Instance shared pointer
+	Ptr ptr();
+
+	//! @return Instance shared pointer
+	CPtr ptr() const;
 
 	/**
 	 * @brief Set the Identifier Field
@@ -195,7 +227,22 @@ public:
 		return ti;
 	}
 
+protected:
+
+	//! @return Events for the Mapped Class
+	virtual Events & class_events()
+	{
+		return s_events;
+	}
+
+protected:
+	static Persistent::Events		s_events;
+
 };
+
+// Persistent Class Events
+template <class D>
+Persistent::Events TypedPersistent<D>::s_events;
 
 /**
  * @brief Templated Finder Interface Supertype

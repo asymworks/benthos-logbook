@@ -42,6 +42,53 @@ Profile::~Profile()
 {
 }
 
+void Profile::attached(Session::Ptr s)
+{
+	Persistent::attached(s);
+
+	m_evtComputerDel = s->mapper<DiveComputer>()->events().before_delete.connect(boost::bind(& Profile::evtDiveComputerDeleted, this, _1, _2));
+	m_evtDiveDel = s->mapper<Dive>()->events().before_delete.connect(boost::bind(& Profile::evtDiveDeleted, this, _1, _2));
+	m_evtMixDel = s->mapper<Mix>()->events().before_delete.connect(boost::bind(& Profile::evtMixDeleted, this, _1, _2));
+}
+
+void Profile::detached(Session::Ptr s)
+{
+	m_evtComputerDel.disconnect();
+	m_evtDiveDel.disconnect();
+	m_evtMixDel.disconnect();
+
+	Persistent::detached(s);
+}
+
+void Profile::evtDiveComputerDeleted(AbstractMapper::Ptr, Persistent::Ptr obj)
+{
+	DiveComputer::Ptr o = boost::dynamic_pointer_cast<DiveComputer>(obj);
+	if (o && (o == m_computer))
+		setComputer(boost::none);
+}
+
+void Profile::evtDiveDeleted(AbstractMapper::Ptr, Persistent::Ptr obj)
+{
+	Dive::Ptr o = boost::dynamic_pointer_cast<Dive>(obj);
+	if (o && (o == m_dive))
+		setDive(boost::none);
+}
+
+void Profile::evtMixDeleted(AbstractMapper::Ptr, Persistent::Ptr obj)
+{
+	Mix::Ptr o = boost::dynamic_pointer_cast<Mix>(obj);
+	if (! o || m_profile.empty())
+		return;
+
+	std::list<waypoint>::iterator it;
+	for (it = m_profile.begin(); it != m_profile.end(); it++)
+		if (it->mix == o)
+			it->mix.reset();
+
+	events().attr_set(ptr(), "keys", boost::any());
+	events().attr_set(ptr(), "profile", boost::any());
+}
+
 DiveComputer::Ptr Profile::computer() const
 {
 	return m_computer;
@@ -91,6 +138,7 @@ void Profile::setComputer(const boost::none_t &)
 
 	m_computer.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "computer", boost::any());
 }
 
 void Profile::setComputer(DiveComputer::Ptr value)
@@ -105,8 +153,9 @@ void Profile::setComputer(DiveComputer::Ptr value)
 		value->profiles()->add(boost::dynamic_pointer_cast<Profile>(shared_from_this()), false);
 	}
 
-	m_computer.swap(value);
+	m_computer = value;
 	mark_dirty();
+	events().attr_set(ptr(), "computer", boost::any(value));
 }
 
 void Profile::setDive(const boost::none_t &)
@@ -118,6 +167,7 @@ void Profile::setDive(const boost::none_t &)
 
 	m_dive.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "dive", boost::any());
 }
 
 void Profile::setDive(Dive::Ptr value)
@@ -132,32 +182,37 @@ void Profile::setDive(Dive::Ptr value)
 		value->profiles()->add(boost::dynamic_pointer_cast<Profile>(shared_from_this()), false);
 	}
 
-	m_dive.swap(value);
+	m_dive = value;
 	mark_dirty();
+	events().attr_set(ptr(), "dive", boost::any(value));
 }
 
 void Profile::setImported(const boost::none_t &)
 {
 	m_imported.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "imported", boost::any());
 }
 
 void Profile::setImported(const time_t & value)
 {
 	m_imported = value;
 	mark_dirty();
+	events().attr_set(ptr(), "imported", boost::any(value));
 }
 
 void Profile::setName(const boost::none_t &)
 {
 	m_name.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "name", boost::any());
 }
 
 void Profile::setName(const std::string & value)
 {
 	m_name = value;
 	mark_dirty();
+	events().attr_set(ptr(), "name", boost::any(value));
 }
 
 void Profile::setProfile(const boost::none_t &)
@@ -165,6 +220,8 @@ void Profile::setProfile(const boost::none_t &)
 	m_profile.clear();
 	m_keys.clear();
 	mark_dirty();
+	events().attr_set(ptr(), "keys", boost::any());
+	events().attr_set(ptr(), "profile", boost::any());
 }
 
 void Profile::setProfile(const std::list<waypoint> & value)
@@ -186,28 +243,34 @@ void Profile::setProfile(const std::list<waypoint> & value)
 	}
 
 	mark_dirty();
+	events().attr_set(ptr(), "keys", boost::any());
+	events().attr_set(ptr(), "profile", boost::any());
 }
 
 void Profile::setRawProfile(const boost::none_t &)
 {
 	m_raw.clear();
 	mark_dirty();
+	events().attr_set(ptr(), "raw_profile", boost::any());
 }
 
 void Profile::setRawProfile(const std::vector<unsigned char> & value)
 {
 	m_raw.assign(value.begin(), value.end());
 	mark_dirty();
+	events().attr_set(ptr(), "raw_profile", boost::any(value));
 }
 
 void Profile::setVendor(const boost::none_t &)
 {
 	m_vendor.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "vendor", boost::any());
 }
 
 void Profile::setVendor(const std::string & value)
 {
 	m_vendor = value;
 	mark_dirty();
+	events().attr_set(ptr(), "vendor", boost::any(value));
 }

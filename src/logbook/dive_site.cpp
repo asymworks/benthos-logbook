@@ -259,54 +259,63 @@ void DiveSite::setAltitude(const boost::none_t &)
 {
 	m_altitude.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "altitude", boost::any());
 }
 
 void DiveSite::setAltitude(double value)
 {
 	m_altitude = value;
 	mark_dirty();
+	events().attr_set(ptr(), "altitude", boost::any(value));
 }
 
 void DiveSite::setBottom(const boost::none_t &)
 {
 	m_bottom.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "bottom", boost::any());
 }
 
 void DiveSite::setBottom(const std::string & value)
 {
 	m_bottom = value;
 	mark_dirty();
+	events().attr_set(ptr(), "bottom", boost::any(value));
 }
 
 void DiveSite::setComments(const boost::none_t &)
 {
 	m_comments.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "comments", boost::any());
 }
 
 void DiveSite::setComments(const std::string & value)
 {
 	m_comments = value;
 	mark_dirty();
+	events().attr_set(ptr(), "comments", boost::any(value));
 }
 
 void DiveSite::setCountry(const boost::none_t &)
 {
 	m_country.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "country", boost::any());
 }
 
 void DiveSite::setCountry(const country & value)
 {
 	m_country = value;
 	mark_dirty();
+	events().attr_set(ptr(), "country", boost::any(value.code()));
 }
 
 void DiveSite::setLatitude(const boost::none_t &)
 {
 	m_lat.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "latitude", boost::any());
 }
 
 void DiveSite::setLatitude(double value)
@@ -315,12 +324,14 @@ void DiveSite::setLatitude(double value)
 		throw std::invalid_argument("Latitude must be between -90 and 90");
 	m_lat = value;
 	mark_dirty();
+	events().attr_set(ptr(), "latitude", boost::any(value));
 }
 
 void DiveSite::setLongitude(const boost::none_t &)
 {
 	m_lng.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "longitude", boost::any());
 }
 
 void DiveSite::setLongitude(double value)
@@ -329,42 +340,49 @@ void DiveSite::setLongitude(double value)
 		throw std::invalid_argument("Longitude must be between -180 and 180");
 	m_lng = value;
 	mark_dirty();
+	events().attr_set(ptr(), "longitude", boost::any(value));
 }
 
 void DiveSite::setName(const std::string & value)
 {
 	m_name = value;
 	mark_dirty();
+	events().attr_set(ptr(), "name", boost::any(value));
 }
 
 void DiveSite::setPlace(const boost::none_t &)
 {
 	m_place.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "place", boost::any());
 }
 
 void DiveSite::setPlace(const std::string & value)
 {
 	m_place = value;
 	mark_dirty();
+	events().attr_set(ptr(), "place", boost::any(value));
 }
 
 void DiveSite::setPlatform(const boost::none_t &)
 {
 	m_platform.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "platform", boost::any());
 }
 
 void DiveSite::setPlatform(const std::string & value)
 {
 	m_platform = value;
 	mark_dirty();
+	events().attr_set(ptr(), "platform", boost::any(value));
 }
 
 void DiveSite::setSalinity(const boost::none_t &)
 {
 	m_salinity.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "salinity", boost::any());
 }
 
 void DiveSite::setSalinity(const std::string & value)
@@ -377,28 +395,33 @@ void DiveSite::setSalinity(const std::string & value)
 
 	m_salinity = lvalue;
 	mark_dirty();
+	events().attr_set(ptr(), "salinity", boost::any(lvalue));
 }
 
 void DiveSite::setTimezone(const boost::none_t &)
 {
 	m_timezone.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "timezone", boost::any());
 }
 
 void DiveSite::setTimezone(const std::string & value)
 {
 	m_timezone = value;
 	mark_dirty();
+	events().attr_set(ptr(), "timezone", boost::any(value));
 }
 
 void DiveSite::setWaterBody(const boost::none_t &)
 {
 	m_waterbody.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "water_body", boost::any());
 }
 
 void DiveSite::setWaterBody(const std::string & value)
 {
 	m_waterbody = value;
 	mark_dirty();
+	events().attr_set(ptr(), "water_body", boost::any(value));
 }

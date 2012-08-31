@@ -28,6 +28,8 @@
  * WITH THE SOFTWARE.
  */
 
+#include <boost/any.hpp>
+
 #include "benthos/logbook/dive_computer.hpp"
 #include "benthos/logbook/dive.hpp"
 #include "benthos/logbook/profile.hpp"
@@ -249,142 +251,166 @@ void DiveComputer::setDevice(const boost::none_t &)
 {
 	m_device.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "device", boost::any());
 }
 
 void DiveComputer::setDevice(const std::string & value)
 {
 	m_device = value;
 	mark_dirty();
+	events().attr_set(ptr(), "device", boost::any(value));
 }
 
 void DiveComputer::setDriver(const std::string & value)
 {
 	m_driver = value;
 	mark_dirty();
+	events().attr_set(ptr(), "driver", boost::any(value));
 }
 
 void DiveComputer::setDriverArgs(const boost::none_t &)
 {
 	m_driver_args.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "driver_args", boost::any());
 }
 
 void DiveComputer::setDriverArgs(const std::string & value)
 {
 	m_driver_args = value;
 	mark_dirty();
+	events().attr_set(ptr(), "driver_args", boost::any(value));
 }
 
 void DiveComputer::setHWVersion(const boost::none_t &)
 {
 	m_hw_version.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "hw_version", boost::any());
 }
 
 void DiveComputer::setHWVersion(const std::string & value)
 {
 	m_hw_version = value;
 	mark_dirty();
+	events().attr_set(ptr(), "hw_version", boost::any(value));
 }
 
 void DiveComputer::setLastTransfer(const boost::none_t &)
 {
 	m_last_transfer.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "last_transfer", boost::any());
 }
 
 void DiveComputer::setLastTransfer(const time_t & value)
 {
 	m_last_transfer = value;
 	mark_dirty();
+	events().attr_set(ptr(), "last_transfer", boost::any(value));
 }
 
 void DiveComputer::setManufacturer(const boost::none_t &)
 {
 	m_manufacturer.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "manufacturer", boost::any());
 }
 
 void DiveComputer::setManufacturer(const std::string & value)
 {
 	m_manufacturer = value;
 	mark_dirty();
+	events().attr_set(ptr(), "manufacturer", boost::any(value));
 }
 
 void DiveComputer::setModel(const boost::none_t &)
 {
 	m_model.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "model", boost::any());
 }
 
 void DiveComputer::setModel(const std::string & value)
 {
 	m_model = value;
 	mark_dirty();
+	events().attr_set(ptr(), "model", boost::any(value));
 }
 
 void DiveComputer::setName(const boost::none_t &)
 {
 	m_name.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "name", boost::any());
 }
 
 void DiveComputer::setName(const std::string & value)
 {
 	m_name = value;
 	mark_dirty();
+	events().attr_set(ptr(), "name", boost::any(value));
 }
 
 void DiveComputer::setParser(const boost::none_t &)
 {
 	m_parser.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "parser", boost::any());
 }
 
 void DiveComputer::setParser(const std::string & value)
 {
 	m_parser = value;
 	mark_dirty();
+	events().attr_set(ptr(), "parser", boost::any(value));
 }
 
 void DiveComputer::setParserArgs(const boost::none_t &)
 {
 	m_parser_args.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "parser_args", boost::any());
 }
 
 void DiveComputer::setParserArgs(const std::string & value)
 {
 	m_parser_args = value;
 	mark_dirty();
+	events().attr_set(ptr(), "parser_args", boost::any(value));
 }
 
 void DiveComputer::setSerial(const std::string & value)
 {
 	m_serial = value;
 	mark_dirty();
+	events().attr_set(ptr(), "serial", boost::any(value));
 }
 
 void DiveComputer::setSWVersion(const boost::none_t &)
 {
 	m_sw_version.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "sw_version", boost::any());
 }
 
 void DiveComputer::setSWVersion(const std::string & value)
 {
 	m_sw_version = value;
 	mark_dirty();
+	events().attr_set(ptr(), "sw_version", boost::any(value));
 }
 
 void DiveComputer::setToken(const boost::none_t &)
 {
 	m_token.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "token", boost::any());
 }
 
 void DiveComputer::setToken(const std::string & value)
 {
 	m_token = value;
 	mark_dirty();
+	events().attr_set(ptr(), "token", boost::any(value));
 }

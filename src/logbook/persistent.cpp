@@ -35,12 +35,25 @@
 using namespace benthos::logbook;
 
 Persistent::Persistent()
-	: m_deleted(false), m_dirty(false), m_id(-1), m_session()
+	: m_deleted(false), m_dirty(false), m_loading(false), m_id(-1), m_session()
 {
 }
 
 Persistent::~Persistent()
 {
+}
+
+void Persistent::attached(Session::Ptr)
+{
+}
+
+void Persistent::detached(Session::Ptr)
+{
+}
+
+Persistent::Events & Persistent::events()
+{
+	return class_events();
 }
 
 int64_t Persistent::id() const
@@ -70,6 +83,16 @@ void Persistent::mark_loading()
 	m_loading = true;
 }
 
+Persistent::Ptr Persistent::ptr()
+{
+	return shared_from_this();
+}
+
+Persistent::CPtr Persistent::ptr() const
+{
+	return shared_from_this();
+}
+
 Session::Ptr Persistent::session() const
 {
 	return m_session.lock();
@@ -82,7 +105,13 @@ void Persistent::set_id(int64_t id)
 
 void Persistent::set_session(Session::Ptr p)
 {
+	if (! m_session.expired())
+		detached(m_session.lock());
+
 	m_session = p;
+
+	if (p)
+		attached(p);
 }
 
 #ifdef HAVE_CXXABI_H

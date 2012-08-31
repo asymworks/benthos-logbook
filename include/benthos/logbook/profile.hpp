@@ -158,6 +158,25 @@ public:
 	//! @param[in] Vendor-Specified Data
 	void setVendor(const std::string & value);
 
+public:
+
+	//! @internal Called when a Dive is deleted
+	void evtDiveDeleted(AbstractMapper::Ptr, Persistent::Ptr);
+
+	//! @internal Called when a Dive Computer is deleted
+	void evtDiveComputerDeleted(AbstractMapper::Ptr, Persistent::Ptr);
+
+	//! @internal Called when a Mix is deleted
+	void evtMixDeleted(AbstractMapper::Ptr, Persistent::Ptr);
+
+protected:
+
+	//! Called when the Persistent is attached to a Session
+	virtual void attached(SessionPtr);
+
+	//! Called when the Persistent is detached from a Session
+	virtual void detached(SessionPtr);
+
 private:
 	Dive::Ptr						m_dive;		///< Dive
 	DiveComputer::Ptr				m_computer;	///< Dive Computer
@@ -169,6 +188,10 @@ private:
 	boost::optional<time_t>			m_imported;	///< Import Date/Time
 
 	std::vector<unsigned char>		m_raw;		///< Raw Profile Data Blob
+
+	boost::signals2::connection		m_evtDiveDel;		///< Event Connection for Dive Deletion
+	boost::signals2::connection		m_evtComputerDel;	///< Event Connection for Dive Computer Deletion
+	boost::signals2::connection		m_evtMixDel;		///< Event Connection for Mix Deletion
 
 };
 

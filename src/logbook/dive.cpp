@@ -127,6 +127,45 @@ Dive::~Dive()
 {
 }
 
+void Dive::attached(Session::Ptr s)
+{
+	Persistent::attached(s);
+
+	m_evtComputerDel = s->mapper<DiveComputer>()->events().before_delete.connect(boost::bind(& Dive::evtDiveComputerDeleted, this, _1, _2));
+	m_evtMixDel = s->mapper<Mix>()->events().before_delete.connect(boost::bind(& Dive::evtMixDeleted, this, _1, _2));
+	m_evtSiteDel = s->mapper<DiveSite>()->events().before_delete.connect(boost::bind(& Dive::evtDiveSiteDeleted, this, _1, _2));
+}
+
+void Dive::detached(Session::Ptr s)
+{
+	m_evtComputerDel.disconnect();
+	m_evtMixDel.disconnect();
+	m_evtSiteDel.disconnect();
+
+	Persistent::detached(s);
+}
+
+void Dive::evtDiveComputerDeleted(AbstractMapper::Ptr, Persistent::Ptr obj)
+{
+	DiveComputer::Ptr o = boost::dynamic_pointer_cast<DiveComputer>(obj);
+	if (o && (o == m_computer))
+		setComputer(boost::none);
+}
+
+void Dive::evtMixDeleted(AbstractMapper::Ptr, Persistent::Ptr obj)
+{
+	Mix::Ptr o = boost::dynamic_pointer_cast<Mix>(obj);
+	if (o && (o == m_mix))
+		setMix(boost::none);
+}
+
+void Dive::evtDiveSiteDeleted(AbstractMapper::Ptr, Persistent::Ptr obj)
+{
+	DiveSite::Ptr o = boost::dynamic_pointer_cast<DiveSite>(obj);
+	if (o && (o == m_site))
+		setSite(boost::none);
+}
+
 const boost::optional<double> & Dive::air_temp() const
 {
 	return m_airtemp;
@@ -314,54 +353,63 @@ void Dive::setAirTemp(const boost::none_t &)
 {
 	m_airtemp.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "air_temp", boost::any());
 }
 
 void Dive::setAirTemp(double value)
 {
 	m_airtemp = value;
 	mark_dirty();
+	events().attr_set(ptr(), "air_temp", boost::any(value));
 }
 
 void Dive::setAlgorithm(const boost::none_t &)
 {
 	m_algorithm.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "algorithm", boost::any());
 }
 
 void Dive::setAlgorithm(const std::string & value)
 {
 	m_algorithm = value;
 	mark_dirty();
+	events().attr_set(ptr(), "algorithm", boost::any(value));
 }
 
 void Dive::setAvgDepth(const boost::none_t &)
 {
 	m_avgdepth.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "avg_depth", boost::any());
 }
 
 void Dive::setAvgDepth(double value)
 {
 	m_avgdepth = value;
 	mark_dirty();
+	events().attr_set(ptr(), "avg_depth", boost::any(value));
 }
 
 void Dive::setComments(const boost::none_t &)
 {
 	m_comments.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "comments", boost::any());
 }
 
 void Dive::setComments(const std::string & value)
 {
 	m_comments = value;
 	mark_dirty();
+	events().attr_set(ptr(), "comments", boost::any(value));
 }
 
 void Dive::setComputer(const boost::none_t &)
 {
 	m_computer.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "computer", boost::any());
 }
 
 void Dive::setComputer(DiveComputer::Ptr value)
@@ -379,8 +427,9 @@ void Dive::setComputer(DiveComputer::Ptr value)
 		value->dives()->add(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
 	}
 
-	m_computer.swap(value);
+	m_computer = value;
 	mark_dirty();
+	events().attr_set(ptr(), "computer", boost::any(value));
 }
 
 void Dive::setDateTime(const boost::none_t &)
@@ -392,18 +441,21 @@ void Dive::setDateTime(const boost::none_t &)
 
 	m_datetime.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "datetime", boost::any());
 }
 
 void Dive::setDateTime(time_t value)
 {
 	m_datetime = value;
 	mark_dirty();
+	events().attr_set(ptr(), "datetime", boost::any(value));
 }
 
 void Dive::setDesatTime(const boost::none_t &)
 {
 	m_desat.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "desat_time", boost::any());
 }
 
 void Dive::setDesatTime(int value)
@@ -413,6 +465,7 @@ void Dive::setDesatTime(int value)
 
 	m_desat = value;
 	mark_dirty();
+	events().attr_set(ptr(), "desat_time", boost::any(value));
 }
 
 void Dive::setDuration(int value)
@@ -422,30 +475,35 @@ void Dive::setDuration(int value)
 
 	m_duration = value;
 	mark_dirty();
+	events().attr_set(ptr(), "duration", boost::any(value));
 }
 
 void Dive::setEndPressure(const boost::none_t &)
 {
 	m_endpx.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "end_pressure", boost::any());
 }
 
 void Dive::setEndPressure(double value)
 {
 	m_endpx = value;
 	mark_dirty();
+	events().attr_set(ptr(), "end_pressure", boost::any(value));
 }
 
 void Dive::setEndPressureGroup(const boost::none_t &)
 {
 	m_pg_end.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "end_pressure_group", boost::any());
 }
 
 void Dive::setEndPressureGroup(const std::string & value)
 {
 	m_pg_end = value;
 	mark_dirty();
+	events().attr_set(ptr(), "end_pressure_group", boost::any(value));
 }
 
 void Dive::setInterval(int value)
@@ -455,54 +513,64 @@ void Dive::setInterval(int value)
 
 	m_interval = value;
 	mark_dirty();
+	events().attr_set(ptr(), "interval", boost::any(value));
 }
 
 void Dive::setMaxDepth(double value)
 {
 	m_maxdepth = value;
 	mark_dirty();
+	events().attr_set(ptr(), "max_depth", boost::any(value));
 }
 
 void Dive::setMaxTemp(const boost::none_t &)
 {
 	m_maxtemp.reset();
 	mark_dirty();
+
+	events().attr_set(ptr(), "max_temp", boost::any());
 }
 
 void Dive::setMaxTemp(double value)
 {
 	m_maxtemp = value;
 	mark_dirty();
+	events().attr_set(ptr(), "max_temp", boost::any(value));
 }
 
 void Dive::setMinTemp(const boost::none_t &)
 {
 	m_mintemp.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "min_temp", boost::any());
 }
 
 void Dive::setMinTemp(double value)
 {
 	m_mintemp = value;
 	mark_dirty();
+	events().attr_set(ptr(), "min_temp", boost::any(value));
 }
 
 void Dive::setMix(const boost::none_t &)
 {
 	m_mix.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "mix", boost::any());
 }
 
 void Dive::setMix(Mix::Ptr value)
 {
-	m_mix.swap(value);
+	m_mix = value;
 	mark_dirty();
+	events().attr_set(ptr(), "mix", boost::any(value));
 }
 
 void Dive::setNoFlyTime(const boost::none_t &)
 {
 	m_nofly.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "nofly_time", boost::any());
 }
 
 void Dive::setNoFlyTime(int value)
@@ -512,12 +580,14 @@ void Dive::setNoFlyTime(int value)
 
 	m_nofly = value;
 	mark_dirty();
+	events().attr_set(ptr(), "nofly_time", boost::any(value));
 }
 
 void Dive::setNumber(const boost::none_t &)
 {
 	m_number.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "number", boost::any());
 }
 
 void Dive::setNumber(int value)
@@ -531,12 +601,14 @@ void Dive::setNumber(int value)
 		m_number = value;
 
 	mark_dirty();
+	events().attr_set(ptr(), "number", boost::any(value));
 }
 
 void Dive::setRating(const boost::none_t &)
 {
 	m_rating.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "rating", boost::any());
 }
 
 void Dive::setRating(int value)
@@ -546,26 +618,35 @@ void Dive::setRating(int value)
 
 	m_rating = value;
 	mark_dirty();
+	events().attr_set(ptr(), "rating", boost::any(value));
 }
 
 void Dive::setRepetition(int value)
 {
+	bool setInterval = false;
 	if (value < 1)
 		throw std::invalid_argument("Repetition number must be greater than 0");
 
 	if (value == 1)
+	{
 		// Surface Interval must be 0 ("infinite") for first dive in
 		// repetition group
 		m_interval = 0;
+		setInterval = true;
+	}
 
 	m_repetition = value;
 	mark_dirty();
+	events().attr_set(ptr(), "repetition", boost::any(value));
+	if (setInterval)
+		events().attr_set(ptr(), "interval", boost::any(m_interval));
 }
 
 void Dive::setRNT(const boost::none_t &)
 {
 	m_rnt.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "rnt", boost::any());
 }
 
 void Dive::setRNT(int value)
@@ -575,6 +656,7 @@ void Dive::setRNT(int value)
 
 	m_rnt = value;
 	mark_dirty();
+	events().attr_set(ptr(), "rnt", boost::any(value));
 }
 
 void Dive::setSafetyStop(bool value)
@@ -587,12 +669,19 @@ void Dive::setSafetyStop(bool value)
 
 	m_stop = value;
 	mark_dirty();
+	events().attr_set(ptr(), "safety_stop", boost::any(value));
+	if (! value)
+	{
+		events().attr_set(ptr(), "stop_depth", boost::any());
+		events().attr_set(ptr(), "stop_time", boost::any());
+	}
 }
 
 void Dive::setSalinity(const boost::none_t &)
 {
 	m_salinity.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "salinity", boost::any());
 }
 
 void Dive::setSalinity(const std::string & value)
@@ -605,6 +694,7 @@ void Dive::setSalinity(const std::string & value)
 
 	m_salinity = lvalue;
 	mark_dirty();
+	events().attr_set(ptr(), "salinity", boost::any(lvalue));
 }
 
 void Dive::setSite(const boost::none_t &)
@@ -616,6 +706,7 @@ void Dive::setSite(const boost::none_t &)
 
 	m_site.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "site", boost::any());
 }
 
 void Dive::setSite(DiveSite::Ptr value)
@@ -633,74 +724,86 @@ void Dive::setSite(DiveSite::Ptr value)
 		value->dives()->add(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
 	}
 
-	m_site.swap(value);
+	m_site = value;
 	mark_dirty();
+	events().attr_set(ptr(), "site", boost::any(value));
 }
 
 void Dive::setStartPressure(const boost::none_t &)
 {
 	m_startpx.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "start_pressure", boost::any());
 }
 
 void Dive::setStartPressure(double value)
 {
 	m_startpx = value;
 	mark_dirty();
+	events().attr_set(ptr(), "start_pressure", boost::any(value));
 }
 
 void Dive::setStartPressureGroup(const boost::none_t &)
 {
 	m_pg_start.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "start_pressure_group", boost::any());
 }
 
 void Dive::setStartPressureGroup(const std::string & value)
 {
 	m_pg_start = value;
 	mark_dirty();
+	events().attr_set(ptr(), "start_pressure_group", boost::any(value));
 }
 
 void Dive::setStopDepth(const boost::none_t &)
 {
 	m_stopdepth.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "stop_depth", boost::any());
 }
 
 void Dive::setStopDepth(double value)
 {
 	m_stopdepth = value;
 	mark_dirty();
+	events().attr_set(ptr(), "stop_depth", boost::any(value));
 }
 
 void Dive::setStopTime(const boost::none_t &)
 {
 	m_stoptime.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "stop_time", boost::any());
 }
 
 void Dive::setStopTime(int value)
 {
 	m_stoptime = value;
 	mark_dirty();
+	events().attr_set(ptr(), "stop_time", boost::any(value));
 }
 
 void Dive::setUTCOffset(const boost::none_t &)
 {
 	m_utc_offset.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "utc_offset", boost::any());
 }
 
 void Dive::setUTCOffset(int value)
 {
 	m_utc_offset = value;
 	mark_dirty();
+	events().attr_set(ptr(), "utc_offset", boost::any(value));
 }
 
 void Dive::setVisibilityCategory(const boost::none_t &)
 {
 	m_viz_cat.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "visibility_category", boost::any());
 }
 
 void Dive::setVisibilityCategory(const std::string & value)
@@ -714,12 +817,14 @@ void Dive::setVisibilityCategory(const std::string & value)
 
 	m_viz_cat = lvalue;
 	mark_dirty();
+	events().attr_set(ptr(), "visibility_category", boost::any(lvalue));
 }
 
 void Dive::setVisibilityDistance(const boost::none_t &)
 {
 	m_viz_dist.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "visibility_distance", boost::any());
 }
 
 void Dive::setVisibilityDistance(double value)
@@ -729,12 +834,14 @@ void Dive::setVisibilityDistance(double value)
 
 	m_viz_dist = value;
 	mark_dirty();
+	events().attr_set(ptr(), "visibility_distance", boost::any(value));
 }
 
 void Dive::setWeight(const boost::none_t &)
 {
 	m_weight.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "weight", boost::any());
 }
 
 void Dive::setWeight(double value)
@@ -744,4 +851,5 @@ void Dive::setWeight(double value)
 
 	m_weight = value;
 	mark_dirty();
+	events().attr_set(ptr(), "weight", boost::any(value));
 }

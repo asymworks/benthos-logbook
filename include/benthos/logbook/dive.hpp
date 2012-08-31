@@ -45,12 +45,14 @@
 
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/signals2.hpp>
 
 #include <benthos/logbook/dbapi/variant.hpp>
 
 #include <benthos/logbook/collection.hpp>
 #include <benthos/logbook/dive_computer.hpp>
 #include <benthos/logbook/dive_site.hpp>
+#include <benthos/logbook/mapper.hpp>
 #include <benthos/logbook/mix.hpp>
 #include <benthos/logbook/persistent.hpp>
 
@@ -402,6 +404,25 @@ public:
 	//! @param[in] Weight Used in kg
 	void setWeight(double value);
 
+public:
+
+	//! @internal Called when a Dive Site is deleted
+	void evtDiveSiteDeleted(AbstractMapper::Ptr, Persistent::Ptr);
+
+	//! @internal Called when a Dive Computer is deleted
+	void evtDiveComputerDeleted(AbstractMapper::Ptr, Persistent::Ptr);
+
+	//! @internal Called when a Mix is deleted
+	void evtMixDeleted(AbstractMapper::Ptr, Persistent::Ptr);
+
+protected:
+
+	//! Called when the Persistent is attached to a Session
+	virtual void attached(SessionPtr);
+
+	//! Called when the Persistent is detached from a Session
+	virtual void detached(SessionPtr);
+
 private:
 	boost::optional<time_t>			m_datetime;		///< Dive Date/Time
 	boost::optional<int>			m_utc_offset;	///< Dive UTC Offset
@@ -443,6 +464,10 @@ private:
 
 	Tags::Ptr								m_tags;		///< List of Tags
 	mutable IObjectCollection<Profile>::Ptr	m_profiles;	///< List of Profiles
+
+	boost::signals2::connection		m_evtSiteDel;		///< Event Connection for Dive Site Deletion
+	boost::signals2::connection		m_evtComputerDel;	///< Event Connection for Dive Computer Deletion
+	boost::signals2::connection		m_evtMixDel;		///< Event Connection for Mix Deletion
 
 };
 
