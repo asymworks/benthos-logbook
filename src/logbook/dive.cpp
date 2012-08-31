@@ -99,6 +99,14 @@ std::list<std::string> Dive::Tags::all() const
 	return std::list<std::string>(m_items.begin(), m_items.end());
 }
 
+void Dive::Tags::assign(Dive::Tags::ConstPtr tags)
+{
+	if (tags)
+		m_items = (tags.get())->m_items;
+	else
+		m_items.clear();
+}
+
 void Dive::Tags::add(const std::string & tag)
 {
 	std::string ltag(tag);

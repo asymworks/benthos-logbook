@@ -108,6 +108,9 @@ public:
 		//! @param[in] Tag to Add
 		void add(const std::string & tag);
 
+		//! @param[in] Tag Collection to Assign
+		void assign(Tags::ConstPtr tags);
+
 		//! @brief Clear list of Tags
 		void clear();
 

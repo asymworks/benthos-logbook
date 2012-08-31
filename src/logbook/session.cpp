@@ -87,6 +87,9 @@ Session::~Session()
 
 void Session::add(Persistent::Ptr p)
 {
+	if (! p)
+		return;
+
 	if (m_mappers.find(p->type_info()) == m_mappers.end())
 		throw std::runtime_error(std::string("No mapper found for class ") + p->type_name());
 
@@ -100,6 +103,9 @@ void Session::add(Persistent::Ptr p)
 
 void Session::attach(Persistent::Ptr p)
 {
+	if (! p)
+		return;
+
 	if (p->session() && (p->session().get() != this))
 		throw std::runtime_error("Object is already registered with a different Session");
 
@@ -127,6 +133,9 @@ typedef std::list<Persistent::Ptr> (AbstractMapper::*pmfCascade)(Persistent::Ptr
 
 void walk_cascade_tree(Persistent::Ptr p, std::set<Persistent::Ptr> & set_, pmfCascade fn, Session::Ptr s, logging::logger * l)
 {
+	if (! p)
+		return;
+
 	AbstractMapper::Ptr m = s->mapper(p->type_info());
 	if (! m)
 		throw std::runtime_error(std::string("No mapper found for class ") + p->type_name().c_str());
@@ -185,6 +194,9 @@ void Session::commit()
 
 void Session::delete_(Persistent::Ptr p)
 {
+	if (! p)
+		return;
+
 	if (m_mappers.find(p->type_info()) == m_mappers.end())
 		throw std::runtime_error(std::string("No mapper found for class ") + p->type_name());
 
@@ -222,6 +234,9 @@ uow_registry Session::deleted() const
 
 void Session::detach(Persistent::Ptr p)
 {
+	if (! p)
+		return;
+
 	if ((p->id() == -1) && (m_new.find(p) != m_new.end()))
 	{
 		m_new.erase(p);
@@ -260,6 +275,9 @@ Session::Events & Session::events()
 
 void Session::expunge(Persistent::Ptr p)
 {
+	if (! p)
+		return;
+
 	if (m_mappers.find(p->type_info()) == m_mappers.end())
 		throw std::runtime_error(std::string("No mapper found for class ") + p->type_name());
 
@@ -383,6 +401,9 @@ void Session::rollback()
 
 void Session::register_(Persistent::Ptr p)
 {
+	if (! p)
+		return;
+
 	if (p->id() == -1)
 		register_new(p);
 	else
@@ -391,6 +412,9 @@ void Session::register_(Persistent::Ptr p)
 
 void Session::register_loaded(Persistent::Ptr p)
 {
+	if (! p)
+		return;
+
 	id_key_type key(p->type_info(), p->id());
 	if ((m_idmap.find(key) != m_idmap.end()) && (! m_idmap[key].expired()) && (m_idmap[key].lock() != p))
 	{
@@ -404,6 +428,9 @@ void Session::register_loaded(Persistent::Ptr p)
 
 void Session::register_new(Persistent::Ptr p)
 {
+	if (! p)
+		return;
+
 	if (p->id() != -1)
 		throw std::runtime_error("Object is already persisted; it cannot be registered as new");
 
@@ -415,6 +442,9 @@ void Session::register_new(Persistent::Ptr p)
 
 void Session::register_update(Persistent::Ptr p)
 {
+	if (! p)
+		return;
+
 	if (p->id() == -1)
 		throw std::runtime_error("Object is not persisted");
 
