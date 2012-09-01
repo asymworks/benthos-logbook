@@ -197,3 +197,128 @@ void Mix::setO2PerMil(unsigned int value)
 	events().attr_set(ptr(), "o2", boost::any(value / (double)1000));
 }
 
+std::string Mix::toString() const
+{
+	char buf[1000] = { 0 };
+
+	if (m_name)
+		return m_name.get();
+
+	// Check for Pure Gasses
+	if (m_fO2 == 1000)
+		return "<Oxygen 100%>";
+	else if (m_fH2 == 1000)
+		return "<Hydrogen 100%>";
+	else if (m_fHe == 1000)
+		return "<Helium 100%>";
+	else if (m_fAr == 1000)
+		return "<Argon 100%>";
+	else if ((m_fAr + m_fH2 + m_fHe + m_fO2) == 0)
+		return "<Nitrogen 100%>";
+
+	// Check for Nitrogen in the mix
+	if (m_fAr + m_fH2 + m_fHe + m_fO2 < 1000)
+	{
+		// Nitrox
+		if (m_fAr + m_fH2 + m_fHe == 0)
+		{
+			if (m_fO2 % 10 != 0)
+			{
+				sprintf(buf, "<Nitrox %.1f>", m_fO2 / (double)10);
+			}
+			else
+			{
+				sprintf(buf, "<Nitrox %d>", m_fO2 / 10);
+			}
+		}
+
+		// Trimix
+		else if (m_fAr + m_fH2 == 0)
+		{
+			if (m_fO2 % 10 != 0)
+			{
+				if (m_fHe % 10 != 0)
+				{
+					sprintf(buf, "<Trimix %.1f/%.1f>", m_fO2 / (double)10, m_fHe / (double)10);
+				}
+				else
+				{
+					sprintf(buf, "<Trimix %.1f/%d>", m_fO2 / (double)10, m_fHe / 10);
+				}
+			}
+			else
+			{
+				if (m_fHe % 10 != 0)
+				{
+					sprintf(buf, "<Trimix %d/%.1f>", m_fO2 / 10, m_fHe / (double)10);
+				}
+				else
+				{
+					sprintf(buf, "<Trimix %d/%d>", m_fO2 / 10, m_fHe / 10);
+				}
+			}
+		}
+
+		// Quad-Mix or Penta-Mix
+		else
+		{
+			sprintf(buf, "<%.1f%% O2 / %.1f%% H2 / %.1f%% He / %.1f%% Ar>", m_fO2 / (double)10, m_fH2 / (double)10, m_fHe / (double)10, m_fAr / (double)10);
+		}
+	}
+	else
+	{
+		// Argox
+		if (m_fAr + m_fO2 == 1000)
+		{
+			if (m_fO2 % 10 != 0)
+			{
+				sprintf(buf, "<Argox %.1f>", m_fO2 / (double)10);
+			}
+			else
+			{
+				sprintf(buf, "<Argox %d>", m_fO2 / 10);
+			}
+		}
+
+		// Heliox
+		else if (m_fHe + m_fO2 == 1000)
+		{
+			if (m_fO2 % 10 != 0)
+			{
+				sprintf(buf, "<Heliox %.1f>", m_fO2 / (double)10);
+			}
+			else
+			{
+				sprintf(buf, "<Heliox %d>", m_fO2 / 10);
+			}
+		}
+
+		// Hydrox
+		else if (m_fH2 + m_fO2 == 1000)
+		{
+			if (m_fO2 % 10 != 0)
+			{
+				sprintf(buf, "<Hydrox %.1f>", m_fO2 / (double)10);
+			}
+			else
+			{
+				sprintf(buf, "<Hydrox %d>", m_fO2 / 10);
+			}
+		}
+
+		// Hydreliox
+		else if (m_fH2 + m_fHe + m_fO2 == 1000)
+		{
+			sprintf(buf, "<Hydreliox %.1f%% O2 / %.1f%% H2 / %.1f%% He>", m_fO2 / (double)10, m_fH2 / (double)10, m_fHe / (double)10);
+		}
+
+		// Quad Mix
+		else
+		{
+			sprintf(buf, "<%.1f%% O2 / %.1f%% H2 / %.1f%% He / %.1f%% Ar>", m_fO2 / (double)10, m_fH2 / (double)10, m_fHe / (double)10, m_fAr / (double)10);
+		}
+	}
+
+	return std::string(buf);
+}
+

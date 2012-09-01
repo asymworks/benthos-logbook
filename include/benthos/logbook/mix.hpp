@@ -76,6 +76,17 @@ public:
 
 public:
 
+	/**
+	 * @brief Return a String Representation of the Gas Mix
+	 * @return String
+	 *
+	 * Returns the Mix Name, if set, otherwise returns an auto-generated
+	 * human-readable name.
+	 */
+	std::string toString() const;
+
+public:
+
 	//! @return Fraction of Argon
 	double ar() const;
 
