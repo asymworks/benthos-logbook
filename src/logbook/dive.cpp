@@ -662,7 +662,11 @@ void Dive::setRNT(int value)
 	if (value < 0)
 		throw std::invalid_argument("Residual Nitrogen Time must be positive");
 
-	m_rnt = value;
+	if (value == 0)
+		m_rnt.reset();
+	else
+		m_rnt = value;
+
 	mark_dirty();
 	events().attr_set(ptr(), "rnt", boost::any(value));
 }
