@@ -62,7 +62,7 @@ std::string DiveMapper::sql_find_cpu = "select " + columns + " from dives where 
 std::string DiveMapper::sql_find_ctry = "select " + columns + " from dives where site_id in (select id from sites where country=?1)";
 std::string DiveMapper::sql_find_dates = "select " + columns + " from dives where dive_datetime >= ?1 and dive_datetime <= ?2";
 
-std::string DiveMapper::sql_find_recent = "select " + columns + " from dives where id in (select distinct dive_id from profiles where imported is not null and imported >= ?1 order by imported desc) limit ?2";
+std::string DiveMapper::sql_find_recent = "select " + columns + " from dives where id in (select distinct dive_id from profiles where imported is not null and dive_id is not null and imported >= ?1 order by imported desc limit ?2)";
 
 std::string DiveMapper::sql_count_site = "select count(*) from dives where site_id=?1";
 std::string DiveMapper::sql_count_cpu = "select count(*) from dives where computer_id=?1";
@@ -353,15 +353,8 @@ Dive::Ptr DiveMapper::find(int64_t id)
 
 std::vector<Dive::Ptr> DiveMapper::findRecentlyImported(unsigned int days, int max)
 {
-	struct tm * tm;
-	time_t now = std::time(NULL);
-	tm = gmtime(& now);
-	tm->tm_mday -= days;
-	tm->tm_isdst = -1;
-	time_t cutoff = mktime(tm);
-
 	m_find_recent_stmt->reset();
-	m_find_recent_stmt->bind(1, cutoff);
+	m_find_recent_stmt->bind(1, std::time(NULL) - (86400 * days));
 	m_find_recent_stmt->bind(2, max);
 	dbapi::cursor::ptr c = m_find_recent_stmt->exec();
 
