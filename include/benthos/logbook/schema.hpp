@@ -96,9 +96,11 @@ private:
 	void create_computers_tbl(dbapi::connection::ptr conn) const;
 	void create_dives_tbl(dbapi::connection::ptr conn) const;
 	void create_divetags_tbl(dbapi::connection::ptr conn) const;
+	void create_divetanks_tbl(dbapi::connection::ptr conn) const;
 	void create_mixes_tbl(dbapi::connection::ptr conn) const;
 	void create_profiles_tbl(dbapi::connection::ptr conn) const;
 	void create_sites_tbl(dbapi::connection::ptr conn) const;
+	void create_tanks_tbl(dbapi::connection::ptr conn) const;
 	void create_version_tbl(dbapi::connection::ptr conn) const;
 
 };

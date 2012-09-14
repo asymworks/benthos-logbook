@@ -50,7 +50,9 @@ void Schema::create(dbapi::connection::ptr conn) const
 	create_mixes_tbl(conn);
 	create_dives_tbl(conn);
 	create_divetags_tbl(conn);
+	create_divetanks_tbl(conn);
 	create_profiles_tbl(conn);
+	create_tanks_tbl(conn);
 }
 
 void Schema::drop(dbapi::connection::ptr conn) const
@@ -58,9 +60,11 @@ void Schema::drop(dbapi::connection::ptr conn) const
 	conn->exec_sql("drop table computers");
 	conn->exec_sql("drop table dives");
 	conn->exec_sql("drop table divetags");
+	conn->exec_sql("drop table divetanks");
 	conn->exec_sql("drop table mixes");
 	conn->exec_sql("drop table profiles");
 	conn->exec_sql("drop table sites");
+	conn->exec_sql("drop table tanks");
 	conn->exec_sql("drop table version");
 }
 
@@ -160,6 +164,25 @@ void Schema::create_divetags_tbl(dbapi::connection::ptr conn) const
 	conn->exec_sql("create index divetags_tag on divetags (tag)");
 }
 
+void Schema::create_divetanks_tbl(dbapi::connection::ptr conn) const
+{
+	conn->exec_sql("create table divetanks ("
+		"dive_id integer not null, "
+		"tank_id integer not null, "
+		"mix_id integer not null, "
+		"px_start float check (px_start >= 0), "
+		"px_end float check (px_end >= 0), "
+		"foreign key (dive_id) references dives(id) on delete cascade deferrable initially deferred, "
+		"foreign key (tank_id) references tanks(id) on delete cascade deferrable initially deferred, "
+		"foreign key (mix_id) references mixes(id) on delete set null deferrable initially deferred"
+	")");
+
+	conn->exec_sql("create unique index divetanks_index on divetanks (dive_id, tank_id)");
+	conn->exec_sql("create index divetanks_dive on divetanks(dive_id)");
+	conn->exec_sql("create index divetanks_tank on divetanks(tank_id)");
+	conn->exec_sql("create index divetanks_mix on divetanks(mix_id)");
+}
+
 void Schema::create_mixes_tbl(dbapi::connection::ptr conn) const
 {
 	conn->exec_sql("create table mixes ("
@@ -209,6 +232,17 @@ void Schema::create_sites_tbl(dbapi::connection::ptr conn) const
 		"salinity varchar check (salinity in (\"fresh\",\"salt\")), "
 		"timezone varchar, "
 		"comments text"
+	")");
+}
+
+void Schema::create_tanks_tbl(dbapi::connection::ptr conn) const
+{
+	conn->exec_sql("create table tanks ("
+		"id integer primary key, "
+		"name varchar, "
+		"type varchar check (type in (\"aluminum\",\"steel\")), "
+		"pressure float check (pressure >= 1), "
+		"volume float check (volume >= 0)"
 	")");
 }
 

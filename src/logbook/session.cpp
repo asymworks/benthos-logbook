@@ -37,6 +37,7 @@
 #include "mappers/dive_mapper.hpp"
 #include "mappers/mix_mapper.hpp"
 #include "mappers/profile_mapper.hpp"
+#include "mappers/tank_mapper.hpp"
 
 using namespace benthos::logbook;
 
@@ -69,6 +70,7 @@ Session::Ptr Session::Create(connection::ptr conn)
 	ptr->registerMapper<DiveSite>(new mappers::DiveSiteMapper(ptr));
 	ptr->registerMapper<Mix>(new mappers::MixMapper(ptr));
 	ptr->registerMapper<Profile>(new mappers::ProfileMapper(ptr));
+	ptr->registerMapper<Tank>(new mappers::TankMapper(ptr));
 
 	// Return new Session
 	return ptr;
@@ -501,10 +503,11 @@ std::list<Persistent::Ptr> Session::sort(const uow_registry & registry) const
 	std::list<Persistent::Ptr> items(registry.begin(), registry.end());
 	std::list<Persistent::Ptr> result;
 
-	// Scan for Mix/DiveSite/DiveComputer
+	// Scan for Mix/Tank/DiveSite/DiveComputer
 	for (it = items.begin(); it != items.end(); )
 	{
 		if (((* it)->type_info() == (& typeid(Mix))) ||
+			((* it)->type_info() == (& typeid(Tank))) ||
 			((* it)->type_info() == (& typeid(DiveSite))) ||
 			((* it)->type_info() == (& typeid(DiveComputer))))
 		{
