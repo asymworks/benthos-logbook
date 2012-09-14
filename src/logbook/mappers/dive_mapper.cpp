@@ -141,7 +141,7 @@ void DiveMapper::afterLoaded(Persistent::Ptr o)
 	m_find_tags_stmt->reset();
 	m_find_tags_stmt->bind(1, d->id());
 
-	dbapi::cursor::ptr c = m_all_tags_stmt->exec();
+	dbapi::cursor::ptr c = m_find_tags_stmt->exec();
 	std::vector<cursor::row_t> rs = c->fetchall();
 	std::vector<cursor::row_t>::const_iterator it;
 	for (it = rs.begin(); it != rs.end(); it++)

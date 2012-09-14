@@ -95,7 +95,7 @@ public:
 	public:
 
 		//! Class Constructor
-		Tags();
+		Tags(Dive::Ptr dive);
 
 		//! Class Destructor
 		~Tags();
@@ -119,6 +119,7 @@ public:
 
 	private:
 		std::set<std::string, cicmp> 	m_items;
+		Dive::Ptr						m_dive;
 
 	};
 
@@ -465,7 +466,7 @@ private:
 	boost::optional<int>			m_nofly;		///< No-Fly Time [minutes]
 	boost::optional<std::string>	m_algorithm;	///< Decompression Algorithm/Table Name
 
-	Tags::Ptr								m_tags;		///< List of Tags
+	mutable Tags::Ptr						m_tags;		///< List of Tags
 	mutable IObjectCollection<Profile>::Ptr	m_profiles;	///< List of Profiles
 
 	boost::signals2::connection		m_evtSiteDel;		///< Event Connection for Dive Site Deletion

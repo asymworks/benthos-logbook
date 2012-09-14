@@ -85,8 +85,8 @@ protected:
 
 };
 
-Dive::Tags::Tags()
-	: m_items()
+Dive::Tags::Tags(Dive::Ptr dive)
+	: m_items(), m_dive(dive)
 {
 }
 
@@ -105,6 +105,8 @@ void Dive::Tags::assign(Dive::Tags::ConstPtr tags)
 		m_items = (tags.get())->m_items;
 	else
 		m_items.clear();
+
+	if (m_dive) m_dive->mark_dirty();
 }
 
 void Dive::Tags::add(const std::string & tag)
@@ -113,21 +115,24 @@ void Dive::Tags::add(const std::string & tag)
 	std::transform(ltag.begin(), ltag.end(), ltag.begin(), tolower);
 
 	m_items.insert(tag);
+	if (m_dive) m_dive->mark_dirty();
 }
 
 void Dive::Tags::clear()
 {
 	m_items.clear();
+	if (m_dive) m_dive->mark_dirty();
 }
 
 void Dive::Tags::remove(const std::string & tag)
 {
 	m_items.erase(tag);
+	if (m_dive) m_dive->mark_dirty();
 }
 
 Dive::Dive()
 	: TypedPersistent<Dive>(), m_repetition(1), m_interval(0), m_duration(0),
-	  m_maxdepth(0), m_stop(false), m_tags(new Tags)
+	  m_maxdepth(0), m_stop(false), m_tags(), m_profiles()
 {
 }
 
@@ -329,11 +334,19 @@ const boost::optional<int> & Dive::stop_time() const
 
 Dive::Tags::Ptr Dive::tags()
 {
+	if (! m_tags)
+		m_tags = Dive::Tags::Ptr(new Dive::Tags(boost::dynamic_pointer_cast<Dive>(shared_from_this())));
 	return m_tags;
 }
 
 Dive::Tags::ConstPtr Dive::tags() const
 {
+	if (! m_tags)
+		m_tags = Dive::Tags::Ptr(
+			new Dive::Tags(boost::dynamic_pointer_cast<Dive>(
+				boost::const_pointer_cast<Persistent>(shared_from_this())
+			))
+		);
 	return m_tags;
 }
 
