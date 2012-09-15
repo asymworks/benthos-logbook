@@ -109,6 +109,9 @@ void Mix::setAr(double value)
 	m_fAr = v;
 	mark_dirty();
 	events().attr_set(ptr(), "ar", boost::any(v / (double)1000));
+	events().attr_set(ptr(), "ar_permil", boost::any(v));
+	events().attr_set(ptr(), "n2", boost::any(n2_permil() / (double)1000));
+	events().attr_set(ptr(), "n2_permil", boost::any(n2_permil()));
 }
 
 void Mix::setArPerMil(unsigned int value)
@@ -118,6 +121,9 @@ void Mix::setArPerMil(unsigned int value)
 	m_fAr = value;
 	mark_dirty();
 	events().attr_set(ptr(), "ar", boost::any(value / (double)1000));
+	events().attr_set(ptr(), "ar_permil", boost::any(value));
+	events().attr_set(ptr(), "n2", boost::any(n2_permil() / (double)1000));
+	events().attr_set(ptr(), "n2_permil", boost::any(n2_permil()));
 }
 
 void Mix::setH2(double value)
@@ -130,6 +136,9 @@ void Mix::setH2(double value)
 	m_fH2 = v;
 	mark_dirty();
 	events().attr_set(ptr(), "h2", boost::any(v / (double)1000));
+	events().attr_set(ptr(), "h2_permil", boost::any(v));
+	events().attr_set(ptr(), "n2", boost::any(n2_permil() / (double)1000));
+	events().attr_set(ptr(), "n2_permil", boost::any(n2_permil()));
 }
 
 void Mix::setH2PerMil(unsigned int value)
@@ -139,6 +148,9 @@ void Mix::setH2PerMil(unsigned int value)
 	m_fH2 = value;
 	mark_dirty();
 	events().attr_set(ptr(), "h2", boost::any(value / (double)1000));
+	events().attr_set(ptr(), "h2_permil", boost::any(value));
+	events().attr_set(ptr(), "n2", boost::any(n2_permil() / (double)1000));
+	events().attr_set(ptr(), "n2_permil", boost::any(n2_permil()));
 }
 
 void Mix::setHe(double value)
@@ -151,6 +163,9 @@ void Mix::setHe(double value)
 	m_fHe = v;
 	mark_dirty();
 	events().attr_set(ptr(), "he", boost::any(v / (double)1000));
+	events().attr_set(ptr(), "he_permil", boost::any(v));
+	events().attr_set(ptr(), "n2", boost::any(n2_permil() / (double)1000));
+	events().attr_set(ptr(), "n2_permil", boost::any(n2_permil()));
 }
 
 void Mix::setHePerMil(unsigned int value)
@@ -160,6 +175,9 @@ void Mix::setHePerMil(unsigned int value)
 	m_fHe = value;
 	mark_dirty();
 	events().attr_set(ptr(), "he", boost::any(value / (double)1000));
+	events().attr_set(ptr(), "he_permil", boost::any(value));
+	events().attr_set(ptr(), "n2", boost::any(n2_permil() / (double)1000));
+	events().attr_set(ptr(), "n2_permil", boost::any(n2_permil()));
 }
 
 void Mix::setName(const boost::none_t &)
@@ -186,6 +204,9 @@ void Mix::setO2(double value)
 	m_fO2 = v;
 	mark_dirty();
 	events().attr_set(ptr(), "o2", boost::any(v / (double)1000));
+	events().attr_set(ptr(), "o2_permil", boost::any(v));
+	events().attr_set(ptr(), "n2", boost::any(n2_permil() / (double)1000));
+	events().attr_set(ptr(), "n2_permil", boost::any(n2_permil()));
 }
 
 void Mix::setO2PerMil(unsigned int value)
@@ -195,6 +216,9 @@ void Mix::setO2PerMil(unsigned int value)
 	m_fO2 = value;
 	mark_dirty();
 	events().attr_set(ptr(), "o2", boost::any(value / (double)1000));
+	events().attr_set(ptr(), "o2_permil", boost::any(value));
+	events().attr_set(ptr(), "n2", boost::any(n2_permil() / (double)1000));
+	events().attr_set(ptr(), "n2_permil", boost::any(n2_permil()));
 }
 
 std::string Mix::toString() const

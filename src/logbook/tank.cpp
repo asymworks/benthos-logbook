@@ -75,18 +75,22 @@ void Tank::setCapacity(double value)
 
 	m_volume = value / m_pressure;
 	mark_dirty();
+	events().attr_set(ptr(), "capacity", boost::any(value));
+	events().attr_set(ptr(), "volume", boost::any(m_volume));
 }
 
 void Tank::setName(const boost::none_t &)
 {
 	m_name.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "name", boost::any());
 }
 
 void Tank::setName(const std::string & value)
 {
 	m_name = value;
 	mark_dirty();
+	events().attr_set(ptr(), "name", boost::any(value));
 }
 
 void Tank::setPressure(double value)
@@ -96,12 +100,14 @@ void Tank::setPressure(double value)
 
 	m_pressure = value;
 	mark_dirty();
+	events().attr_set(ptr(), "pressure", boost::any(value));
 }
 
 void Tank::setType(const boost::none_t &)
 {
 	m_type.reset();
 	mark_dirty();
+	events().attr_set(ptr(), "type", boost::any());
 }
 
 void Tank::setType(const std::string & value)
@@ -114,6 +120,7 @@ void Tank::setType(const std::string & value)
 
 	m_type = lvalue;
 	mark_dirty();
+	events().attr_set(ptr(), "type", boost::any(lvalue));
 }
 
 void Tank::setVolume(double value)
@@ -122,4 +129,6 @@ void Tank::setVolume(double value)
 		throw std::invalid_argument("Tank Volume cannot be negative");
 
 	m_volume = value;
+	events().attr_set(ptr(), "capacity", boost::any(capacity()));
+	events().attr_set(ptr(), "volume", boost::any(value));
 }
