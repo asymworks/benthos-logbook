@@ -37,6 +37,7 @@ add_library(logbook_module OBJECT
 	mappers/dive_computer_mapper.cpp
 	mappers/dive_mapper.cpp
 	mappers/dive_site_mapper.cpp
+	mappers/dive_tank_mapper.cpp
 	mappers/mix_mapper.cpp
 	mappers/profile_mapper.cpp
 	mappers/tank_mapper.cpp
@@ -44,12 +45,14 @@ add_library(logbook_module OBJECT
 	country.cpp
 	dive_computer.cpp
 	dive_site.cpp
+	dive_tank.cpp
 	dive.cpp
 	logbook.cpp
 	mapper.cpp
 	mix.cpp
 	persistent.cpp
 	profile.cpp
+	proxy_object.cpp
 	schema.cpp
 	session.cpp
 	tank.cpp

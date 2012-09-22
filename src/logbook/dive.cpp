@@ -30,18 +30,20 @@
 
 #include <stdexcept>
 #include "benthos/logbook/dive.hpp"
+#include "benthos/logbook/dive_tank.hpp"
 #include "benthos/logbook/profile.hpp"
+#include "benthos/logbook/object_collection.hpp"
 #include "benthos/logbook/session.hpp"
 
 using namespace benthos::logbook;
 
-class DiveProfiles: public ObjectCollection<Profile, Dive>
+class DiveProfiles: public ObjectCollection<Profile>
 {
 public:
 
 	//! Class Constructor
 	DiveProfiles(Dive::Ptr obj)
-		: ObjectCollection(obj)
+		: ObjectCollection(boost::shared_polymorphic_cast<Persistent>(obj), "profiles", "dive")
 	{
 	}
 
@@ -53,34 +55,72 @@ public:
 protected:
 
 	//! @return List of Associated Items from the Database
-	virtual std::vector<Profile::Ptr> load(Dive::Ptr obj) const
+	virtual std::vector<Profile::Ptr> doLoad(Persistent::Ptr obj)
 	{
 		IProfileFinder::Ptr df = boost::shared_dynamic_cast<IProfileFinder>(obj->session()->finder<Profile>());
 		return df->findByDive(obj->id());
 	}
 
-	//! @return Loaded Object from Database
-	virtual Profile::Ptr load(boost::shared_ptr<Session> s, int64_t id) const
-	{
-		return s->finder<Profile>()->find(id);
-	}
-
 	//! @brief Link this Object to the Owning Object
-	virtual void link(Profile::Ptr d, Dive::Ptr t) const
+	virtual void link(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		d->setDive(t);
-	}
-
-	//! @brief Check if the Owning Object is linked to this Object
-	virtual bool linked(Profile::Ptr d, Dive::Ptr t) const
-	{
-		return (d->dive() == t);
+		Dive::Ptr dive = boost::shared_polymorphic_downcast<Dive>(obj);
+		Profile::Ptr profile = boost::shared_polymorphic_downcast<Profile>(d);
+		profile->setDive(dive);
 	}
 
 	//! @brief Unlink this Object to the Owning Object
-	virtual void unlink(Profile::Ptr d, Dive::Ptr t) const
+	virtual void unlink(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		d->setDive(boost::none);
+		Dive::Ptr dive = boost::shared_polymorphic_downcast<Dive>(obj);
+		Profile::Ptr profile = boost::shared_polymorphic_downcast<Profile>(d);
+		profile->setDive(boost::none);
+	}
+
+};
+
+class DiveTanks: public ObjectCollection<DiveTank>
+{
+public:
+
+	//! Class Constructor
+	DiveTanks(Dive::Ptr obj)
+		: ObjectCollection(boost::shared_polymorphic_cast<Persistent>(obj), "tanks", "dive")
+	{
+	}
+
+	//! Class Destructor
+	virtual ~DiveTanks()
+	{
+	}
+
+protected:
+
+	//! @return List of Associated Items from the Database
+	virtual std::vector<DiveTank::Ptr> doLoad(Persistent::Ptr obj)
+	{
+		IDiveTankFinder::Ptr df = boost::shared_dynamic_cast<IDiveTankFinder>(obj->session()->finder<DiveTank>());
+		return df->findByDive(obj->id());
+	}
+
+	//! @brief Link this Object to the Owning Object
+	virtual void link(Persistent::Ptr d, Persistent::Ptr obj)
+	{
+		/*
+		 * The DiveTank object is statically linked to its dive, so just
+		 * call the event handler here.
+		 */
+		on_link_update(d, "dive", boost::any(boost::dynamic_pointer_cast<Dive>(obj)));
+	}
+
+	//! @brief Unlink this Object to the Owning Object
+	virtual void unlink(Persistent::Ptr d, Persistent::Ptr obj)
+	{
+		/*
+		 * The DiveTank object is statically linked to its dive, so just
+		 * call the event handler here.
+		 */
+		on_link_update(d, "dive", boost::any());
 	}
 
 };
@@ -267,19 +307,16 @@ const boost::optional<int> & Dive::number() const
 IObjectCollection<Profile>::Ptr Dive::profiles()
 {
 	if (! m_profiles)
+	{
 		m_profiles = IObjectCollection<Profile>::Ptr(new DiveProfiles(boost::dynamic_pointer_cast<Dive>(shared_from_this())));
+		m_profiles->load();
+	}
 	return m_profiles;
 }
 
 IObjectCollection<Profile>::ConstPtr Dive::profiles() const
 {
-	if (! m_profiles)
-		m_profiles = IObjectCollection<Profile>::Ptr(
-			new DiveProfiles(boost::dynamic_pointer_cast<Dive>(
-				boost::const_pointer_cast<Persistent>(shared_from_this())
-			))
-		);
-	return m_profiles;
+	return profiles();
 }
 
 const boost::optional<int> & Dive::rating() const
@@ -348,6 +385,11 @@ Dive::Tags::ConstPtr Dive::tags() const
 			))
 		);
 	return m_tags;
+}
+
+Tank::Ptr Dive::tank() const
+{
+	return m_tank;
 }
 
 const boost::optional<int> & Dive::utc_offset() const
@@ -438,16 +480,6 @@ void Dive::setComputer(DiveComputer::Ptr value)
 	if (value && value->session() && session() && (value->session() != session()))
 		throw std::runtime_error("DiveComputer belongs to a different session as the Dive");
 
-	if (m_computer && ! m_computer->dives()->in_cascade())
-	{
-		m_computer->dives()->remove(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
-	}
-
-	if (value && ! value->dives()->in_cascade())
-	{
-		value->dives()->add(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
-	}
-
 	m_computer = value;
 	mark_dirty();
 	events().attr_set(ptr(), "computer", boost::any(value));
@@ -455,11 +487,6 @@ void Dive::setComputer(DiveComputer::Ptr value)
 
 void Dive::setDateTime(const boost::none_t &)
 {
-	if (m_computer && ! m_computer->dives()->in_cascade())
-	{
-		m_computer->dives()->remove(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
-	}
-
 	m_datetime.reset();
 	mark_dirty();
 	events().attr_set(ptr(), "datetime", boost::any());
@@ -724,11 +751,6 @@ void Dive::setSalinity(const std::string & value)
 
 void Dive::setSite(const boost::none_t &)
 {
-	if (m_site && ! m_site->dives()->in_cascade())
-	{
-		m_site->dives()->remove(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
-	}
-
 	m_site.reset();
 	mark_dirty();
 	events().attr_set(ptr(), "site", boost::any());
@@ -738,16 +760,6 @@ void Dive::setSite(DiveSite::Ptr value)
 {
 	if (value && value->session() && session() && (value->session() != session()))
 		throw std::runtime_error("DiveSite belongs to a different session as the Dive");
-
-	if (m_site && ! m_site->dives()->in_cascade())
-	{
-		m_site->dives()->remove(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
-	}
-
-	if (value && ! value->dives()->in_cascade())
-	{
-		value->dives()->add(boost::dynamic_pointer_cast<Dive>(shared_from_this()), false);
-	}
 
 	m_site = value;
 	mark_dirty();
@@ -808,6 +820,20 @@ void Dive::setStopTime(int value)
 	m_stoptime = value;
 	mark_dirty();
 	events().attr_set(ptr(), "stop_time", boost::any(value));
+}
+
+void Dive::setTank(const boost::none_t &)
+{
+	m_tank.reset();
+	mark_dirty();
+	events().attr_set(ptr(), "tank", boost::any());
+}
+
+void Dive::setTank(Tank::Ptr value)
+{
+	m_tank = value;
+	mark_dirty();
+	events().attr_set(ptr(), "tank", boost::any(value));
 }
 
 void Dive::setUTCOffset(const boost::none_t &)

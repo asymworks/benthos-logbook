@@ -31,17 +31,18 @@
 #include <stdexcept>
 #include "benthos/logbook/dive_site.hpp"
 #include "benthos/logbook/dive.hpp"
+#include "benthos/logbook/object_collection.hpp"
 #include "benthos/logbook/session.hpp"
 
 using namespace benthos::logbook;
 
-class DiveSiteDives: public ObjectCollection<Dive, DiveSite>
+class DiveSiteDives: public ObjectCollection<Dive>
 {
 public:
 
 	//! Class Constructor
 	DiveSiteDives(DiveSite::Ptr obj)
-		: ObjectCollection(obj)
+		: ObjectCollection(boost::shared_polymorphic_cast<Persistent>(obj), "dives", "site")
 	{
 	}
 
@@ -53,34 +54,26 @@ public:
 protected:
 
 	//! @return List of Associated Items from the Database
-	virtual std::vector<Dive::Ptr> load(DiveSite::Ptr obj) const
+	virtual std::vector<Dive::Ptr> doLoad(Persistent::Ptr obj)
 	{
 		IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(obj->session()->finder<Dive>());
 		return df->findBySite(obj->id());
 	}
 
-	//! @return Loaded Object from Database
-	virtual Dive::Ptr load(boost::shared_ptr<Session> s, int64_t id) const
-	{
-		return s->finder<Dive>()->find(id);
-	}
-
 	//! @brief Link this Object to the Owning Object
-	virtual void link(Dive::Ptr d, DiveSite::Ptr t) const
+	virtual void link(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		d->setSite(t);
-	}
-
-	//! @brief Check if the Owning Object is linked to this Object
-	virtual bool linked(Dive::Ptr d, DiveSite::Ptr t) const
-	{
-		return (d->site() == t);
+		DiveSite::Ptr site = boost::shared_polymorphic_downcast<DiveSite>(obj);
+		Dive::Ptr dive = boost::shared_polymorphic_downcast<Dive>(d);
+		dive->setSite(site);
 	}
 
 	//! @brief Unlink this Object to the Owning Object
-	virtual void unlink(Dive::Ptr d, DiveSite::Ptr t) const
+	virtual void unlink(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		d->setSite(boost::none);
+		DiveSite::Ptr site = boost::shared_polymorphic_downcast<DiveSite>(obj);
+		Dive::Ptr dive = boost::shared_polymorphic_downcast<Dive>(d);
+		dive->setSite(boost::none);
 	}
 
 };
@@ -147,19 +140,17 @@ const boost::optional<country> & DiveSite::country_() const
 IObjectCollection<Dive>::Ptr DiveSite::dives()
 {
 	if (! m_dives)
+	{
 		m_dives = IObjectCollection<Dive>::Ptr(new DiveSiteDives(boost::dynamic_pointer_cast<DiveSite>(shared_from_this())));
+		m_dives->load();
+	}
+
 	return m_dives;
 }
 
 IObjectCollection<Dive>::ConstPtr DiveSite::dives() const
 {
-	if (! m_dives)
-		m_dives = IObjectCollection<Dive>::Ptr(
-			new DiveSiteDives(boost::dynamic_pointer_cast<DiveSite>(
-				boost::const_pointer_cast<Persistent>(shared_from_this())
-			))
-		);
-	return m_dives;
+	return dives();
 }
 
 const boost::optional<double> & DiveSite::latitude() const

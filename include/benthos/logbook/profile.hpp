@@ -51,6 +51,7 @@
 #include <benthos/logbook/dive.hpp>
 #include <benthos/logbook/mix.hpp>
 #include <benthos/logbook/persistent.hpp>
+#include <benthos/logbook/util.hpp>
 
 namespace benthos { namespace logbook {
 

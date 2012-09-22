@@ -34,6 +34,7 @@
 
 #include "mappers/dive_computer_mapper.hpp"
 #include "mappers/dive_site_mapper.hpp"
+#include "mappers/dive_tank_mapper.hpp"
 #include "mappers/dive_mapper.hpp"
 #include "mappers/mix_mapper.hpp"
 #include "mappers/profile_mapper.hpp"
@@ -68,6 +69,7 @@ Session::Ptr Session::Create(connection::ptr conn)
 	ptr->registerMapper<Dive>(new mappers::DiveMapper(ptr));
 	ptr->registerMapper<DiveComputer>(new mappers::DiveComputerMapper(ptr));
 	ptr->registerMapper<DiveSite>(new mappers::DiveSiteMapper(ptr));
+	ptr->registerMapper<DiveTank>(new mappers::DiveTankMapper(ptr));
 	ptr->registerMapper<Mix>(new mappers::MixMapper(ptr));
 	ptr->registerMapper<Profile>(new mappers::ProfileMapper(ptr));
 	ptr->registerMapper<Tank>(new mappers::TankMapper(ptr));
@@ -239,9 +241,11 @@ void Session::detach(Persistent::Ptr p)
 	if (! p)
 		return;
 
+
 	if ((p->id() == -1) && (m_new.find(p) != m_new.end()))
 	{
 		m_new.erase(p);
+		m_events.before_detach(shared_from_this(), p);
 		set_persistent_session(p, Ptr());
 		return;
 	}
@@ -250,6 +254,7 @@ void Session::detach(Persistent::Ptr p)
 	m_idmap.erase(key);
 	m_deleted.erase(p);
 
+	m_events.before_detach(shared_from_this(), p);
 	set_persistent_session(p, Ptr());
 }
 

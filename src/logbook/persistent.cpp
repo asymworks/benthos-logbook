@@ -43,12 +43,14 @@ Persistent::~Persistent()
 {
 }
 
-void Persistent::attached(Session::Ptr)
+void Persistent::attached(Session::Ptr s)
 {
+	class_events().attached(shared_from_this(), s);
 }
 
-void Persistent::detached(Session::Ptr)
+void Persistent::detached(Session::Ptr s)
 {
+	class_events().detached(shared_from_this(), s);
 }
 
 Persistent::Events & Persistent::events()

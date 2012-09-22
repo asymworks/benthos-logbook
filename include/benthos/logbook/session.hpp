@@ -109,6 +109,7 @@ public:
 	typedef struct
 	{
 		boost::signals2::signal<void (Ptr, Persistent::Ptr)>	after_attach;
+		boost::signals2::signal<void (Ptr, Persistent::Ptr)>	before_detach;
 
 	} Events;
 

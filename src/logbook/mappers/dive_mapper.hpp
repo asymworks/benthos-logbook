@@ -101,6 +101,13 @@ public:
 	 */
 	virtual std::list<Persistent::Ptr> cascade_add(Persistent::Ptr o);
 
+	/**
+	 * @brief Return the list of Persistent Objects to be Cascade-Deleted
+	 * @param[in] Domain Object
+	 * @return List of Cascaded Objects
+	 */
+	virtual std::list<Persistent::Ptr> cascade_delete(Persistent::Ptr o);
+
 public:
 
 	/**

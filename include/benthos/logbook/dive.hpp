@@ -55,11 +55,16 @@
 #include <benthos/logbook/mapper.hpp>
 #include <benthos/logbook/mix.hpp>
 #include <benthos/logbook/persistent.hpp>
+#include <benthos/logbook/tank.hpp>
+#include <benthos/logbook/util.hpp>
 
 namespace benthos { namespace logbook {
 
 // Forward Declaration of Profile
 class Profile;
+
+// Forward Declaration of DiveTank
+class DiveTank;
 
 /**
  * @brief Dive Model Class
@@ -128,6 +133,8 @@ public:
 	/**
 	 * Managed Collection Mappings:
 	 * - Equipment
+	 * - Profiles
+	 * - Tanks
 	 */
 
 	//! @return Profile Collection
@@ -141,6 +148,12 @@ public:
 
 	//! @return List of Tags
 	Tags::ConstPtr tags() const;
+
+	//! @return Tank Collection
+	IObjectCollection<DiveTank>::Ptr tanks();
+
+	//! @return Tank Collection
+	IObjectCollection<DiveTank>::ConstPtr tanks() const;
 
 public:
 
@@ -212,6 +225,9 @@ public:
 
 	//! @return Dive Site
 	DiveSite::Ptr site() const;
+
+	//! @return Primary Tank
+	Tank::Ptr tank() const;
 
 	//! @return Starting Tank Pressure in bar
 	const boost::optional<double> & start_pressure() const;
@@ -384,6 +400,12 @@ public:
 	//! @param[in] Safety Stop Time in Seconds
 	void setStopTime(int value);
 
+	//! @brief Set the Primary Tank to NULL
+	void setTank(const boost::none_t &);
+
+	//! @param[in] Primary Tank
+	void setTank(Tank::Ptr value);
+
 	//! @brief Set the UTC Offset of the Dive Locale to NULL
 	void setUTCOffset(const boost::none_t &);
 
@@ -445,7 +467,8 @@ private:
 	boost::optional<double>			m_mintemp;		///< Dive Minimum Temperature [deg C]
 	boost::optional<double>			m_startpx;		///< Starting Tank Pressure [bar]
 	boost::optional<double>			m_endpx;		///< Ending Tank Pressure [bar]
-	Mix::Ptr						m_mix;			///< Breathing Mix
+	Mix::Ptr						m_mix;			///< Primary Breathing Mix
+	Tank::Ptr						m_tank;			///< Primary Tank
 
 	boost::optional<std::string>	m_salinity;		///< Salinity ('fresh' or 'salt')
 	boost::optional<std::string>	m_comments;		///< Comments
@@ -466,8 +489,9 @@ private:
 	boost::optional<int>			m_nofly;		///< No-Fly Time [minutes]
 	boost::optional<std::string>	m_algorithm;	///< Decompression Algorithm/Table Name
 
-	mutable Tags::Ptr						m_tags;		///< List of Tags
-	mutable IObjectCollection<Profile>::Ptr	m_profiles;	///< List of Profiles
+	mutable Tags::Ptr							m_tags;		///< List of Tags
+	mutable IObjectCollection<Profile>::Ptr		m_profiles;	///< List of Profiles
+	mutable IObjectCollection<DiveTank>::Ptr	m_tanks;	///< List of Tanks
 
 	boost::signals2::connection		m_evtSiteDel;		///< Event Connection for Dive Site Deletion
 	boost::signals2::connection		m_evtComputerDel;	///< Event Connection for Dive Computer Deletion

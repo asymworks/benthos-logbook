@@ -30,6 +30,7 @@
 
 #include "dive_mapper.hpp"
 
+#include <benthos/logbook/dive_tank.hpp>
 #include <benthos/logbook/profile.hpp>
 #include <benthos/logbook/session.hpp>
 
@@ -38,20 +39,20 @@ using namespace benthos::logbook::mappers;
 
 std::string DiveMapper::columns = "id, dive_datetime, dive_utcoffset, dive_number, "
 		"site_id, computer_id, repetition, interval, duration, max_depth, avg_depth, "
-		"air_temp, max_temp, min_temp, px_start, px_end, mix_id, salinity, comments, "
+		"air_temp, max_temp, min_temp, px_start, px_end, mix_id, tank_id, salinity, comments, "
 		"rating, safety_stop, stop_depth, stop_time, weight, visibility_cat, "
 		"visibility_dist, pg_start, pg_end, rnt, desat, nofly, algorithm";
 
 std::string DiveMapper::sql_insert = "insert into dives values (?1, ?2, ?3, ?4, ?5, ?6, "
 		"?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, "
-		"?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32)";
+		"?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33)";
 std::string DiveMapper::sql_update = "update dives set dive_datetime=?2, dive_utcoffset=?3, "
 		"dive_number=?4, site_id=?5, computer_id=?6, repetition=?7, interval=?8, "
 		"duration=?9, max_depth=?10, avg_depth=?11, air_temp=?12, max_temp=?13, min_temp=?14, "
-		"px_start=?15, px_end=?16, mix_id=?17, salinity=?18, comments=?19, rating=?20, "
-		"safety_stop=?21, stop_depth=?22, stop_time=?23, weight=?24, visibility_cat=?25, "
-		"visibility_dist=?26, pg_start=?27, pg_end=?28, rnt=?29, desat=?30, nofly=?31, "
-		"algorithm=?32 where id=?1";
+		"px_start=?15, px_end=?16, mix_id=?17, tank_id=?18, salinity=?19, comments=?20, rating=?21, "
+		"safety_stop=?22, stop_depth=?23, stop_time=?24, weight=?25, visibility_cat=?26, "
+		"visibility_dist=?27, pg_start=?28, pg_end=?29, rnt=?30, desat=?31, nofly=?32, "
+		"algorithm=?33 where id=?1";
 std::string DiveMapper::sql_delete = "delete from dives where id=?1";
 
 std::string DiveMapper::sql_find_all = "select " + columns + " from dives";
@@ -209,21 +210,26 @@ void DiveMapper::bindUpdate(statement::ptr s, Persistent::Ptr p) const
 	else
 		s->bind(17, boost::none);
 
-	s->bind(18, o->salinity());
-	s->bind(19, o->comments());
-	s->bind(20, o->rating());
-	s->bind(21, o->safety_stop() ? 1 : 0);
-	s->bind(22, o->stop_depth());
-	s->bind(23, o->stop_time());
-	s->bind(24, o->weight());
-	s->bind(25, o->visibility_category());
-	s->bind(26, o->visibility_distance());
-	s->bind(27, o->start_pressure_group());
-	s->bind(28, o->end_pressure_group());
-	s->bind(29, o->rnt());
-	s->bind(30, o->desat_time());
-	s->bind(31, o->nofly_time());
-	s->bind(32, o->algorithm());
+	if (o->tank())
+		s->bind(18, o->tank()->id());
+	else
+		s->bind(18, boost::none);
+
+	s->bind(19, o->salinity());
+	s->bind(20, o->comments());
+	s->bind(21, o->rating());
+	s->bind(22, o->safety_stop() ? 1 : 0);
+	s->bind(23, o->stop_depth());
+	s->bind(24, o->stop_time());
+	s->bind(25, o->weight());
+	s->bind(26, o->visibility_category());
+	s->bind(27, o->visibility_distance());
+	s->bind(28, o->start_pressure_group());
+	s->bind(29, o->end_pressure_group());
+	s->bind(30, o->rnt());
+	s->bind(31, o->desat_time());
+	s->bind(32, o->nofly_time());
+	s->bind(33, o->algorithm());
 }
 
 std::list<Persistent::Ptr> DiveMapper::cascade_add(Persistent::Ptr p)
@@ -237,10 +243,27 @@ std::list<Persistent::Ptr> DiveMapper::cascade_add(Persistent::Ptr p)
 	std::list<Profile::Ptr> profiles = o->profiles()->all();
 	result.assign(profiles.begin(), profiles.end());
 
+	std::list<DiveTank::Ptr> tanks = o->tanks()->all();
+	result.insert(result.end(), tanks.begin(), tanks.end());
+
 	if (o->computer())
 		result.push_back(o->computer());
 	if (o->site())
 		result.push_back(o->site());
+
+	return result;
+}
+
+std::list<Persistent::Ptr> DiveMapper::cascade_delete(Persistent::Ptr p)
+{
+	std::list<Persistent::Ptr> result;
+	Dive::Ptr o = downcast(p);
+
+	if (! o)
+		return result;
+
+	std::list<DiveTank::Ptr> tanks = o->tanks()->all();
+	result.assign(tanks.begin(), tanks.end());
 
 	return result;
 }
@@ -278,6 +301,7 @@ Dive::Ptr DiveMapper::doLoad(int64_t id, cursor::row_t r) const
 	IFinder<DiveComputer>::Ptr cmp_finder(m_session.lock()->finder<DiveComputer>());
 	IFinder<DiveSite>::Ptr site_finder(m_session.lock()->finder<DiveSite>());
 	IFinder<Mix>::Ptr mix_finder(m_session.lock()->finder<Mix>());
+	IFinder<Tank>::Ptr tank_finder(m_session.lock()->finder<Tank>());
 
 	set_persistent_id(o, id);
 	o->setDateTime(r[1].as<time_t>());
@@ -310,22 +334,27 @@ Dive::Ptr DiveMapper::doLoad(int64_t id, cursor::row_t r) const
 	else
 		o->setMix(mix_finder->find(r[16].as<int64_t>()));
 
-	SET_VARIANT(o, setSalinity, r[17], std::string);
-	SET_VARIANT(o, setComments, r[18], std::string);
-	SET_VARIANT(o, setRating, r[19], int);
+	if (r[17].is_null())
+		o->setTank(boost::none);
+	else
+		o->setTank(tank_finder->find(r[17].as<int64_t>()));
 
-	o->setSafetyStop(r[20].as<int>() == 1);
-	SET_VARIANT(o, setStopDepth, r[21], double);
-	SET_VARIANT(o, setStopTime, r[22], int);
-	SET_VARIANT(o, setWeight, r[23], double);
-	SET_VARIANT(o, setVisibilityCategory, r[24], std::string);
-	SET_VARIANT(o, setVisibilityDistance, r[25], double);
-	SET_VARIANT(o, setStartPressureGroup, r[26], std::string);
-	SET_VARIANT(o, setEndPressureGroup, r[27], std::string);
-	SET_VARIANT(o, setRNT, r[28], int);
-	SET_VARIANT(o, setDesatTime, r[29], int);
-	SET_VARIANT(o, setNoFlyTime, r[30], int);
-	SET_VARIANT(o, setAlgorithm, r[31], std::string);
+	SET_VARIANT(o, setSalinity, r[18], std::string);
+	SET_VARIANT(o, setComments, r[19], std::string);
+	SET_VARIANT(o, setRating, r[20], int);
+
+	o->setSafetyStop(r[21].as<int>() == 1);
+	SET_VARIANT(o, setStopDepth, r[22], double);
+	SET_VARIANT(o, setStopTime, r[23], int);
+	SET_VARIANT(o, setWeight, r[24], double);
+	SET_VARIANT(o, setVisibilityCategory, r[25], std::string);
+	SET_VARIANT(o, setVisibilityDistance, r[26], double);
+	SET_VARIANT(o, setStartPressureGroup, r[27], std::string);
+	SET_VARIANT(o, setEndPressureGroup, r[28], std::string);
+	SET_VARIANT(o, setRNT, r[29], int);
+	SET_VARIANT(o, setDesatTime, r[30], int);
+	SET_VARIANT(o, setNoFlyTime, r[31], int);
+	SET_VARIANT(o, setAlgorithm, r[32], std::string);
 
 	return o;
 }

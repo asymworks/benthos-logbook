@@ -123,6 +123,7 @@ void Schema::create_dives_tbl(dbapi::connection::ptr conn) const
 		"px_start float, "
 		"px_end float, "
 		"mix_id integer, "
+		"tank_id integer, "
 		"salinity text check (salinity in (\"fresh\",\"salt\")), "
 		"comments text, "
 		"rating integer, "
@@ -141,11 +142,13 @@ void Schema::create_dives_tbl(dbapi::connection::ptr conn) const
 		"foreign key (site_id) references sites(id) on delete set null deferrable initially deferred, "
 		"foreign key (computer_id) references computers(id) on delete set null deferrable initially deferred, "
 		"foreign key (mix_id) references mixes(id) on delete set null deferrable initially deferred"
+		"foreign key (tank_id) references tanks(id) on delete set null deferrable initially deferred"
 	")");
 
 	conn->exec_sql("create index dive_site on dives (site_id)");
 	conn->exec_sql("create index dive_computer on dives (computer_id)");
 	conn->exec_sql("create index dive_mix on dives (mix_id)");
+	conn->exec_sql("create index dive_tank on dives (tank_id)");
 
 	conn->exec_sql("create index dive_datetime on dives (dive_datetime)");
 	conn->exec_sql("create index dive_number on dives (dive_number)");
@@ -167,18 +170,21 @@ void Schema::create_divetags_tbl(dbapi::connection::ptr conn) const
 void Schema::create_divetanks_tbl(dbapi::connection::ptr conn) const
 {
 	conn->exec_sql("create table divetanks ("
+		"id integer primary key, "
 		"dive_id integer not null, "
-		"tank_id integer not null, "
-		"mix_id integer not null, "
+		"tank_idx integer not null check (tank_idx >= 0)"
+		"tank_id integer, "
+		"mix_id integer, "
 		"px_start float check (px_start >= 0), "
 		"px_end float check (px_end >= 0), "
 		"foreign key (dive_id) references dives(id) on delete cascade deferrable initially deferred, "
-		"foreign key (tank_id) references tanks(id) on delete cascade deferrable initially deferred, "
+		"foreign key (tank_id) references tanks(id) on delete set null deferrable initially deferred, "
 		"foreign key (mix_id) references mixes(id) on delete set null deferrable initially deferred"
 	")");
 
-	conn->exec_sql("create unique index divetanks_index on divetanks (dive_id, tank_id)");
+	conn->exec_sql("create unique index divetanks_index on divetanks (dive_id, tank_idx)");
 	conn->exec_sql("create index divetanks_dive on divetanks(dive_id)");
+	conn->exec_sql("create index divetanks_idx on divetanks(tank_idx)");
 	conn->exec_sql("create index divetanks_tank on divetanks(tank_id)");
 	conn->exec_sql("create index divetanks_mix on divetanks(mix_id)");
 }

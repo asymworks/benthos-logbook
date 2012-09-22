@@ -51,6 +51,9 @@ namespace benthos { namespace logbook {
 // Forward Definition of Session class
 class Session;
 
+// Forward Definition of Proxy Object class
+class ProxyObject;
+
 typedef boost::shared_ptr<Session>	SessionPtr;
 typedef boost::weak_ptr<Session>	SessionWPtr;
 
@@ -88,6 +91,9 @@ public:
 		boost::signals2::signal<void (Ptr, const std::string &, const boost::any &)>	attr_append;
 		boost::signals2::signal<void (Ptr, const std::string &, const boost::any &)>	attr_remove;
 		boost::signals2::signal<void (Ptr, const std::string &, const boost::any &)>	attr_set;
+
+		boost::signals2::signal<void (Ptr, SessionPtr)>		attached;
+		boost::signals2::signal<void (Ptr, SessionPtr)>		detached;
 
 	} Events;
 
@@ -194,6 +200,23 @@ public:
 		void set_persistent_session(Ptr o, SessionPtr p) const { o->set_session(p); }
 	};
 
+	/**
+	 * @brief Persistent Event Source Class
+	 *
+	 * This class enables raising events from outside the Persistent (i.e. in
+	 * a collection object).
+	 */
+	class EventSource
+	{
+	public:
+		EventSource() { }
+		virtual ~EventSource() { }
+	public:
+		void raise_attr_set(Ptr o, const std::string & a, const boost::any & v) { o->class_events().attr_set(o, a, v); }
+		void raise_attr_append(Ptr o, const std::string & a, const boost::any & v) { o->class_events().attr_append(o, a, v); }
+		void raise_attr_remove(Ptr o, const std::string & a, const boost::any & v) { o->class_events().attr_remove(o, a, v); }
+	};
+
 private:
 	bool				m_deleted;
 	bool				m_dirty;
@@ -201,6 +224,9 @@ private:
 
 	int64_t				m_id;
 	SessionWPtr			m_session;
+
+private:
+	friend class ProxyObject;
 
 };
 
@@ -225,6 +251,12 @@ public:
 	{
 		static const std::type_info * ti = & typeid(D);
 		return ti;
+	}
+
+	//! @return Static Events
+	static Events & ClassEvents()
+	{
+		return s_events;
 	}
 
 protected:
