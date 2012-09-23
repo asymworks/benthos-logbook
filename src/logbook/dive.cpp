@@ -392,6 +392,21 @@ Tank::Ptr Dive::tank() const
 	return m_tank;
 }
 
+IObjectCollection<DiveTank>::Ptr Dive::tanks()
+{
+	if (! m_tanks)
+	{
+		m_tanks = IObjectCollection<DiveTank>::Ptr(new DiveTanks(boost::dynamic_pointer_cast<Dive>(shared_from_this())));
+		m_tanks->load();
+	}
+	return m_tanks;
+}
+
+IObjectCollection<DiveTank>::ConstPtr Dive::tanks() const
+{
+	return tanks();
+}
+
 const boost::optional<int> & Dive::utc_offset() const
 {
 	return m_utc_offset;
