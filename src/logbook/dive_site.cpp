@@ -36,7 +36,7 @@
 
 using namespace benthos::logbook;
 
-class DiveSiteDives: public ObjectCollection<Dive>
+class DiveSiteDives: public ObjectCollection<Dive, DiveSite>
 {
 public:
 

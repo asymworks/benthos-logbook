@@ -54,7 +54,7 @@ namespace benthos { namespace logbook {
  * the event system being wired up correctly, in particular that the linked
  * object will fire the attr_set event when link() or unlink() is called.
  */
-template <class D>
+template <class D, class P>
 class ObjectCollection: public IObjectCollection<D>,
 	public Persistent::EventSource,
 	public boost::noncopyable
@@ -84,7 +84,7 @@ public:
 		if (coll_name.empty() || link_name.empty())
 			throw std::runtime_error("Attribute name cannot be empty");
 
-		m_cLinkSet = TypedPersistent<D>::ClassEvents().attr_set.connect(boost::bind(& ObjectCollection<D>::on_link_update, this, _1, _2, _3));
+		m_cLinkSet = TypedPersistent<D>::ClassEvents().attr_set.connect(boost::bind(& ObjectCollection<D, P>::on_link_update, this, _1, _2, _3));
 	}
 
 	//! Class Destructor
@@ -216,11 +216,12 @@ public:
 		{
 			try
 			{
-				obj = boost::any_cast<Persistent::Ptr>(value);
+				boost::shared_ptr<P> pobj = boost::any_cast<boost::shared_ptr<P> >(value);
+				obj = boost::shared_static_cast<Persistent>(pobj);
 			}
 			catch (boost::bad_any_cast &)
 			{
-				throw std::runtime_error("Got attr_set with a non-persistent value for link attribute " + m_linkName);
+				throw std::runtime_error("Got attr_set with a non-persistent value for link attribute " + m_linkName + " (type: " + value.type().name() + ")");
 			}
 		}
 

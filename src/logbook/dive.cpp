@@ -37,7 +37,7 @@
 
 using namespace benthos::logbook;
 
-class DiveProfiles: public ObjectCollection<Profile>
+class DiveProfiles: public ObjectCollection<Profile, Dive>
 {
 public:
 
@@ -79,7 +79,7 @@ protected:
 
 };
 
-class DiveTanks: public ObjectCollection<DiveTank>
+class DiveTanks: public ObjectCollection<DiveTank, Dive>
 {
 public:
 
