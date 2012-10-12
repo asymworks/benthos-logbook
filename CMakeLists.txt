@@ -50,3 +50,7 @@ add_subdirectory(src)
 
 # Generate documentation in the doc directory
 add_subdirectory(doc)
+
+# Install top-level files
+install(FILES ${CMAKE_SOURCE_DIR}/LICENSE DESTINATION share/benthos/logbook/)
+install(FILES ${CMAKE_SOURCE_DIR}/README DESTINATION share/benthos/logbook/)
