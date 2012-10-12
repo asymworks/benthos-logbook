@@ -846,6 +846,9 @@ void Dive::setTank(const boost::none_t &)
 
 void Dive::setTank(Tank::Ptr value)
 {
+	if (value && value->session() && session() && (value->session() != session()))
+		throw std::runtime_error("Tank belongs to a different session as the Dive");
+
 	m_tank = value;
 	mark_dirty();
 	events().attr_set(ptr(), "tank", boost::any(value));

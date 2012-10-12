@@ -42,7 +42,7 @@ std::string DiveTankMapper::sql_delete = "delete from divetanks where id=?1";
 
 std::string DiveTankMapper::sql_find_all = "select " + columns + " from divetanks";
 std::string DiveTankMapper::sql_find_id = "select " + columns + " from divetanks where id=?1";
-std::string DiveTankMapper::sql_find_dive = "select " + columns + " from divetanks where dive_id=?1";
+std::string DiveTankMapper::sql_find_dive = "select " + columns + " from divetanks where dive_id=?1 order by tank_idx";
 std::string DiveTankMapper::sql_find_tank = "select " + columns + " from divetanks where tank_id=?1";
 
 DiveTankMapper::DiveTankMapper(boost::shared_ptr<Session> session)
