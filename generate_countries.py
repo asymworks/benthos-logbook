@@ -46,7 +46,7 @@ TEMPLATE = u'''/*
  * This file is generated automatically by generate_countries.py
  */
 
-#include "logbook/countries.hpp"
+#include "benthos/logbook/countries.hpp"
 
 class _libdata
 {

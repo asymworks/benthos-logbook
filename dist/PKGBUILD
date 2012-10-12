@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # Arch PKGBUILD for the Benthos Scuba Logbook C++ Library (benthos-logbook)
 # 
-# Maintainer: Jonathan P. Krauss <jpk@benthos-log.net>
+# Maintainer: Jonathan P. Krauss <jpk@benthos-log.com>
 #------------------------------------------------------------------------------
 #
 # Copyright (C) 2011 Asymworks, LLC.  All Rights Reserved.
@@ -46,14 +46,13 @@ makedepends=('cmake' 'boost' 'python2')
 conflicts=()
 replaces=()
 backup=()
-source=("http://benthos-log.net/files/${pkgname}-${pkgver}.tar.bz2")
-md5sums=()
+source=("http://benthos-log.com/files/${pkgname}-${pkgver}.tar.bz2")
+md5sums=('ae3e4ec3ad90bec767e9372e6e040f0f')
 
 build() {
 	cd "${srcdir}/${pkgname}-${pkgver}"
 	[[ -d build ]] && rm -r build
 	mkdir build && cd build
-	python2 generate_countries.py || return 1
 	cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .. || return 1
 	make || return 1
 }
