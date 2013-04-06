@@ -108,7 +108,7 @@ public:
 		std::list<boost::shared_ptr<D> > result;
 		std::list<ProxyObject::Ptr>::const_iterator it;
 		for (it = m_items.begin(); it != m_items.end(); it++)
-			result.push_back(boost::shared_polymorphic_downcast<D>((* it)->obj()));
+			result.push_back(boost::dynamic_pointer_cast<D>((* it)->obj()));
 		return result;
 	}
 
@@ -124,7 +124,7 @@ public:
 	 */
 	virtual void add(boost::shared_ptr<D> item)
 	{
-		Persistent::Ptr obj = boost::shared_polymorphic_cast<Persistent>(item);
+		Persistent::Ptr obj = boost::dynamic_pointer_cast<Persistent>(item);
 		std::list<ProxyObject::Ptr>::iterator it = find(obj);
 		if (it != m_items.end())
 			return;
@@ -182,7 +182,7 @@ public:
 	 */
 	virtual void remove(boost::shared_ptr<D> item)
 	{
-		Persistent::Ptr obj = boost::shared_polymorphic_cast<Persistent>(item);
+		Persistent::Ptr obj = boost::dynamic_pointer_cast<Persistent>(item);
 		std::list<ProxyObject::Ptr>::iterator it = find(obj);
 		if (it == m_items.end())
 			return;
@@ -217,7 +217,9 @@ public:
 			try
 			{
 				boost::shared_ptr<P> pobj = boost::any_cast<boost::shared_ptr<P> >(value);
-				obj = boost::shared_static_cast<Persistent>(pobj);
+				obj = boost::dynamic_pointer_cast<Persistent>(pobj);
+				if (! obj)
+					throw boost::bad_any_cast();
 			}
 			catch (boost::bad_any_cast &)
 			{

@@ -43,7 +43,7 @@ public:
 
 	//! Class Constructor
 	DiveProfiles(Dive::Ptr obj)
-		: ObjectCollection(boost::shared_polymorphic_cast<Persistent>(obj), "profiles", "dive")
+		: ObjectCollection(boost::dynamic_pointer_cast<Persistent>(obj), "profiles", "dive")
 	{
 	}
 
@@ -57,23 +57,23 @@ protected:
 	//! @return List of Associated Items from the Database
 	virtual std::vector<Profile::Ptr> doLoad(Persistent::Ptr obj)
 	{
-		IProfileFinder::Ptr df = boost::shared_dynamic_cast<IProfileFinder>(obj->session()->finder<Profile>());
+		IProfileFinder::Ptr df = boost::dynamic_pointer_cast<IProfileFinder>(obj->session()->finder<Profile>());
 		return df->findByDive(obj->id());
 	}
 
 	//! @brief Link this Object to the Owning Object
 	virtual void link(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		Dive::Ptr dive = boost::shared_polymorphic_downcast<Dive>(obj);
-		Profile::Ptr profile = boost::shared_polymorphic_downcast<Profile>(d);
+		Dive::Ptr dive = boost::dynamic_pointer_cast<Dive>(obj);
+		Profile::Ptr profile = boost::dynamic_pointer_cast<Profile>(d);
 		profile->setDive(dive);
 	}
 
 	//! @brief Unlink this Object to the Owning Object
 	virtual void unlink(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		Dive::Ptr dive = boost::shared_polymorphic_downcast<Dive>(obj);
-		Profile::Ptr profile = boost::shared_polymorphic_downcast<Profile>(d);
+		Dive::Ptr dive = boost::dynamic_pointer_cast<Dive>(obj);
+		Profile::Ptr profile = boost::dynamic_pointer_cast<Profile>(d);
 		profile->setDive(boost::none);
 	}
 
@@ -85,7 +85,7 @@ public:
 
 	//! Class Constructor
 	DiveTanks(Dive::Ptr obj)
-		: ObjectCollection(boost::shared_polymorphic_cast<Persistent>(obj), "tanks", "dive")
+		: ObjectCollection(boost::dynamic_pointer_cast<Persistent>(obj), "tanks", "dive")
 	{
 	}
 
@@ -99,7 +99,7 @@ protected:
 	//! @return List of Associated Items from the Database
 	virtual std::vector<DiveTank::Ptr> doLoad(Persistent::Ptr obj)
 	{
-		IDiveTankFinder::Ptr df = boost::shared_dynamic_cast<IDiveTankFinder>(obj->session()->finder<DiveTank>());
+		IDiveTankFinder::Ptr df = boost::dynamic_pointer_cast<IDiveTankFinder>(obj->session()->finder<DiveTank>());
 		return df->findByDive(obj->id());
 	}
 

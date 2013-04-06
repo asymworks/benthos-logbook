@@ -42,7 +42,7 @@ public:
 
 	//! Class Constructor
 	DiveSiteDives(DiveSite::Ptr obj)
-		: ObjectCollection(boost::shared_polymorphic_cast<Persistent>(obj), "dives", "site")
+		: ObjectCollection(boost::dynamic_pointer_cast<Persistent>(obj), "dives", "site")
 	{
 	}
 
@@ -56,23 +56,23 @@ protected:
 	//! @return List of Associated Items from the Database
 	virtual std::vector<Dive::Ptr> doLoad(Persistent::Ptr obj)
 	{
-		IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(obj->session()->finder<Dive>());
+		IDiveFinder::Ptr df = boost::dynamic_pointer_cast<IDiveFinder>(obj->session()->finder<Dive>());
 		return df->findBySite(obj->id());
 	}
 
 	//! @brief Link this Object to the Owning Object
 	virtual void link(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		DiveSite::Ptr site = boost::shared_polymorphic_downcast<DiveSite>(obj);
-		Dive::Ptr dive = boost::shared_polymorphic_downcast<Dive>(d);
+		DiveSite::Ptr site = boost::dynamic_pointer_cast<DiveSite>(obj);
+		Dive::Ptr dive = boost::dynamic_pointer_cast<Dive>(d);
 		dive->setSite(site);
 	}
 
 	//! @brief Unlink this Object to the Owning Object
 	virtual void unlink(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		DiveSite::Ptr site = boost::shared_polymorphic_downcast<DiveSite>(obj);
-		Dive::Ptr dive = boost::shared_polymorphic_downcast<Dive>(d);
+		DiveSite::Ptr site = boost::dynamic_pointer_cast<DiveSite>(obj);
+		Dive::Ptr dive = boost::dynamic_pointer_cast<Dive>(d);
 		dive->setSite(boost::none);
 	}
 
@@ -101,7 +101,7 @@ const boost::optional<double> & DiveSite::avg_depth() const
 		return o;
 	}
 
-	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
+	IDiveFinder::Ptr df = boost::dynamic_pointer_cast<IDiveFinder>(session()->finder<Dive>());
 	o = df->avgDepthForSite(id());
 
 	return o;
@@ -116,7 +116,7 @@ const boost::optional<double> & DiveSite::avg_temp() const
 		return o;
 	}
 
-	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
+	IDiveFinder::Ptr df = boost::dynamic_pointer_cast<IDiveFinder>(session()->finder<Dive>());
 	o = df->avgTempForSite(id());
 
 	return o;
@@ -187,7 +187,7 @@ const boost::optional<double> & DiveSite::max_depth() const
 		return o;
 	}
 
-	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
+	IDiveFinder::Ptr df = boost::dynamic_pointer_cast<IDiveFinder>(session()->finder<Dive>());
 	o = df->maxDepthForSite(id());
 
 	return o;
@@ -202,7 +202,7 @@ unsigned int DiveSite::num_dives() const
 {
 	if (id() == -1)
 		return 0;
-	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
+	IDiveFinder::Ptr df = boost::dynamic_pointer_cast<IDiveFinder>(session()->finder<Dive>());
 	return df->countBySite(id());
 }
 
@@ -225,7 +225,7 @@ const boost::optional<double> & DiveSite::rating() const
 		return o;
 	}
 
-	IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(session()->finder<Dive>());
+	IDiveFinder::Ptr df = boost::dynamic_pointer_cast<IDiveFinder>(session()->finder<Dive>());
 	o = df->ratingForSite(id());
 
 	return o;

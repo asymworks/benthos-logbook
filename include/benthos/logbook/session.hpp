@@ -244,7 +244,7 @@ public:
 	{
 		const_typeinfo_ptr ti = & typeid(D);
 		AbstractMapper::Ptr p(m_mappers[ti]);
-		return boost::shared_dynamic_cast<IFinder<D> >(p);
+		return boost::dynamic_pointer_cast<IFinder<D> >(p);
 	}
 
 	/**
@@ -256,7 +256,7 @@ public:
 	{
 		const_typeinfo_ptr ti = & typeid(D);
 		AbstractMapper::Ptr p(m_mappers[ti]);
-		return boost::shared_dynamic_cast<Mapper<D> >(p);
+		return boost::dynamic_pointer_cast<Mapper<D> >(p);
 	}
 
 	//! @return Data Mapper

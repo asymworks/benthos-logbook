@@ -295,13 +295,13 @@ protected:
 	//! Upcast to Persistent from Domain Model
 	Persistent::Ptr upcast(typename D::Ptr o) const
 	{
-		return boost::shared_polymorphic_cast<Persistent>(o);
+		return boost::dynamic_pointer_cast<Persistent>(o);
 	}
 
 	//! Downcast to Domain Model from Persistent
 	typename D::Ptr downcast(Persistent::Ptr o) const
 	{
-		return boost::shared_polymorphic_downcast<D>(o);
+		return boost::dynamic_pointer_cast<D>(o);
 	}
 
 protected:

@@ -167,7 +167,7 @@ protected:
 			throw std::runtime_error("Mapper for class " + TypedPersistent<D>().type_name() + " does not implement IFinder");
 
 		typename D::Ptr obj = f->find(m_objId);
-		return boost::shared_polymorphic_cast<Persistent>(obj);
+		return boost::dynamic_pointer_cast<Persistent>(obj);
 	}
 
 };

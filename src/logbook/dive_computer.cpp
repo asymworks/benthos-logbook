@@ -44,7 +44,7 @@ public:
 
 	//! Class Constructor
 	DiveComputerDives(DiveComputer::Ptr obj)
-		: ObjectCollection(boost::shared_polymorphic_cast<Persistent>(obj), "dives", "computer")
+		: ObjectCollection(boost::dynamic_pointer_cast<Persistent>(obj), "dives", "computer")
 	{
 	}
 
@@ -58,23 +58,23 @@ protected:
 	//! @return List of Associated Items from the Database
 	virtual std::vector<Dive::Ptr> doLoad(Persistent::Ptr obj)
 	{
-		IDiveFinder::Ptr df = boost::shared_dynamic_cast<IDiveFinder>(obj->session()->finder<Dive>());
+		IDiveFinder::Ptr df = boost::dynamic_pointer_cast<IDiveFinder>(obj->session()->finder<Dive>());
 		return df->findByComputer(obj->id());
 	}
 
 	//! @brief Link this Object to the Owning Object
 	virtual void link(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		DiveComputer::Ptr c = boost::shared_polymorphic_downcast<DiveComputer>(obj);
-		Dive::Ptr dive = boost::shared_polymorphic_downcast<Dive>(d);
+		DiveComputer::Ptr c = boost::dynamic_pointer_cast<DiveComputer>(obj);
+		Dive::Ptr dive = boost::dynamic_pointer_cast<Dive>(d);
 		dive->setComputer(c);
 	}
 
 	//! @brief Unlink this Object to the Owning Object
 	virtual void unlink(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		DiveComputer::Ptr c = boost::shared_polymorphic_downcast<DiveComputer>(obj);
-		Dive::Ptr dive = boost::shared_polymorphic_downcast<Dive>(d);
+		DiveComputer::Ptr c = boost::dynamic_pointer_cast<DiveComputer>(obj);
+		Dive::Ptr dive = boost::dynamic_pointer_cast<Dive>(d);
 		dive->setComputer(boost::none);
 	}
 
@@ -86,7 +86,7 @@ public:
 
 	//! Class Constructor
 	DiveComputerProfiles(DiveComputer::Ptr obj)
-		: ObjectCollection(boost::shared_polymorphic_cast<Persistent>(obj), "profiles", "computer")
+		: ObjectCollection(boost::dynamic_pointer_cast<Persistent>(obj), "profiles", "computer")
 	{
 	}
 
@@ -100,23 +100,23 @@ protected:
 	//! @return List of Associated Items from the Database
 	virtual std::vector<Profile::Ptr> doLoad(Persistent::Ptr obj)
 	{
-		IProfileFinder::Ptr df = boost::shared_dynamic_cast<IProfileFinder>(obj->session()->finder<Profile>());
+		IProfileFinder::Ptr df = boost::dynamic_pointer_cast<IProfileFinder>(obj->session()->finder<Profile>());
 		return df->findByComputer(obj->id());
 	}
 
 	//! @brief Link this Object to the Owning Object
 	virtual void link(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		DiveComputer::Ptr c = boost::shared_polymorphic_downcast<DiveComputer>(obj);
-		Profile::Ptr profile = boost::shared_polymorphic_downcast<Profile>(d);
+		DiveComputer::Ptr c = boost::dynamic_pointer_cast<DiveComputer>(obj);
+		Profile::Ptr profile = boost::dynamic_pointer_cast<Profile>(d);
 		profile->setComputer(c);
 	}
 
 	//! @brief Unlink this Object to the Owning Object
 	virtual void unlink(Persistent::Ptr d, Persistent::Ptr obj)
 	{
-		DiveComputer::Ptr c = boost::shared_polymorphic_downcast<DiveComputer>(obj);
-		Profile::Ptr profile = boost::shared_polymorphic_downcast<Profile>(d);
+		DiveComputer::Ptr c = boost::dynamic_pointer_cast<DiveComputer>(obj);
+		Profile::Ptr profile = boost::dynamic_pointer_cast<Profile>(d);
 		profile->setComputer(boost::none);
 	}
 
