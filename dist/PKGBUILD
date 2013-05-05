@@ -34,8 +34,8 @@
 #
 
 pkgname=benthos-logbook
-pkgver=0.1.0
-pkgrel=1
+pkgver=0.1.1
+pkgrel=0
 pkgdesc="Benthos Scuba Diving Logbook Library for C++"
 arch=('i686' 'x86_64')
 license=('bsd')
