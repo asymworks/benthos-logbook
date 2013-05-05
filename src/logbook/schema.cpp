@@ -141,8 +141,8 @@ void Schema::create_dives_tbl(dbapi::connection::ptr conn) const
 		"algorithm varchar, "
 		"foreign key (site_id) references sites(id) on delete set null deferrable initially deferred, "
 		"foreign key (computer_id) references computers(id) on delete set null deferrable initially deferred, "
-		"foreign key (mix_id) references mixes(id) on delete set null deferrable initially deferred"
-		"foreign key (tank_id) references tanks(id) on delete set null deferrable initially deferred"
+		"foreign key (mix_id) references mixes(id) on delete set null deferrable initially deferred, "
+		"foreign key (tank_id) references tanks(id) on delete set null deferrable initially deferred "
 	")");
 
 	conn->exec_sql("create index dive_site on dives (site_id)");
@@ -172,7 +172,7 @@ void Schema::create_divetanks_tbl(dbapi::connection::ptr conn) const
 	conn->exec_sql("create table divetanks ("
 		"id integer primary key, "
 		"dive_id integer not null, "
-		"tank_idx integer not null check (tank_idx >= 0)"
+		"tank_idx integer not null check (tank_idx >= 0), "
 		"tank_id integer, "
 		"mix_id integer, "
 		"px_start float check (px_start >= 0), "

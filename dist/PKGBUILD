@@ -47,7 +47,7 @@ conflicts=()
 replaces=()
 backup=()
 source=("http://benthos-log.com/files/${pkgname}-${pkgver}.tar.bz2")
-md5sums=('ae3e4ec3ad90bec767e9372e6e040f0f')
+md5sums=('505bf24084b77c52b11e700de6b1fa53')
 
 build() {
 	cd "${srcdir}/${pkgname}-${pkgver}"
