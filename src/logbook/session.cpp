@@ -386,7 +386,7 @@ uow_registry Session::new_() const
 
 void Session::prune()
 {
-	ssize_t sl = m_idmap.size();
+	size_t sl = m_idmap.size();
 
 	identity_map::iterator it;
 	for (it = m_idmap.begin(); it != m_idmap.end(); )

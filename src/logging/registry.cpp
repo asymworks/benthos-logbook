@@ -125,8 +125,13 @@ logger_tree_item * getChildOf(logger_tree_item * t, const std::string & name)
 	std::map<std::string, logger_tree_item *>::const_iterator it;
 	for (it = t->children.begin(); it != t->children.end(); it++)
 	{
+#if defined(_WIN32) || defined(WIN32)
+		if (_stricmp(name.c_str(), it->first.c_str()) == 0)
+			return it->second;
+#else
 		if (strcasecmp(name.c_str(), it->first.c_str()) == 0)
 			return it->second;
+#endif
 	}
 
 	// DNE - create it

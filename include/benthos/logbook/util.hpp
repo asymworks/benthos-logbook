@@ -19,6 +19,10 @@
 
 namespace benthos { namespace logbook {
 
+#if defined(_WIN32) || defined(WIN32)
+#define strcasecmp _stricmp
+#endif
+
 //! @brief Case-Insensitive String Compare
 struct cicmp
 {

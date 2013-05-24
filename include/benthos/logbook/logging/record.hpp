@@ -40,6 +40,13 @@
 #include <ctime>
 #include <string>
 
+// ERROR is defined in WinGDI.h
+#if defined(_WIN32) || defined(WIN32)
+# if defined(ERROR)
+# undef ERROR
+# endif
+#endif
+
 namespace benthos { namespace logbook { namespace logging {
 
 /**@{

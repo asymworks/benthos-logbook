@@ -28,45 +28,40 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef LOGGING_MUTEX_HPP_
-#define LOGGING_MUTEX_HPP_
+#include <Windows.h>
 
-/**
- * @file include/benthos/logbook/logging/mutex.hpp
- * @brief Simple Mutex Class
- * @author Jonathan Krauss <jkrauss@asymworks.com>
- */
+#include "benthos/logbook/logging/mutex.hpp"
 
-namespace benthos { namespace logbook { namespace logging {
+using namespace benthos::logbook::logging;
 
-/**
- * @brief Mutex Class
- *
- * Simple C++0x-compliant Mutex class which is used in various places within
- * SQLiteKit.  The backend implementation is platform-specific but tries to
- * use pthreads wherever available.
- */
-class mutex
+struct mutex::_data
 {
-public:
-#ifndef _MSC_VER
-	mutex(const mutex &)=delete;
-	mutex & operator=(const mutex &)=delete;
-#endif
-
-	mutex();
-	~mutex();
-
-	void lock(); // blocking
-	void unlock();
-	bool try_lock();
-
-private:
-	struct _data;
-	_data * 	m_data;
-
+	CRITICAL_SECTION 	cs;
 };
 
-} } } /* benthos::logbook::logging */
+mutex::mutex()
+	: m_data(new _data)
+{
+	InitializeCriticalSection(& m_data->cs);
+}
 
-#endif /* LOGGING_MUTEX_HPP_ */
+mutex::~mutex()
+{
+	DeleteCriticalSection(& m_data->cs);
+	delete m_data;
+}
+
+void mutex::lock()
+{
+	EnterCriticalSection(& m_data->cs);
+}
+
+void mutex::unlock()
+{
+	LeaveCriticalSection(& m_data->cs);
+}
+
+bool mutex::try_lock()
+{
+	return (bool)TryEnterCriticalSection(& m_data->cs);
+}

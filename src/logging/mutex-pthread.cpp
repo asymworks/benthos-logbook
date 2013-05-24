@@ -28,45 +28,43 @@
  * WITH THE SOFTWARE.
  */
 
-#ifndef LOGGING_MUTEX_HPP_
-#define LOGGING_MUTEX_HPP_
+#include <errno.h>
+#include <pthread.h>
+#include <stdexcept>
 
-/**
- * @file include/benthos/logbook/logging/mutex.hpp
- * @brief Simple Mutex Class
- * @author Jonathan Krauss <jkrauss@asymworks.com>
- */
+#include "benthos/logbook/logging/mutex.hpp"
 
-namespace benthos { namespace logbook { namespace logging {
+using namespace benthos::logbook::logging;
 
-/**
- * @brief Mutex Class
- *
- * Simple C++0x-compliant Mutex class which is used in various places within
- * SQLiteKit.  The backend implementation is platform-specific but tries to
- * use pthreads wherever available.
- */
-class mutex
+struct mutex::_data
 {
-public:
-#ifndef _MSC_VER
-	mutex(const mutex &)=delete;
-	mutex & operator=(const mutex &)=delete;
-#endif
-
-	mutex();
-	~mutex();
-
-	void lock(); // blocking
-	void unlock();
-	bool try_lock();
-
-private:
-	struct _data;
-	_data * 	m_data;
-
+	pthread_mutex_t 	mutex;
 };
 
-} } } /* benthos::logbook::logging */
+mutex::mutex()
+	: m_data(new _data)
+{
+	if (pthread_mutex_init(& m_data->mutex, NULL) != 0)
+		throw std::runtime_error("Failed to initialize mutex");
+}
 
-#endif /* LOGGING_MUTEX_HPP_ */
+mutex::~mutex()
+{
+	pthread_mutex_destroy(& m_data->mutex);
+	delete m_data;
+}
+
+void mutex::lock()
+{
+	pthread_mutex_lock(& m_data->mutex);
+}
+
+void mutex::unlock()
+{
+	pthread_mutex_unlock(& m_data->mutex);
+}
+
+bool mutex::try_lock()
+{
+	return (pthread_mutex_trylock(& m_data->mutex) != EBUSY);
+}

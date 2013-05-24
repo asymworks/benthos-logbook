@@ -37,6 +37,10 @@
 
 using namespace benthos::logbook::dbapi;
 
+#if defined(_WIN32) || defined(WIN32)
+#define strcasecmp _stricmp
+#endif
+
 enum
 {
 	TYPE_SELECT		= 0,

@@ -38,12 +38,12 @@ dbapi_error::dbapi_error(const std::string & msg)
 {
 }
 
-dbapi_error::dbapi_error(dbapi::connection * db)
+dbapi_error::dbapi_error(connection * db)
 	: std::runtime_error(sqlite3_errmsg(db->handle()))
 {
 }
 
-dbapi_error::dbapi_error(dbapi::connection::ptr db)
+dbapi_error::dbapi_error(connection::ptr db)
 	: std::runtime_error(sqlite3_errmsg(db->handle()))
 {
 }

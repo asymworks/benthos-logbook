@@ -29,8 +29,18 @@
  */
 
 #include <cstdio>
+
+#if defined(_WIN32) || defined(WIN32)
+#include <Windows.h>
+#else
+#if defined(HAVE_PTHREADS)
 #include <pthread.h>
+#endif
+#endif
+
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
 
 #include "benthos/logbook/logging/record.hpp"
 
@@ -45,8 +55,17 @@ const int level::CRITICAL = 4;
 
 log_record::log_record(const std::string & channel, int level, const std::string & message)
 	: m_channel(channel), m_level(level), m_message(message),
-	  m_threadId(pthread_self()), m_processId(getpid()), m_timestamp(time(NULL))
+	  m_threadId(0), m_processId(0), m_timestamp(time(NULL))
 {
+#if defined(_WIN32) || defined(WIN32)
+	m_threadId = GetCurrentThreadId();
+	m_processId = GetCurrentProcessId();
+#else
+#if defined(HAVE_PTHREADS)
+	m_threadId = pthread_self();
+	m_processId = getpid();
+#endif
+#endif
 }
 
 log_record::~log_record()

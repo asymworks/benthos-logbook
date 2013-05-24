@@ -34,6 +34,12 @@
 #include <boost/lexical_cast.hpp>
 #include <climits>
 
+#ifdef _MSC_VER
+/* Yes, MSVC - I know there is a possible loss of data here... that's kind of the point */
+#pragma warning(push)
+#pragma warning(disable : 4244)
+#endif
+
 using namespace benthos::logbook::dbapi;
 
 // Catch-all converter: throws runtime_error
@@ -233,5 +239,9 @@ struct convert<std::string, std::vector<unsigned char> >
 		return std::string(v.begin(), v.end());
 	}
 };
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif /* DBAPI_VARIANT_CONV_HPP_ */

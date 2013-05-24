@@ -232,7 +232,7 @@ int pfj_parse_int(void * ctx, long long i)
 
 	if (jctx->cur_key == "time")
 	{
-		jctx->cur_wp.time = i;
+		jctx->cur_wp.time = (unsigned int)i;
 		jctx->cur_key.clear();
 		return 1;
 	}
@@ -243,7 +243,7 @@ int pfj_parse_int(void * ctx, long long i)
 		return 0;
 	}
 
-	jctx->cur_wp.data[jctx->cur_key] = i;
+	jctx->cur_wp.data[jctx->cur_key] = (double)i;
 	jctx->cur_key.clear();
 	return 1;
 }

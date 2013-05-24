@@ -63,8 +63,10 @@ class logger
 {
 public:
 
+#ifndef _MSC_VER
 	logger()=delete;
 	logger & operator=(const logger &)=delete;
+#endif
 
 protected:
 

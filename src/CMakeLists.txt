@@ -37,7 +37,11 @@ INCLUDE (CheckIncludeFileCXX)
 INCLUDE (CheckCXXSourceCompiles)
 
 # C++ Flags
-add_definitions( -std=c++0x -fPIC -g )
+if (WIN32)
+	add_definitions( -D_SCL_SECURE_NO_WARNINGS )
+else (WIN32)
+	add_definitions( -std=c++0x -fPIC -g )
+endif (WIN32)
 
 # Check for include files
 check_include_file_cxx( cxxabi.h HAVE_CXXABI_H )
@@ -64,6 +68,8 @@ endif ( HAVE_CXXABI_H )
 # Boost Headers Required
 find_package( Boost 1.39 REQUIRED )
 
+message("Found Boost in ${Boost_INCLUDE_DIRS}")
+
 # Sqlite3 Required
 find_package( Sqlite3 REQUIRED )
 
@@ -74,7 +80,7 @@ find_package( Yajl REQUIRED )
 include_directories(
 	${CMAKE_SOURCE_DIR}/include
 	${CMAKE_BINARY_DIR}/include
-	${BOOST_INCLUDE_DIRS}
+	${Boost_INCLUDE_DIRS}
 	${SQLITE3_INCLUDE_DIRS}
 	${YAJL_INCLUDE_DIRS}
 )

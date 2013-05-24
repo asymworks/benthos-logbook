@@ -172,7 +172,7 @@ std::vector<country> DiveSiteMapper::countries() const
 		{
 			result.push_back(country((* it)[0].get<std::string>()));
 		}
-		catch (std::exception & e)
+		catch (std::exception &)
 		{
 		}
 	}

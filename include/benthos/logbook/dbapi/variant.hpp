@@ -48,6 +48,7 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>

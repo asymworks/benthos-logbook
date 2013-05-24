@@ -110,7 +110,7 @@ void log_handler::handle(const log_record & rec)
 	{
 		emit_(rec);
 	}
-	catch (std::exception & e)
+	catch (std::exception &)
 	{
 		handleError(rec);
 	}

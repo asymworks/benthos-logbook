@@ -33,11 +33,18 @@
 # WITH THE SOFTWARE.
 #
 
+set(MUTEX_CPP)
+if (WIN32)
+	set(MUTEX_CPP mutex-win32.cpp)
+else (WIN32)
+	set(MUTEX_CPP mutex-pthread.cpp)
+endif (WIN32)
+
 add_library(logging_module OBJECT
 	formatter.cpp
 	handler.cpp
 	logger.cpp
-	mutex.cpp
+	${MUTEX_CPP}
 	record.cpp
 	registry.cpp
 	stream_handler.cpp
